@@ -9,13 +9,14 @@ const Quiz = ({ socket }) => {
     points: 0,
     total: 0,
   });
-  // const [socketID, setSocketID] = useState(null);
+  const [socketID, setSocketID] = useState(null);
   const [opponentAnswers, setOpponentAnswers] = useState([]);
 
   const [time, setTime] = useState("fetching");
 
   useEffect(() => {
     socket.on("connect", () => {
+      setSocketID(socket.id);
       console.log(socket.id);
     });
     socket.on("connect_error", () => {
@@ -40,7 +41,7 @@ const Quiz = ({ socket }) => {
       return;
     }
 
-    socket.emit("playerAnswer", formatInput);
+    // socket.emit("playerAnswer", formatInput);
 
     const result = formatInput == question.answer;
     console.log(result);
@@ -95,7 +96,11 @@ const Quiz = ({ socket }) => {
     return oppAnswers;
   };
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (score.total !== 0) {
+      socket.emit("playerAnswer", { ...score, userID: socketID });
+    }
+  }, [score]);
 
   useEffect(() => {
     renderQuestion();
