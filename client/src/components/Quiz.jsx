@@ -1,18 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl } from "react-bootstrap";
+import { io } from "socket.io-client";
 
-const Quiz = (props) => {
-  const [list, setList] = useState([]);
+const Quiz = ({ socket }) => {
   const [question, setQuestion] = useState({});
   const [responses, setResponses] = useState([]);
   const [score, setScore] = useState({
     points: 0,
     total: 0,
   });
-  // const [question, setQuestion] = useState({
-  //   question: "",
-  //   answer: "",
-  // });
+  // const [socketID, setSocketID] = useState(null);
+  const [opponentAnswers, setOpponentAnswers] = useState([]);
+
+  const [time, setTime] = useState("fetching");
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    socket.on("connect_error", () => {
+      setTimeout(() => socket.connect(), 5000);
+    });
+    socket.on("time", (data) => setTime(data));
+    socket.on("new player", (arg) => {
+      return console.log("New player joined: ", arg);
+    });
+    socket.on("playerAnswer", (answer) => {
+      console.log("Player answered: ", answer);
+    });
+
+    socket.on("disconnect", () => setTime("server disconnected"));
+  }, [socket]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +39,8 @@ const Quiz = (props) => {
     if (formatInput === "") {
       return;
     }
+
+    socket.emit("playerAnswer", formatInput);
 
     const result = formatInput == question.answer;
     console.log(result);
@@ -67,6 +87,14 @@ const Quiz = (props) => {
     setQuestion({ question: `${x} x ${y}`, answer: ans });
   };
 
+  const renderOpponentAnswers = () => {
+    const oppAnswers = opponentAnswers.map((answer, index) => {
+      // console.log(`number: ${number}, index: ${index}`);
+      return <li key={index}>{answer}</li>;
+    });
+    return oppAnswers;
+  };
+
   useEffect(() => {});
 
   useEffect(() => {
@@ -75,7 +103,7 @@ const Quiz = (props) => {
 
   return (
     <div>
-      <h1>Quiz</h1>
+      <h1>Quiz ---- Time: {time}</h1>
       <h3>Question {responses.length + 1}</h3>
       <h2>{question.question}</h2>
 
@@ -83,7 +111,8 @@ const Quiz = (props) => {
         <FormControl type="number" />
       </Form>
       <h3>Score: {score.total > 0 && `${score.points} / ${score.total}`}</h3>
-      <ul>{renderAnswers()}</ul>
+      {/* <ul>{renderAnswers()}</ul> */}
+      <ul>{opponentAnswers && renderOpponentAnswers()}</ul>
     </div>
   );
 };
