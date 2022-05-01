@@ -3,10 +3,12 @@ import { Form, FormControl } from "react-bootstrap";
 
 const Quiz = (props) => {
   const [list, setList] = useState([]);
-  const [question, setQuestion] = useState({
-    question: "",
-    answer: "",
-  });
+  const [question, setQuestion] = useState({});
+  const [responses, setResponses] = useState([]);
+  // const [question, setQuestion] = useState({
+  //   question: "",
+  //   answer: "",
+  // });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,17 +18,31 @@ const Quiz = (props) => {
       return;
     }
 
-    const temp = [...list];
-    temp.push(formatInput);
+    const result = formatInput == question.answer;
+    console.log(result);
+
+    const response = {
+      ...question,
+      input: formatInput,
+      result: result,
+    };
+
     e.target[0].value = "";
-    setList(temp);
+
+    setResponses((prev) => [...prev, response]);
   };
 
   const renderAnswers = () => {
-    const testList = list.map((number, index) => {
-      // console.log(`number: ${number}, index: ${index}`);
-      return <li key={index}>{number}</li>;
-    });
+    const testList = responses.map(
+      ({ question, answer, input, result }, index) => {
+        // console.log(`number: ${number}, index: ${index}`);
+        return (
+          <li key={index}>{`${question} = ${input} - ${
+            result ? "correct" : "incorrect"
+          }`}</li>
+        );
+      }
+    );
     return testList;
   };
 
@@ -37,9 +53,11 @@ const Quiz = (props) => {
     setQuestion({ question: `${x} x ${y}`, answer: ans });
   };
 
+  useEffect(() => {});
+
   useEffect(() => {
     renderQuestion();
-  }, [list]);
+  }, [responses]);
 
   return (
     <div>
