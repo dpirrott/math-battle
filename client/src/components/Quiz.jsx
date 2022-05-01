@@ -5,6 +5,10 @@ const Quiz = (props) => {
   const [list, setList] = useState([]);
   const [question, setQuestion] = useState({});
   const [responses, setResponses] = useState([]);
+  const [score, setScore] = useState({
+    points: 0,
+    total: 0,
+  });
   // const [question, setQuestion] = useState({
   //   question: "",
   //   answer: "",
@@ -20,6 +24,16 @@ const Quiz = (props) => {
 
     const result = formatInput == question.answer;
     console.log(result);
+
+    if (result) {
+      setScore((prev) => {
+        return { points: prev.points + 1, total: prev.total + 1 };
+      });
+    } else {
+      setScore((prev) => {
+        return { ...prev, total: prev.total + 1 };
+      });
+    }
 
     const response = {
       ...question,
@@ -38,7 +52,7 @@ const Quiz = (props) => {
         // console.log(`number: ${number}, index: ${index}`);
         return (
           <li key={index}>{`${question} = ${input} - ${
-            result ? "correct" : "incorrect"
+            result ? "correct" : `incorrect (answer = ${answer})`
           }`}</li>
         );
       }
@@ -62,13 +76,13 @@ const Quiz = (props) => {
   return (
     <div>
       <h1>Quiz</h1>
-      <p>
-        Question: {question.question}, answer: {question.answer}
-      </p>
+      <h3>Question {responses.length + 1}</h3>
+      <h2>{question.question}</h2>
 
       <Form onSubmit={(e) => handleSubmit(e)}>
         <FormControl type="number" />
       </Form>
+      <h3>Score: {score.total > 0 && `${score.points} / ${score.total}`}</h3>
       <ul>{renderAnswers()}</ul>
     </div>
   );
