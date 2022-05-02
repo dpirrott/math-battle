@@ -3,7 +3,8 @@ import { Form, FormControl, Button } from "react-bootstrap";
 import { io } from "socket.io-client";
 
 const Quiz = ({ socket }) => {
-  const [question, setQuestion] = useState({});
+  const [question, setQuestion] = useState(null);
+  const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
   const [score, setScore] = useState({
     points: 0,
@@ -11,6 +12,7 @@ const Quiz = ({ socket }) => {
   });
   const [socketID, setSocketID] = useState(null);
   const [opponentAnswers, setOpponentAnswers] = useState([]);
+  const [opponentResult, setOpponentResult] = useState(null);
 
   // const [time, setTime] = useState("fetching");
   const [clock, setClock] = useState("Infinity");
@@ -32,12 +34,21 @@ const Quiz = ({ socket }) => {
       setOpponentAnswers((prev) => [...prev, answer]);
     });
 
+    socket.on("game questions", (questionsList) => {
+      setQuestions(questionsList);
+    });
+
     socket.on("game timer", (clock) => {
       setClock(clock);
     });
 
     socket.on("finish", (msg) => {
       setFinish(msg);
+    });
+
+    socket.on("opponentScore", (result) => {
+      console.log(result);
+      setOpponentResult(result);
     });
 
     socket.on("disconnect", () => console.log("Disconnected"));
@@ -96,10 +107,8 @@ const Quiz = ({ socket }) => {
   };
 
   const renderQuestion = () => {
-    const x = Math.ceil(Math.random() * 11 + 1);
-    const y = Math.ceil(Math.random() * 11 + 1);
-    const ans = x * y;
-    setQuestion({ question: `${x} x ${y}`, answer: ans });
+    const retrievedQuestion = questions[responses.length];
+    setQuestion(retrievedQuestion);
   };
 
   const renderOpponentAnswers = () => {
@@ -117,8 +126,16 @@ const Quiz = ({ socket }) => {
   // }, [score]);
 
   useEffect(() => {
-    renderQuestion();
-  }, [responses]);
+    if (questions) {
+      renderQuestion();
+    }
+  }, [questions, responses]);
+
+  useEffect(() => {
+    if (finish) {
+      socket.emit("opponentScore", { userID: socketID, ...score });
+    }
+  }, [finish]);
 
   return (
     <div>
@@ -132,7 +149,7 @@ const Quiz = ({ socket }) => {
       ) : (
         <div>
           <h3>Question {responses.length + 1}</h3>
-          <h2>{question.question}</h2>
+          <h2>{question && question.question}</h2>
         </div>
       )}
 
@@ -142,8 +159,14 @@ const Quiz = ({ socket }) => {
       <Button onClick={() => startGame()}>Start</Button>
 
       <h3>Score: {score.total > 0 && `${score.points} / ${score.total}`}</h3>
+      {opponentResult && (
+        <h4>
+          {opponentResult.userID} score:{" "}
+          {`${opponentResult.points} / ${opponentResult.total}`}
+        </h4>
+      )}
       {/* <ul>{renderAnswers()}</ul> */}
-      <ul>{opponentAnswers && renderOpponentAnswers()}</ul>
+      {/* <ul>{opponentAnswers && renderOpponentAnswers()}</ul> */}
     </div>
   );
 };

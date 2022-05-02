@@ -23,8 +23,15 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("playerAnswer", answer);
   });
 
+  socket.on("opponentScore", (result) => {
+    console.log(result);
+    socket.broadcast.emit("opponentScore", result);
+  });
+
   socket.on("start game", () => {
-    let count = 6;
+    let count = 21;
+    const questions = generateQuestions(60);
+    io.to("clock-room").emit("game questions", questions);
     let timer = setInterval(() => {
       count--;
       if (count === 0) {
