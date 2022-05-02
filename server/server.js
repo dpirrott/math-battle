@@ -1,6 +1,8 @@
 const express = require("express");
 const socketIo = require("socket.io");
 const http = require("http");
+const { clearInterval } = require("timers");
+const { generateQuestions } = require("./helpers/generateQuestions");
 const PORT = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
@@ -19,6 +21,20 @@ io.on("connection", (socket) => {
   socket.on("playerAnswer", (answer) => {
     console.log("Player answered: ", answer);
     socket.broadcast.emit("playerAnswer", answer);
+  });
+
+  socket.on("start game", () => {
+    let count = 6;
+    let timer = setInterval(() => {
+      count--;
+      if (count === 0) {
+        clearInterval(timer);
+        io.to("clock-room").emit("game timer", count);
+        io.to("clock-room").emit("finish", "Game over");
+      } else {
+        io.to("clock-room").emit("game timer", count);
+      }
+    }, 1000);
   });
 
   socket.on("disconnect", (reason) => {

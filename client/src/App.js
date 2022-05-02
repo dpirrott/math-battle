@@ -1,5 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
+
 import Quiz from "./components/Quiz";
 import { io } from "socket.io-client";
 import { useState, useEffect } from "react";

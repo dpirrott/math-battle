@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, FormControl } from "react-bootstrap";
+import { Form, FormControl, Button } from "react-bootstrap";
 import { io } from "socket.io-client";
 
 const Quiz = ({ socket }) => {
@@ -12,7 +12,9 @@ const Quiz = ({ socket }) => {
   const [socketID, setSocketID] = useState(null);
   const [opponentAnswers, setOpponentAnswers] = useState([]);
 
-  const [time, setTime] = useState("fetching");
+  // const [time, setTime] = useState("fetching");
+  const [clock, setClock] = useState("Infinity");
+  const [finish, setFinish] = useState(null);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -22,16 +24,28 @@ const Quiz = ({ socket }) => {
     socket.on("connect_error", () => {
       setTimeout(() => socket.connect(), 5000);
     });
-    socket.on("time", (data) => setTime(data));
     socket.on("new player", (arg) => {
       return console.log("New player joined: ", arg);
     });
     socket.on("playerAnswer", (answer) => {
       console.log("Player answered: ", answer);
+      setOpponentAnswers((prev) => [...prev, answer]);
     });
 
-    socket.on("disconnect", () => setTime("server disconnected"));
+    socket.on("game timer", (clock) => {
+      setClock(clock);
+    });
+
+    socket.on("finish", (msg) => {
+      setFinish(msg);
+    });
+
+    socket.on("disconnect", () => console.log("Disconnected"));
   }, [socket]);
+
+  const startGame = () => {
+    socket.emit("start game");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,7 +55,7 @@ const Quiz = ({ socket }) => {
       return;
     }
 
-    // socket.emit("playerAnswer", formatInput);
+    socket.emit("playerAnswer", formatInput);
 
     const result = formatInput == question.answer;
     console.log(result);
@@ -96,11 +110,11 @@ const Quiz = ({ socket }) => {
     return oppAnswers;
   };
 
-  useEffect(() => {
-    if (score.total !== 0) {
-      socket.emit("playerAnswer", { ...score, userID: socketID });
-    }
-  }, [score]);
+  // useEffect(() => {
+  //   if (score.total !== 0) {
+  //     socket.emit("playerAnswer", { ...score, userID: socketID });
+  //   }
+  // }, [score]);
 
   useEffect(() => {
     renderQuestion();
@@ -108,13 +122,25 @@ const Quiz = ({ socket }) => {
 
   return (
     <div>
-      <h1>Quiz ---- Time: {time}</h1>
-      <h3>Question {responses.length + 1}</h3>
-      <h2>{question.question}</h2>
+      <h1>Quiz</h1>
+      <h2>
+        Time remaining: {clock} {}
+      </h2>
+
+      {finish ? (
+        <h2>{finish}</h2>
+      ) : (
+        <div>
+          <h3>Question {responses.length + 1}</h3>
+          <h2>{question.question}</h2>
+        </div>
+      )}
 
       <Form onSubmit={(e) => handleSubmit(e)}>
         <FormControl type="number" />
       </Form>
+      <Button onClick={() => startGame()}>Start</Button>
+
       <h3>Score: {score.total > 0 && `${score.points} / ${score.total}`}</h3>
       {/* <ul>{renderAnswers()}</ul> */}
       <ul>{opponentAnswers && renderOpponentAnswers()}</ul>
