@@ -16,7 +16,9 @@ io.on("connection", (socket) => {
 
   socket.join("clock-room");
 
-  socket.broadcast.emit("new player", socket.id);
+  socket.on("new player", (name) => {
+    socket.broadcast.emit("new player", name);
+  });
 
   socket.on("playerAnswer", (answer) => {
     console.log("Player answered: ", answer);

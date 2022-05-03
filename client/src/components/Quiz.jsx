@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 
-const Quiz = ({ socket }) => {
+const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
@@ -25,7 +25,7 @@ const Quiz = ({ socket }) => {
       setTimeout(() => socket.connect(), 5000);
     });
     socket.on("new player", (arg) => {
-      return console.log("New player joined: ", arg);
+      console.log("New player joined: ", arg);
     });
     socket.on("playerAnswer", (answer) => {
       console.log("Player answered: ", answer);
@@ -97,32 +97,32 @@ const Quiz = ({ socket }) => {
     setResponses((prev) => [...prev, response]);
   };
 
-  const renderAnswers = () => {
-    const testList = responses.map(
-      ({ question, answer, input, result }, index) => {
-        // console.log(`number: ${number}, index: ${index}`);
-        return (
-          <li key={index}>{`${question} = ${input} - ${
-            result ? "correct" : `incorrect (answer = ${answer})`
-          }`}</li>
-        );
-      }
-    );
-    return testList;
-  };
+  // const renderAnswers = () => {
+  //   const testList = responses.map(
+  //     ({ question, answer, input, result }, index) => {
+  //       // console.log(`number: ${number}, index: ${index}`);
+  //       return (
+  //         <li key={index}>{`${question} = ${input} - ${
+  //           result ? "correct" : `incorrect (answer = ${answer})`
+  //         }`}</li>
+  //       );
+  //     }
+  //   );
+  //   return testList;
+  // };
 
   const renderQuestion = () => {
     const retrievedQuestion = questions[responses.length];
     setQuestion(retrievedQuestion);
   };
 
-  const renderOpponentAnswers = () => {
-    const oppAnswers = opponentAnswers.map((answer, index) => {
-      // console.log(`number: ${number}, index: ${index}`);
-      return <li key={index}>{answer}</li>;
-    });
-    return oppAnswers;
-  };
+  // const renderOpponentAnswers = () => {
+  //   const oppAnswers = opponentAnswers.map((answer, index) => {
+  //     // console.log(`number: ${number}, index: ${index}`);
+  //     return <li key={index}>{answer}</li>;
+  //   });
+  //   return oppAnswers;
+  // };
 
   useEffect(() => {
     if (questions) {
@@ -147,9 +147,13 @@ const Quiz = ({ socket }) => {
     }
   }, [finish]);
 
+  useEffect(() => {
+    socket.emit("new player", cookies.name);
+  }, [cookies]);
+
   return (
     <div>
-      <h1>Quiz</h1>
+      <h2>"{cookies.name}"</h2>
       {!setFinish && (
         <h2>
           Time remaining: {clock} {}
@@ -159,10 +163,12 @@ const Quiz = ({ socket }) => {
       {finish ? (
         <h2>{finish}</h2>
       ) : (
-        <div>
-          <h3>Question {responses.length + 1}</h3>
-          <h2>{question && question.question}</h2>
-        </div>
+        question && (
+          <div>
+            <h3>Question {responses.length + 1}</h3>
+            <h2>{question.question}</h2>
+          </div>
+        )
       )}
 
       {questions && (
