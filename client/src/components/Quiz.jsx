@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
-import { io } from "socket.io-client";
 
 const Quiz = ({ socket }) => {
   const [question, setQuestion] = useState(null);
@@ -14,7 +13,6 @@ const Quiz = ({ socket }) => {
   const [opponentAnswers, setOpponentAnswers] = useState([]);
   const [opponentResult, setOpponentResult] = useState(null);
 
-  // const [time, setTime] = useState("fetching");
   const [clock, setClock] = useState("Infinity");
   const [finish, setFinish] = useState(null);
 
@@ -44,6 +42,9 @@ const Quiz = ({ socket }) => {
 
     socket.on("finish", (msg) => {
       setFinish(msg);
+      setClock("Infinity");
+      setQuestions(null);
+      setQuestion(null);
     });
 
     socket.on("opponentScore", (result) => {
@@ -67,6 +68,10 @@ const Quiz = ({ socket }) => {
     }
 
     socket.emit("playerAnswer", formatInput);
+
+    // console.log(
+    //   `typeof formatInput: ${typeof formatInput} --- typeof question.answer: ${typeof question.answer}`
+    // );
 
     const result = formatInput == question.answer;
     console.log(result);
@@ -119,17 +124,22 @@ const Quiz = ({ socket }) => {
     return oppAnswers;
   };
 
-  // useEffect(() => {
-  //   if (score.total !== 0) {
-  //     socket.emit("playerAnswer", { ...score, userID: socketID });
-  //   }
-  // }, [score]);
-
   useEffect(() => {
     if (questions) {
+      setFinish(null);
       renderQuestion();
     }
   }, [questions, responses]);
+
+  useEffect(() => {
+    if (questions) {
+      setScore({
+        points: 0,
+        total: 0,
+      });
+      setResponses([]);
+    }
+  }, [questions]);
 
   useEffect(() => {
     if (finish) {
@@ -140,9 +150,11 @@ const Quiz = ({ socket }) => {
   return (
     <div>
       <h1>Quiz</h1>
-      <h2>
-        Time remaining: {clock} {}
-      </h2>
+      {!setFinish && (
+        <h2>
+          Time remaining: {clock} {}
+        </h2>
+      )}
 
       {finish ? (
         <h2>{finish}</h2>
@@ -153,12 +165,14 @@ const Quiz = ({ socket }) => {
         </div>
       )}
 
-      <Form onSubmit={(e) => handleSubmit(e)}>
-        <FormControl type="number" />
-      </Form>
+      {questions && (
+        <Form onSubmit={(e) => handleSubmit(e)}>
+          <FormControl type="number" />
+        </Form>
+      )}
       <Button onClick={() => startGame()}>Start</Button>
 
-      <h3>Score: {score.total > 0 && `${score.points} / ${score.total}`}</h3>
+      {score.total > 0 && <h3>Score: {`${score.points} / ${score.total}`}</h3>}
       {opponentResult && (
         <h4>
           {opponentResult.userID} score:{" "}

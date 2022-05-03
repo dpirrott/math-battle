@@ -29,7 +29,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start game", () => {
-    let count = 21;
+    let count = 20;
+    io.to("clock-room").emit("game timer", count);
     const questions = generateQuestions(60);
     io.to("clock-room").emit("game questions", questions);
     let timer = setInterval(() => {
