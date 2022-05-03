@@ -8,7 +8,6 @@ import { useCookies } from "react-cookie";
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [name, setName] = useState(null);
   const [cookies, setCookie] = useCookies(null);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ function App() {
     e.preventDefault();
     const nickName = e.target[0].value.trim();
     if (nickName !== "") {
-      setName(nickName);
+      // setName(nickName);
       setCookie("name", nickName);
     }
   };
@@ -36,10 +35,13 @@ function App() {
       <h1>Math Battle</h1>
       {socket &&
         (!cookies.name ? (
-          <Form onSubmit={(e) => enterBattle(e)}>
-            <FormControl type="text" />
-            <Button type="submit">Submit</Button>
-          </Form>
+          <div>
+            <h4>Enter your nickname:</h4>
+            <Form onSubmit={(e) => enterBattle(e)}>
+              <FormControl type="text" />
+              <Button type="submit">Submit</Button>
+            </Form>
+          </div>
         ) : (
           <Quiz socket={socket} cookies={cookies} />
         ))}

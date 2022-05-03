@@ -11,13 +11,21 @@ const io = socketIo(server, {
     origin: "http://localhost:3000",
   },
 }); //in case server and client run on different urls
+
+let currentUsers = [];
+
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
 
   socket.join("clock-room");
 
-  socket.on("new player", (name) => {
-    socket.broadcast.emit("new player", name);
+  socket.on("new player", (player) => {
+    socket.broadcast.emit("new player", player.name);
+    io.to(player.socketID).emit("current players", currentUsers);
+    if (player.socketID) {
+      currentUsers.push(player);
+    }
+    console.log(currentUsers);
   });
 
   socket.on("playerAnswer", (answer) => {
@@ -49,6 +57,11 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
+    const prevUsers = currentUsers.filter(
+      (user) => user.socketID !== socket.id
+    );
+    console.log("Remaining players:", prevUsers);
+    currentUsers = prevUsers;
   });
 });
 

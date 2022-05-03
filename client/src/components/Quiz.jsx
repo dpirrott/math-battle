@@ -10,7 +10,8 @@ const Quiz = ({ socket, cookies }) => {
     total: 0,
   });
   const [socketID, setSocketID] = useState(null);
-  const [opponentAnswers, setOpponentAnswers] = useState([]);
+  // const [opponentAnswers, setOpponentAnswers] = useState([]);
+  const [opponentName, setOpponentName] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
 
   const [clock, setClock] = useState("Infinity");
@@ -18,18 +19,29 @@ const Quiz = ({ socket, cookies }) => {
 
   useEffect(() => {
     socket.on("connect", () => {
-      setSocketID(socket.id);
       console.log(socket.id);
+      if (cookies.name) {
+        console.log("I was previously known as ", cookies.name);
+        socket.emit("new player", { name: cookies.name, socketID: socket.id });
+      }
     });
     socket.on("connect_error", () => {
       setTimeout(() => socket.connect(), 5000);
     });
-    socket.on("new player", (arg) => {
-      console.log("New player joined: ", arg);
+    socket.on("new player", (name) => {
+      console.log("New player joined: ", name);
+      setOpponentName(name);
+    });
+    socket.on("current players", (players) => {
+      // For now assume only 1 opponent
+      if (players.length > 0) {
+        console.log("Player already in lobby: ", players[0]);
+        setOpponentName(players[0]);
+      }
     });
     socket.on("playerAnswer", (answer) => {
       console.log("Player answered: ", answer);
-      setOpponentAnswers((prev) => [...prev, answer]);
+      // setOpponentAnswers((prev) => [...prev, answer]);
     });
 
     socket.on("game questions", (questionsList) => {
@@ -53,7 +65,7 @@ const Quiz = ({ socket, cookies }) => {
     });
 
     socket.on("disconnect", () => console.log("Disconnected"));
-  }, [socket]);
+  }, [socket, cookies.name]);
 
   const startGame = () => {
     socket.emit("start game");
@@ -73,7 +85,7 @@ const Quiz = ({ socket, cookies }) => {
     //   `typeof formatInput: ${typeof formatInput} --- typeof question.answer: ${typeof question.answer}`
     // );
 
-    const result = formatInput == question.answer;
+    const result = Number(formatInput) === question.answer;
     console.log(result);
 
     if (result) {
@@ -111,11 +123,6 @@ const Quiz = ({ socket, cookies }) => {
   //   return testList;
   // };
 
-  const renderQuestion = () => {
-    const retrievedQuestion = questions[responses.length];
-    setQuestion(retrievedQuestion);
-  };
-
   // const renderOpponentAnswers = () => {
   //   const oppAnswers = opponentAnswers.map((answer, index) => {
   //     // console.log(`number: ${number}, index: ${index}`);
@@ -125,6 +132,11 @@ const Quiz = ({ socket, cookies }) => {
   // };
 
   useEffect(() => {
+    const renderQuestion = () => {
+      const retrievedQuestion = questions[responses.length];
+      setQuestion(retrievedQuestion);
+    };
+
     if (questions) {
       setFinish(null);
       renderQuestion();
@@ -145,11 +157,17 @@ const Quiz = ({ socket, cookies }) => {
     if (finish) {
       socket.emit("opponentScore", { userID: socketID, ...score });
     }
-  }, [finish]);
+  }, [finish, score, socket, socketID]);
 
   useEffect(() => {
-    socket.emit("new player", cookies.name);
-  }, [cookies]);
+    if (socketID) {
+      socket.emit("new player", { name: cookies.name, socketID: socketID });
+    }
+  }, [cookies, socket, socketID]);
+
+  useEffect(() => {
+    setSocketID(socket.id);
+  }, [socket]);
 
   return (
     <div>
@@ -181,7 +199,7 @@ const Quiz = ({ socket, cookies }) => {
       {score.total > 0 && <h3>Score: {`${score.points} / ${score.total}`}</h3>}
       {opponentResult && (
         <h4>
-          {opponentResult.userID} score:{" "}
+          {opponentName} score:{" "}
           {`${opponentResult.points} / ${opponentResult.total}`}
         </h4>
       )}
