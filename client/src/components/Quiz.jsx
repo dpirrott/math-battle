@@ -6,7 +6,7 @@ const Quiz = ({ socket, cookies }) => {
   const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
   const [score, setScore] = useState({
-    points: 0,
+    correct: 0,
     total: 0,
   });
   const [socketID, setSocketID] = useState(null);
@@ -35,8 +35,8 @@ const Quiz = ({ socket, cookies }) => {
     socket.on("current players", (players) => {
       // For now assume only 1 opponent
       if (players.length > 0) {
-        console.log("Player already in lobby: ", players[0]);
-        setOpponentName(players[0]);
+        console.log("Player already in lobby: ", players[0].name);
+        setOpponentName(players[0].name);
       }
     });
     socket.on("playerAnswer", (answer) => {
@@ -64,11 +64,19 @@ const Quiz = ({ socket, cookies }) => {
       setOpponentResult(result);
     });
 
-    socket.on("disconnect", () => console.log("Disconnected"));
+    socket.on("opponent disconnect", () => {
+      setOpponentName(null);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+    });
   }, [socket, cookies.name]);
 
   const startGame = () => {
     socket.emit("start game");
+    setOpponentResult(null);
+    setFinish(null);
   };
 
   const handleSubmit = (e) => {
@@ -90,11 +98,25 @@ const Quiz = ({ socket, cookies }) => {
 
     if (result) {
       setScore((prev) => {
-        return { points: prev.points + 1, total: prev.total + 1 };
+        return {
+          correct: prev.correct + 1,
+          total: prev.total + 1,
+          points: Math.round(
+            ((prev.correct + 1) / (prev.total + 1)).toFixed(1) *
+              (prev.correct + 1) *
+              10
+          ),
+        };
       });
     } else {
       setScore((prev) => {
-        return { ...prev, total: prev.total + 1 };
+        return {
+          ...prev,
+          total: prev.total + 1,
+          points: Math.round(
+            (prev.correct / (prev.total + 1)).toFixed(1) * prev.correct * 10
+          ),
+        };
       });
     }
 
@@ -146,7 +168,7 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     if (questions) {
       setScore({
-        points: 0,
+        correct: 0,
         total: 0,
       });
       setResponses([]);
@@ -171,18 +193,19 @@ const Quiz = ({ socket, cookies }) => {
 
   return (
     <div>
-      <h2>"{cookies.name}"</h2>
-      {!setFinish && (
-        <h2>
-          Time remaining: {clock} {}
-        </h2>
-      )}
+      <h2>
+        "{cookies.name}"{" "}
+        {opponentName
+          ? `Vs. "${opponentName}"`
+          : "--> waiting for opponent to join..."}
+      </h2>
 
       {finish ? (
         <h2>{finish}</h2>
       ) : (
         question && (
           <div>
+            <h2>Time remaining: {clock}</h2>
             <h3>Question {responses.length + 1}</h3>
             <h2>{question.question}</h2>
           </div>
@@ -196,11 +219,13 @@ const Quiz = ({ socket, cookies }) => {
       )}
       <Button onClick={() => startGame()}>Start</Button>
 
-      {score.total > 0 && <h3>Score: {`${score.points} / ${score.total}`}</h3>}
+      {score.total > 0 && (
+        <h3>Score: {`${score.points} (${score.correct} / ${score.total})`}</h3>
+      )}
       {opponentResult && (
         <h4>
-          {opponentName} score:{" "}
-          {`${opponentResult.points} / ${opponentResult.total}`}
+          {opponentName} score: {opponentResult.points}
+          {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
       {/* <ul>{renderAnswers()}</ul> */}

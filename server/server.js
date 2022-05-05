@@ -57,6 +57,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
+    socket.broadcast.emit("opponent disconnect");
     const prevUsers = currentUsers.filter(
       (user) => user.socketID !== socket.id
     );
