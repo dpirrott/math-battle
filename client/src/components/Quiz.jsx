@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import { socketLoad } from "../Helpers/socketLoad";
+import { KeyPad } from "./KeyPad";
 
 const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
@@ -11,7 +12,6 @@ const Quiz = ({ socket, cookies }) => {
     total: 0,
   });
   const [socketID, setSocketID] = useState(null);
-  // const [opponentAnswers, setOpponentAnswers] = useState([]);
   const [opponentName, setOpponentName] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
 
@@ -170,14 +170,6 @@ const Quiz = ({ socket, cookies }) => {
           </div>
         )
       )}
-
-      {questions && (
-        <Form onSubmit={(e) => handleSubmit(e)}>
-          <FormControl type="number" />
-        </Form>
-      )}
-      <Button onClick={() => startGame()}>Start</Button>
-
       {score.total > 0 && (
         <h3>Score: {`${score.points} (${score.correct} / ${score.total})`}</h3>
       )}
@@ -187,6 +179,14 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
+
+      {questions && (
+        <Form onSubmit={(e) => handleSubmit(e)}>
+          <FormControl type="number" />
+        </Form>
+      )}
+      <KeyPad />
+      <Button onClick={() => startGame()}>Start</Button>
     </div>
   );
 };
