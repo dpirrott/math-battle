@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
+import { socketLoad } from "../Helpers/socketLoad";
 
 const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
@@ -17,60 +18,20 @@ const Quiz = ({ socket, cookies }) => {
   const [clock, setClock] = useState("Infinity");
   const [finish, setFinish] = useState(null);
 
+  // Set-up socket event listeners
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log(socket.id);
-      if (cookies.name) {
-        console.log("I was previously known as ", cookies.name);
-        socket.emit("new player", { name: cookies.name, socketID: socket.id });
-      }
-    });
-    socket.on("connect_error", () => {
-      setTimeout(() => socket.connect(), 5000);
-    });
-    socket.on("new player", (name) => {
-      console.log("New player joined: ", name);
-      setOpponentName(name);
-    });
-    socket.on("current players", (players) => {
-      // For now assume only 1 opponent
-      if (players.length > 0) {
-        console.log("Player already in lobby: ", players[0].name);
-        setOpponentName(players[0].name);
-      }
-    });
-    socket.on("playerAnswer", (answer) => {
-      console.log("Player answered: ", answer);
-      // setOpponentAnswers((prev) => [...prev, answer]);
-    });
-
-    socket.on("game questions", (questionsList) => {
-      setQuestions(questionsList);
-    });
-
-    socket.on("game timer", (clock) => {
-      setClock(clock);
-    });
-
-    socket.on("finish", (msg) => {
-      setFinish(msg);
-      setClock("Infinity");
-      setQuestions(null);
-      setQuestion(null);
-    });
-
-    socket.on("opponentScore", (result) => {
-      console.log(result);
-      setOpponentResult(result);
-    });
-
-    socket.on("opponent disconnect", () => {
-      setOpponentName(null);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected");
-    });
+    if (socket && cookies.name) {
+      socketLoad({
+        socket,
+        cookies,
+        setOpponentName,
+        setQuestions,
+        setClock,
+        setFinish,
+        setQuestion,
+        setOpponentResult,
+      });
+    }
   }, [socket, cookies.name]);
 
   const startGame = () => {
@@ -88,10 +49,6 @@ const Quiz = ({ socket, cookies }) => {
     }
 
     socket.emit("playerAnswer", formatInput);
-
-    // console.log(
-    //   `typeof formatInput: ${typeof formatInput} --- typeof question.answer: ${typeof question.answer}`
-    // );
 
     const result = Number(formatInput) === question.answer;
     console.log(result);
@@ -160,7 +117,9 @@ const Quiz = ({ socket, cookies }) => {
     };
 
     if (questions) {
-      setFinish(null);
+      if (finish) {
+        setFinish(null);
+      }
       renderQuestion();
     }
   }, [questions, responses]);
@@ -228,8 +187,6 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-      {/* <ul>{renderAnswers()}</ul> */}
-      {/* <ul>{opponentAnswers && renderOpponentAnswers()}</ul> */}
     </div>
   );
 };
