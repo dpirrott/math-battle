@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import { socketLoad } from "../Helpers/socketLoad";
-import { KeyPad } from "./KeyPad";
+import { KeyPad } from "./customKeypad";
 
 const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
@@ -185,8 +185,8 @@ const Quiz = ({ socket, cookies }) => {
           <FormControl type="number" />
         </Form>
       )}
-      <KeyPad />
       <Button onClick={() => startGame()}>Start</Button>
+      <KeyPad />
     </div>
   );
 };

@@ -1,18 +1,74 @@
-.dgsWKL {
-  background-color: transparent;
+body {
+  background-color: rgb(52, 68, 78);
 }
 
-.fpKsPY {
+.container {
+  border: 2px solid rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 600px;
+  height: 600px;
+  padding: 20px;
+  margin: 50px auto;
+  gap: 10px;
+  background-color: rgba(0, 0, 0, 0.842);
+  border-radius: 20px;
+}
+
+#display {
+  font-size: 100px;
+  height: 100px;
+  display: inline-block;
+  font-family: "Roboto", sans-serif;
+}
+
+.row {
+  display: flex;
   width: 100%;
-  height: 400px;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
 }
 
-.jfdoYu {
-  top: 350px;
-  position: fixed;
+#displayContainer {
+  justify-content: flex-start;
+  align-items: center;
+  background-color: rgb(141, 185, 143);
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 2px solid white;
 }
 
-.enterAnswer {
-  position: fixed;
-  top: 850px;
+.row-item {
+  flex: 1;
+  font-size: 32px;
+  border-radius: 10px;
+  border: 2px solid white;
+}
+
+#delete {
+  flex: 1 1 0;
+  background-color: firebrick;
+}
+
+#clear {
+  background-color: gold;
+}
+
+#submit {
+  background-color: rgb(72, 149, 0);
+}
+
+.number {
+  background-color: #c3c3c3;
+}
+
+.operation {
+  background-color: rgb(74, 77, 85);
+  color: white;
+}
+
+#neg {
+  color: black;
 }

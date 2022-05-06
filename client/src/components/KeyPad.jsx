@@ -14,6 +14,7 @@ export const KeyPad = () => {
         placeholder={"my placeholder"}
         value={100}
         decimal={2}
+        showSubmit={true}
       >
         <button onClick={() => setShowSubmit(true)}>Click me!</button>
       </NumPad.Number>
