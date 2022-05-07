@@ -17,6 +17,7 @@ const Quiz = ({ socket, cookies }) => {
 
   const [clock, setClock] = useState("Infinity");
   const [finish, setFinish] = useState(null);
+  const [display, setDisplay] = useState("DISPLAY");
 
   // Set-up socket event listeners
   useEffect(() => {
@@ -186,7 +187,7 @@ const Quiz = ({ socket, cookies }) => {
         </Form>
       )}
       <Button onClick={() => startGame()}>Start</Button>
-      <KeyPad />
+      <KeyPad display={display} setDisplay={setDisplay} />
     </div>
   );
 };
