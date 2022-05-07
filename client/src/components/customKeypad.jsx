@@ -3,65 +3,105 @@ import { useState } from "react";
 import "./KeyPad.css";
 
 export const KeyPad = () => {
+  const handleClick = (e) => {
+    console.log(e.target.id);
+  };
+
   return (
-    <div class="container">
-      <div class="row" id="displayContainer">
+    <div className="container">
+      <div className="row" id="displayContainer">
         <p id="display">DISPLAY</p>
       </div>
 
-      <div class="row">
-        <button class="row-item" id="delete">
+      <div className="row">
+        <button className="row-item" id="delete">
           Del
         </button>
-        <button class="row-item" id="submit">
+        <button className="row-item" id="submit">
           Submit
         </button>
       </div>
 
-      <div class="row">
-        <button class="row-item number" id="7">
+      <div className="row">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="7"
+        >
           7
         </button>
-        <button class="row-item number" id="8">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="8"
+        >
           8
         </button>
-        <button class="row-item number" id="9">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="9"
+        >
           9
         </button>
       </div>
 
-      <div class="row">
-        <button class="row-item number" id="4">
+      <div className="row">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="4"
+        >
           4
         </button>
-        <button class="row-item number" id="5">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="5"
+        >
           5
         </button>
-        <button class="row-item number" id="6">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="6"
+        >
           6
         </button>
       </div>
 
-      <div class="row">
-        <button class="row-item number" id="1">
+      <div className="row">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="1"
+        >
           1
         </button>
-        <button class="row-item number" id="2">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="2"
+        >
           2
         </button>
-        <button class="row-item number" id="3">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="row-item number"
+          id="3"
+        >
           3
         </button>
       </div>
 
-      <div class="row">
-        <button class="row-item number" id="dot">
+      <div className="row">
+        <button className="row-item number" id="dot">
           .
         </button>
-        <button class="row-item number" id="0">
+        <button className="row-item number" id="0">
           0
         </button>
-        <button class="row-item operation" id="neg">
+        <button className="row-item operation" id="neg">
           (-)
         </button>
       </div>
