@@ -71,6 +71,7 @@ export const KeyPad = ({ display, setDisplay, handleSubmit }) => {
   return (
     <div className="container">
       <div className="row" id="displayContainer">
+        <p id="question"></p>
         <p id="display">{display}</p>
       </div>
 

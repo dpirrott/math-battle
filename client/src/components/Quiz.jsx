@@ -42,9 +42,9 @@ const Quiz = ({ socket, cookies }) => {
     setDisplay("0");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formatInput = e.target[0].value.trim();
+  const handleSubmit = () => {
+    // e.preventDefault();
+    const formatInput = display.join("");
 
     if (formatInput === "") {
       return;
@@ -85,7 +85,7 @@ const Quiz = ({ socket, cookies }) => {
       result: result,
     };
 
-    e.target[0].value = "";
+    setDisplay("0");
 
     setResponses((prev) => [...prev, response]);
   };
@@ -181,13 +181,10 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-
-      <Button onClick={() => startGame()}>Start</Button>
+      {clock === "Infinity" && (
+        <Button onClick={() => startGame()}>Start</Button>
+      )}
       {questions && (
-        // <Form onSubmit={(e) => handleSubmit(e)}>
-        //   <FormControl type="number" />
-        // </Form>
-
         <KeyPad
           display={display}
           setDisplay={setDisplay}
