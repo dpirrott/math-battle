@@ -10,17 +10,28 @@ body {
   width: 600px;
   height: 600px;
   padding: 20px;
-  margin: 50px auto;
+  margin: 15px auto;
   gap: 10px;
   background-color: rgba(0, 0, 0, 0.842);
   border-radius: 20px;
 }
 
+#question {
+  font-size: 35px;
+  height: fit-content;
+  margin-bottom: 0;
+  align-self: flex-start;
+  width: fit-content;
+  line-height: 35px;
+}
+
 #display {
   font-size: 75px;
-  height: 100px;
-  display: inline-block;
+  line-height: 75px;
   font-family: "Roboto", sans-serif;
+  width: fit-content;
+  align-self: flex-end;
+  margin-bottom: 0;
 }
 
 .row {
@@ -33,11 +44,14 @@ body {
 
 #displayContainer {
   justify-content: flex-start;
+  flex-wrap: nowrap;
   align-items: center;
   background-color: rgb(141, 185, 143);
   margin-bottom: 10px;
   border-radius: 10px;
   border: 2px solid white;
+  flex-direction: column;
+  gap: 0;
 }
 
 .row-item {
