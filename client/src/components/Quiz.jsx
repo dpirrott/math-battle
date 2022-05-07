@@ -39,6 +39,7 @@ const Quiz = ({ socket, cookies }) => {
     socket.emit("start game");
     setOpponentResult(null);
     setFinish(null);
+    setDisplay("0");
   };
 
   const handleSubmit = (e) => {
@@ -181,13 +182,18 @@ const Quiz = ({ socket, cookies }) => {
         </h4>
       )}
 
-      {questions && (
-        <Form onSubmit={(e) => handleSubmit(e)}>
-          <FormControl type="number" />
-        </Form>
-      )}
       <Button onClick={() => startGame()}>Start</Button>
-      <KeyPad display={display} setDisplay={setDisplay} />
+      {questions && (
+        // <Form onSubmit={(e) => handleSubmit(e)}>
+        //   <FormControl type="number" />
+        // </Form>
+
+        <KeyPad
+          display={display}
+          setDisplay={setDisplay}
+          handleSubmit={handleSubmit}
+        />
+      )}
     </div>
   );
 };

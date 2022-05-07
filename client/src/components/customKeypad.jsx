@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import "./KeyPad.css";
 
-export const KeyPad = ({ display, setDisplay }) => {
+export const KeyPad = ({ display, setDisplay, handleSubmit }) => {
   const handleClickNum = (e) => {
     if (display === "DISPLAY" || display === "0") {
       setDisplay([e.target.id]);
@@ -25,6 +25,13 @@ export const KeyPad = ({ display, setDisplay }) => {
         break;
 
       case "submit":
+        if (display[display.length - 1] === ".") {
+          handleSubmit(display.slice(0, display.length - 1));
+          setDisplay("0");
+          break;
+        }
+        handleSubmit(display);
+        setDisplay("0");
         break;
 
       case "neg":
@@ -42,7 +49,12 @@ export const KeyPad = ({ display, setDisplay }) => {
           (display[0] === "0" && display.length === 1)
         ) {
           setDisplay(["0", "."]);
+        } else if (display.includes(".")) {
+          break;
+        } else {
+          setDisplay((prev) => [...prev, "."]);
         }
+
         break;
     }
   };
