@@ -42,12 +42,12 @@ const socketLoad = ({
     setClock(clock);
   });
 
-  socket.on("finish", (msg) => {
-    setFinish(msg);
-    setClock("Infinity");
-    setQuestions(null);
-    setQuestion(null);
-  });
+  // socket.on("finish", (msg) => {
+  //   setFinish(msg);
+  //   setClock("Infinity");
+  //   setQuestions(null);
+  //   setQuestion(null);
+  // });
 
   socket.on("opponentScore", (result) => {
     console.log(result);

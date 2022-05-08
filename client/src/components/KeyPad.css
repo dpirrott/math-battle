@@ -86,7 +86,7 @@
 }
 
 #timerBox {
-  width: 70px;
+  width: 85px;
 }
 
 #header {
@@ -94,6 +94,7 @@
   justify-content: center;
   border-top: 10px solid black;
   border-radius: 30% 30% 0 0;
+  align-items: center;
 }
 
 .scoreCard {
@@ -101,6 +102,10 @@
   height: fit-content;
 }
 
+.scoreCard > h1 {
+  font-size: 40px;
+}
+
 svg > text {
-  fill: black;
+  fill: black !important;
 }
