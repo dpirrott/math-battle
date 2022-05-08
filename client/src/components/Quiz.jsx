@@ -167,8 +167,6 @@ const Quiz = ({ socket, cookies }) => {
         question && (
           <div>
             <h2>Time remaining: {clock}</h2>
-            <h3>Question {responses.length + 1}</h3>
-            <h2>{question.question}</h2>
           </div>
         )
       )}
@@ -188,6 +186,7 @@ const Quiz = ({ socket, cookies }) => {
         <KeyPad
           display={display}
           setDisplay={setDisplay}
+          question={question}
           handleSubmit={handleSubmit}
         />
       )}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import "./KeyPad.css";
 
-export const KeyPad = ({ display, setDisplay, handleSubmit }) => {
+export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
   const handleClickNum = (e) => {
     if (display === "DISPLAY" || display === "0") {
       setDisplay([e.target.id]);
@@ -71,7 +71,12 @@ export const KeyPad = ({ display, setDisplay, handleSubmit }) => {
   return (
     <div className="container">
       <div className="row" id="displayContainer">
-        <p id="question">5 x 4 =</p>
+        {question && (
+          <p id="question">
+            <span>{`Q#${question.number}`}</span>
+            <span>{`${question.question}`}</span>
+          </p>
+        )}
         <p id="display">{display}</p>
       </div>
 
