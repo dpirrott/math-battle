@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Form, FormControl, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { socketLoad } from "../Helpers/socketLoad";
-import { KeyPad } from "./customKeypad";
+import { Header } from "./Header";
+import { KeyPad } from "./Keypad";
+import { Timer } from "./Timer";
 
 const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
@@ -179,9 +181,11 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-      {clock === "Infinity" && (
+      {/* {clock === "Infinity" && (
         <Button onClick={() => startGame()}>Start</Button>
-      )}
+      )} */}
+      <Header />
+      {/* <Timer /> */}
       {questions && (
         <KeyPad
           display={display}
