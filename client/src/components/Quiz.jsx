@@ -181,9 +181,9 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-      {/* {clock === "Infinity" && (
+      {clock === "Infinity" && (
         <Button onClick={() => startGame()}>Start</Button>
-      )} */}
+      )}
       <Header />
       {/* <Timer /> */}
       {questions && (

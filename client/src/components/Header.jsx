@@ -3,10 +3,14 @@ import { Timer } from "./Timer";
 
 export const Header = () => {
   return (
-    <div>
-      <div>Dfish</div>
+    <div id="header">
+      <div className="scoreCard">
+        <h2>Dfish</h2>
+      </div>
       <Timer />
-      <div>Opponent</div>
+      <div className="scoreCard">
+        <h2>Opponent</h2>
+      </div>
     </div>
   );
 };
