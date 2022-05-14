@@ -1,5 +1,5 @@
 import React from "react";
-import { Timer } from "./Timer";
+import { Timer } from "./Timer/Timer";
 
 export const Header = ({ clock, setFinish }) => {
   return (

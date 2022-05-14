@@ -30,15 +30,16 @@ export const ReactSvgTimer = ({
   resetTimer,
   timerCount,
   completeTimer,
+  duration,
+  setDuration,
 }) => {
   timerCount = timerCount || 5;
   // State variables
-  let [draw, setDraw] = useState < string > "";
+  let [draw, setDraw] = useState("");
   let [timerIsRunning, setTimerIsRunning] = useState(false);
   let [counterText, setcounterText] = useState("");
-  let [duration, setDuration] = useState(0);
   let [elapsedTime, setElapsedTime] = useState(0);
-  let [startDateMoment, setStartDateMoment] = useState < any > null;
+  let [startDateMoment, setStartDateMoment] = useState(null);
   // Instance variables
   const goalTimeMilliseconds = timerCount * 1000;
   const degrees = 360 / (timerCount * 1000);
@@ -56,9 +57,10 @@ export const ReactSvgTimer = ({
 
   useInterval(() => {
     // Moments are used to correct drift from JavaScript's setInterval
-    setDuration(elapsedTime + moment(new Date()).diff(moment(startDateMoment)));
-    if (duration <= goalTimeMilliseconds) {
-      setDraw(drawCoord(duration * degrees));
+    // setDuration(elapsedTime + moment(new Date()).diff(moment(startDateMoment)));
+    const timeElapsed = goalTimeMilliseconds - duration;
+    if (timeElapsed <= goalTimeMilliseconds) {
+      setDraw(drawCoord(timeElapsed * degrees));
     } else {
       completeTimer(true);
       setDraw(drawCoord(359.99));
@@ -102,19 +104,7 @@ export const ReactSvgTimer = ({
 
   const getcounterText = () => {
     // This function is not great - complexity is due to counting up once timer goal is reached
-    const isTimerPositive = duration > goalTimeMilliseconds;
-    const getTimerDuration = () => {
-      return moment
-        .duration(
-          isTimerPositive
-            ? duration - goalTimeMilliseconds
-            : goalTimeMilliseconds - duration
-        )
-        .asMilliseconds();
-    };
-    let roundedMilliseconds = Math.round(getTimerDuration() / 1000) * 1000;
-    let prefix = isTimerPositive && roundedMilliseconds > 0 ? "+" : "";
-    return `${prefix}${moment.utc(roundedMilliseconds).format("mm:ss")}`;
+    return `${moment.utc(duration).format("mm:ss")}`;
   };
 
   return (

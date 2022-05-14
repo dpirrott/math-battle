@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
-import { KeyPad } from "./Keypad";
-import { Timer } from "./Timer";
+import { KeyPad } from "./KeyPad/Keypad";
 
 const Quiz = ({ socket, cookies }) => {
   const [question, setQuestion] = useState(null);
@@ -17,7 +16,7 @@ const Quiz = ({ socket, cookies }) => {
   const [opponentName, setOpponentName] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
 
-  const [clock, setClock] = useState("Infinity");
+  const [clock, setClock] = useState("0");
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
 
@@ -45,7 +44,6 @@ const Quiz = ({ socket, cookies }) => {
   };
 
   const handleSubmit = () => {
-    // e.preventDefault();
     const formatInput = display.join("");
 
     if (formatInput === "") {
@@ -184,9 +182,7 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-      {clock === "Infinity" && (
-        <Button onClick={() => startGame()}>Start</Button>
-      )}
+      {clock === "0" && <Button onClick={() => startGame()}>Start</Button>}
       <Header clock={clock} setFinish={setFinish} />
       {/* <Timer /> */}
       {questions && (

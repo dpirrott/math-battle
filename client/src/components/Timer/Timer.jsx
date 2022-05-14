@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import ReactSvgTimer from "react-svg-timer";
-import "./KeyPad.css";
+import React, { useEffect, useState } from "react";
+import { ReactSvgTimer } from "./ReactSvgTimer";
+import "../KeyPad/KeyPad.css";
 
 export const Timer = ({ clock, setFinish }) => {
   let [resetRequested, setResetRequested] = useState(false);
   let [timerIsComplete, setTimerIsComplete] = useState(false);
   let [logMilliseconds, setLogMilliseconds] = useState(true);
+  const [duration, setDuration] = useState(0);
 
   const onComplete = (status) => {
     setTimerIsComplete(status);
@@ -18,15 +19,19 @@ export const Timer = ({ clock, setFinish }) => {
   };
 
   const timerValue = (value) => {
-    if (logMilliseconds) {
-      console.log(value);
-    }
+    // if (logMilliseconds) {
+    //   console.log(value);
+    // }
     return value;
   };
 
   const onResetRequest = () => {
     setResetRequested(true);
   };
+
+  useEffect(() => {
+    setDuration(clock * 1000);
+  }, [clock]);
 
   return (
     <div id="timerBox">
@@ -38,8 +43,10 @@ export const Timer = ({ clock, setFinish }) => {
         resetTimer={onReset}
         completeTimer={onComplete}
         resetTimerRequested={resetRequested}
-        timerDuration={timerValue(clock)}
+        timerDuration={timerValue}
         displayCountdown={true}
+        duration={duration}
+        setDuration={setDuration}
       />
     </div>
   );
