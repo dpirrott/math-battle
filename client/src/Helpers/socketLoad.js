@@ -7,6 +7,7 @@ const socketLoad = ({
   setFinish,
   setQuestion,
   setOpponentResult,
+  setTimerIsRunning,
 }) => {
   socket.on("connect", () => {
     console.log(socket.id);
@@ -48,6 +49,14 @@ const socketLoad = ({
   //   setQuestions(null);
   //   setQuestion(null);
   // });
+
+  socket.on("pause", () => {
+    setTimerIsRunning(false);
+  });
+
+  socket.on("resume", () => {
+    setTimerIsRunning(true);
+  });
 
   socket.on("opponentScore", (result) => {
     console.log(result);

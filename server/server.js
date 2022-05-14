@@ -13,6 +13,7 @@ const io = socketIo(server, {
 }); //in case server and client run on different urls
 
 let currentUsers = [];
+let pauseState = false;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
@@ -44,7 +45,9 @@ io.on("connection", (socket) => {
     const questions = generateQuestions(60);
     io.to("clock-room").emit("game questions", questions);
     let timer = setInterval(() => {
-      count--;
+      if (!pauseState) {
+        count--;
+      }
       if (count === 0) {
         clearInterval(timer);
         io.to("clock-room").emit("game timer", count);
@@ -53,6 +56,16 @@ io.on("connection", (socket) => {
         io.to("clock-room").emit("game timer", count);
       }
     }, 1000);
+  });
+
+  socket.on("pause", () => {
+    pauseState = true;
+    socket.broadcast.emit("pause");
+  });
+
+  socket.on("resume", () => {
+    pauseState = false;
+    socket.broadcast.emit("resume");
   });
 
   socket.on("disconnect", (reason) => {

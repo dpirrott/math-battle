@@ -19,6 +19,7 @@ const Quiz = ({ socket, cookies }) => {
   const [clock, setClock] = useState("0");
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
+  const [timerIsRunning, setTimerIsRunning] = useState(false);
 
   // Set-up socket event listeners
   useEffect(() => {
@@ -32,6 +33,7 @@ const Quiz = ({ socket, cookies }) => {
         setFinish,
         setQuestion,
         setOpponentResult,
+        setTimerIsRunning,
       });
     }
   }, [socket, cookies.name]);
@@ -41,6 +43,14 @@ const Quiz = ({ socket, cookies }) => {
     setOpponentResult(null);
     setFinish(null);
     setDisplay("0");
+  };
+
+  const pause = () => {
+    socket.emit("pause");
+  };
+
+  const resume = () => {
+    socket.emit("resume");
   };
 
   const handleSubmit = () => {
@@ -183,7 +193,14 @@ const Quiz = ({ socket, cookies }) => {
         </h4>
       )}
       {clock === "0" && <Button onClick={() => startGame()}>Start</Button>}
-      <Header clock={clock} setFinish={setFinish} />
+      <Header
+        clock={clock}
+        setFinish={setFinish}
+        timerIsRunning={timerIsRunning}
+        setTimerIsRunning={setTimerIsRunning}
+        onPause={() => pause()}
+        onResume={() => resume()}
+      />
       {/* <Timer /> */}
       {questions && (
         <KeyPad

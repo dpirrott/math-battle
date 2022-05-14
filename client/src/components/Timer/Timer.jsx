@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ReactSvgTimer } from "./ReactSvgTimer";
 import "../KeyPad/KeyPad.css";
 
-export const Timer = ({ clock, setFinish }) => {
+export const Timer = ({
+  clock,
+  setFinish,
+  onPause,
+  onResume,
+  timerIsRunning,
+  setTimerIsRunning,
+}) => {
   let [resetRequested, setResetRequested] = useState(false);
   let [timerIsComplete, setTimerIsComplete] = useState(false);
   let [logMilliseconds, setLogMilliseconds] = useState(true);
@@ -47,6 +54,10 @@ export const Timer = ({ clock, setFinish }) => {
         displayCountdown={true}
         duration={duration}
         setDuration={setDuration}
+        onPause={onPause}
+        onResume={onResume}
+        timerIsRunning={timerIsRunning}
+        setTimerIsRunning={setTimerIsRunning}
       />
     </div>
   );

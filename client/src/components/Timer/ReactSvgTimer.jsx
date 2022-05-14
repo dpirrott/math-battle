@@ -32,11 +32,14 @@ export const ReactSvgTimer = ({
   completeTimer,
   duration,
   setDuration,
+  onPause,
+  onResume,
+  timerIsRunning,
+  setTimerIsRunning,
 }) => {
   timerCount = timerCount || 5;
   // State variables
   let [draw, setDraw] = useState("");
-  let [timerIsRunning, setTimerIsRunning] = useState(false);
   let [counterText, setcounterText] = useState("");
   let [elapsedTime, setElapsedTime] = useState(0);
   let [startDateMoment, setStartDateMoment] = useState(null);
@@ -73,10 +76,12 @@ export const ReactSvgTimer = ({
     setElapsedTime(duration);
     setStartDateMoment(moment(new Date()));
     setTimerIsRunning(true);
+    onResume();
   };
 
   const pause = () => {
     setTimerIsRunning(false);
+    onPause();
   };
 
   const reset = () => {
