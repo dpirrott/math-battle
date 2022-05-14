@@ -8,6 +8,7 @@ const socketLoad = ({
   setQuestion,
   setOpponentResult,
   setTimerIsRunning,
+  setDisplay,
 }) => {
   socket.on("connect", () => {
     console.log(socket.id);
@@ -52,9 +53,11 @@ const socketLoad = ({
 
   socket.on("pause", () => {
     setTimerIsRunning(false);
+    setDisplay("PAUSED");
   });
 
   socket.on("resume", () => {
+    setDisplay("0");
     setTimerIsRunning(true);
   });
 

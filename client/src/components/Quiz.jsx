@@ -16,7 +16,7 @@ const Quiz = ({ socket, cookies }) => {
   const [opponentName, setOpponentName] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
 
-  const [clock, setClock] = useState("0");
+  const [clock, setClock] = useState(0);
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
   const [timerIsRunning, setTimerIsRunning] = useState(false);
@@ -34,6 +34,7 @@ const Quiz = ({ socket, cookies }) => {
         setQuestion,
         setOpponentResult,
         setTimerIsRunning,
+        setDisplay,
       });
     }
   }, [socket, cookies.name]);
@@ -43,14 +44,18 @@ const Quiz = ({ socket, cookies }) => {
     setOpponentResult(null);
     setFinish(null);
     setDisplay("0");
+    setTimerIsRunning(true);
+    socket.emit("resume");
   };
 
   const pause = () => {
     socket.emit("pause");
+    setDisplay("PAUSED");
   };
 
   const resume = () => {
     socket.emit("resume");
+    setDisplay("0");
   };
 
   const handleSubmit = () => {
@@ -149,7 +154,7 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     if (finish) {
       socket.emit("opponentScore", { userID: socketID, ...score });
-      setClock("Infinity");
+      setClock(0);
       setQuestions(null);
       setQuestion(null);
     }
@@ -192,7 +197,7 @@ const Quiz = ({ socket, cookies }) => {
           {`(${opponentResult.correct} / ${opponentResult.total})`}
         </h4>
       )}
-      {clock === "0" && <Button onClick={() => startGame()}>Start</Button>}
+      {clock === 0 && <Button onClick={() => startGame()}>Start</Button>}
       <Header
         clock={clock}
         setFinish={setFinish}
