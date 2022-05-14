@@ -153,11 +153,12 @@ const Quiz = ({ socket, cookies }) => {
 
   useEffect(() => {
     if (finish) {
-      socket.emit("opponentScore", { userID: socketID, ...score });
       setClock(0);
       setQuestions(null);
       setQuestion(null);
     }
+
+    socket.emit("opponentScore", { userID: socketID, ...score });
   }, [finish, score, socket, socketID]);
 
   useEffect(() => {
@@ -199,6 +200,10 @@ const Quiz = ({ socket, cookies }) => {
       )}
       {clock === 0 && <Button onClick={() => startGame()}>Start</Button>}
       <Header
+        cookies={cookies}
+        score={score}
+        opponentName={opponentName}
+        opponentResult={opponentResult}
         clock={clock}
         setFinish={setFinish}
         timerIsRunning={timerIsRunning}

@@ -2,6 +2,10 @@ import React from "react";
 import { Timer } from "./Timer/Timer";
 
 export const Header = ({
+  cookies,
+  score,
+  opponentName,
+  opponentResult,
   clock,
   setFinish,
   timerIsRunning,
@@ -12,8 +16,8 @@ export const Header = ({
   return (
     <div id="header">
       <div className="scoreCard">
-        <h2>Dfish</h2>
-        <h1>75pts</h1>
+        <h2>{cookies.name}</h2>
+        <h1>{score.total > 0 && score.points}</h1>
       </div>
       <Timer
         clock={clock}
@@ -24,8 +28,8 @@ export const Header = ({
         setTimerIsRunning={setTimerIsRunning}
       />
       <div className="scoreCard">
-        <h2>Opponent</h2>
-        <h1>100pts</h1>
+        <h2>{opponentName}</h2>
+        <h1>{opponentResult && opponentResult.points}</h1>
       </div>
     </div>
   );
