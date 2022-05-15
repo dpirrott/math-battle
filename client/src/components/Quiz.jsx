@@ -44,7 +44,7 @@ const Quiz = ({ socket, cookies }) => {
 
   const startGame = () => {
     socket.emit("start game");
-    setOpponentResult(null);
+    setOpponentResult({ points: 0 });
     setFinish(null);
     setDisplay("0");
     setTimerIsRunning(true);
@@ -157,6 +157,7 @@ const Quiz = ({ socket, cookies }) => {
       setScore({
         correct: 0,
         total: 0,
+        points: 0,
       });
       setResponses([]);
     }
