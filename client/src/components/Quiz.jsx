@@ -9,6 +9,7 @@ const Quiz = ({ socket, cookies }) => {
   const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
   const [score, setScore] = useState({
+    points: 0,
     correct: 0,
     total: 0,
   });

@@ -19,7 +19,7 @@ export const Header = ({
     <div id="header">
       <div className="scoreCard">
         <h2>{cookies.name}</h2>
-        <h1>{score.total > 0 && score.points}</h1>
+        <h1>{opponentName && score.points}</h1>
       </div>
       {totalTime && (
         <Timer
@@ -35,7 +35,7 @@ export const Header = ({
       )}
 
       <div className="scoreCard">
-        <h2>{opponentName}</h2>
+        <h2>{opponentName || "Waiting for opponent..."}</h2>
         <h1>{opponentResult && opponentResult.points}</h1>
       </div>
     </div>

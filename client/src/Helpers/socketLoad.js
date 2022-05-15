@@ -24,12 +24,14 @@ const socketLoad = ({
   socket.on("new player", (name) => {
     console.log("New player joined: ", name);
     setOpponentName(name);
+    setOpponentResult({ points: 0 });
   });
   socket.on("current players", (players) => {
     // For now assume only 1 opponent
     if (players.length > 0) {
       console.log("Player already in lobby: ", players[0].name);
       setOpponentName(players[0].name);
+      setOpponentResult({ points: 0 });
     }
   });
   socket.on("playerAnswer", (answer) => {
@@ -72,6 +74,7 @@ const socketLoad = ({
 
   socket.on("opponent disconnect", () => {
     setOpponentName(null);
+    setOpponentResult(null);
   });
 
   socket.on("disconnect", () => {
