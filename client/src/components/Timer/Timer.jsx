@@ -4,11 +4,13 @@ import "../KeyPad/KeyPad.css";
 
 export const Timer = ({
   clock,
+  finish,
   setFinish,
   onPause,
   onResume,
   timerIsRunning,
   setTimerIsRunning,
+  totalTime,
 }) => {
   let [resetRequested, setResetRequested] = useState(false);
   let [timerIsComplete, setTimerIsComplete] = useState(false);
@@ -37,8 +39,18 @@ export const Timer = ({
   };
 
   useEffect(() => {
-    setDuration(clock * 1000);
-  }, [clock]);
+    if (clock === 0) {
+      setDuration(totalTime * 1000);
+    } else {
+      setDuration(clock * 1000);
+    }
+  }, [clock, totalTime]);
+
+  useEffect(() => {
+    if (!finish || finish === "Game over") {
+      setDuration(totalTime * 1000);
+    }
+  }, [finish, totalTime]);
 
   return (
     <div id="timerBox">

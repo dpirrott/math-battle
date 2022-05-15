@@ -14,6 +14,7 @@ const io = socketIo(server, {
 
 let currentUsers = [];
 let pauseState = false;
+let endState = false;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
@@ -44,9 +45,14 @@ io.on("connection", (socket) => {
     io.to("clock-room").emit("game timer", count);
     const questions = generateQuestions(60);
     io.to("clock-room").emit("game questions", questions);
+    io.to("clock-room").emit("game timer", count, count);
     let timer = setInterval(() => {
       if (!pauseState) {
         count--;
+      }
+      if (endState) {
+        clearInterval(timer);
+        io.to("clock-room").emit("finish", "Game over");
       }
       if (count === 0) {
         clearInterval(timer);
@@ -56,6 +62,11 @@ io.on("connection", (socket) => {
         io.to("clock-room").emit("game timer", count);
       }
     }, 1000);
+  });
+
+  socket.on("end game", () => {
+    endState = true;
+    socket.broadcast.emit("end game");
   });
 
   socket.on("pause", () => {

@@ -109,7 +109,11 @@ export const ReactSvgTimer = ({
 
   const getcounterText = () => {
     // This function is not great - complexity is due to counting up once timer goal is reached
-    return `${moment.utc(duration).format("mm:ss")}`;
+    if (duration >= 3600000) {
+      return `${moment.utc(duration).format("hh:mm:ss")}`;
+    } else {
+      return `${moment.utc(duration).format("mm:ss")}`;
+    }
   };
 
   return (

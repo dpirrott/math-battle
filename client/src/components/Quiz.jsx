@@ -17,6 +17,7 @@ const Quiz = ({ socket, cookies }) => {
   const [opponentResult, setOpponentResult] = useState(null);
 
   const [clock, setClock] = useState(0);
+  const [totalTime, setTotalTime] = useState(0);
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
   const [timerIsRunning, setTimerIsRunning] = useState(false);
@@ -30,6 +31,7 @@ const Quiz = ({ socket, cookies }) => {
         setOpponentName,
         setQuestions,
         setClock,
+        setTotalTime,
         setFinish,
         setQuestion,
         setOpponentResult,
@@ -46,6 +48,13 @@ const Quiz = ({ socket, cookies }) => {
     setDisplay("0");
     setTimerIsRunning(true);
     socket.emit("resume");
+  };
+
+  const endGame = () => {
+    socket.emit("end game");
+    setTimerIsRunning(false);
+    setClock(0);
+    setFinish("Game over");
   };
 
   const pause = () => {
@@ -180,34 +189,24 @@ const Quiz = ({ socket, cookies }) => {
           : "--> waiting for opponent to join..."}
       </h2>
 
-      {finish ? (
-        <h2>{finish}</h2>
+      {finish && <h2>{finish}</h2>}
+
+      {clock === 0 ? (
+        <Button onClick={() => startGame()}>Start</Button>
       ) : (
-        question && (
-          <div>
-            <h2>Time remaining: {clock}</h2>
-          </div>
-        )
+        <Button onClick={() => endGame()}>End Game</Button>
       )}
-      {score.total > 0 && (
-        <h3>Score: {`${score.points} (${score.correct} / ${score.total})`}</h3>
-      )}
-      {opponentResult && (
-        <h4>
-          {opponentName} score: {opponentResult.points}
-          {`(${opponentResult.correct} / ${opponentResult.total})`}
-        </h4>
-      )}
-      {clock === 0 && <Button onClick={() => startGame()}>Start</Button>}
       <Header
         cookies={cookies}
         score={score}
         opponentName={opponentName}
         opponentResult={opponentResult}
         clock={clock}
+        finish={finish}
         setFinish={setFinish}
         timerIsRunning={timerIsRunning}
         setTimerIsRunning={setTimerIsRunning}
+        totalTime={totalTime}
         onPause={() => pause()}
         onResume={() => resume()}
       />

@@ -7,11 +7,13 @@ export const Header = ({
   opponentName,
   opponentResult,
   clock,
+  finish,
   setFinish,
   timerIsRunning,
   onPause,
   onResume,
   setTimerIsRunning,
+  totalTime,
 }) => {
   return (
     <div id="header">
@@ -21,11 +23,13 @@ export const Header = ({
       </div>
       <Timer
         clock={clock}
+        finish={finish}
         setFinish={setFinish}
         onPause={onPause}
         onResume={onResume}
         timerIsRunning={timerIsRunning}
         setTimerIsRunning={setTimerIsRunning}
+        totalTime={totalTime}
       />
       <div className="scoreCard">
         <h2>{opponentName}</h2>

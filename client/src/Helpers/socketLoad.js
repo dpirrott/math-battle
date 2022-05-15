@@ -4,6 +4,7 @@ const socketLoad = ({
   setOpponentName,
   setQuestions,
   setClock,
+  setTotalTime,
   setFinish,
   setQuestion,
   setOpponentResult,
@@ -40,16 +41,18 @@ const socketLoad = ({
     setQuestions(questionsList);
   });
 
-  socket.on("game timer", (clock) => {
+  socket.on("game timer", (clock, totalGameTime = false) => {
+    if (totalGameTime) {
+      setTotalTime(totalGameTime);
+    }
     setClock(clock);
   });
 
-  // socket.on("finish", (msg) => {
-  //   setFinish(msg);
-  //   setClock("Infinity");
-  //   setQuestions(null);
-  //   setQuestion(null);
-  // });
+  socket.on("end game", () => {
+    setTimerIsRunning(false);
+    setClock(0);
+    setFinish("Game over");
+  });
 
   socket.on("pause", () => {
     setTimerIsRunning(false);
