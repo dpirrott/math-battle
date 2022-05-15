@@ -39,7 +39,7 @@ export const Timer = ({
   };
 
   useEffect(() => {
-    if (clock === 0) {
+    if (clock === 0 && totalTime) {
       setDuration(totalTime * 1000);
     } else {
       setDuration(clock * 1000);
@@ -47,7 +47,7 @@ export const Timer = ({
   }, [clock, totalTime]);
 
   useEffect(() => {
-    if (!finish || finish === "Game over") {
+    if (finish === "Game over" && totalTime) {
       setDuration(totalTime * 1000);
     }
   }, [finish, totalTime]);

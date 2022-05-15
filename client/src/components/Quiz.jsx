@@ -17,7 +17,7 @@ const Quiz = ({ socket, cookies }) => {
   const [opponentResult, setOpponentResult] = useState(null);
 
   const [clock, setClock] = useState(0);
-  const [totalTime, setTotalTime] = useState(0);
+  const [totalTime, setTotalTime] = useState(null);
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
   const [timerIsRunning, setTimerIsRunning] = useState(false);
@@ -55,6 +55,7 @@ const Quiz = ({ socket, cookies }) => {
     setTimerIsRunning(false);
     setClock(0);
     setFinish("Game over");
+    setTotalTime(null);
   };
 
   const pause = () => {

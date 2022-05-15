@@ -52,6 +52,7 @@ const socketLoad = ({
     setTimerIsRunning(false);
     setClock(0);
     setFinish("Game over");
+    setTotalTime(null);
   });
 
   socket.on("pause", () => {

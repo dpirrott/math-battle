@@ -50,7 +50,7 @@ export const ReactSvgTimer = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setcounterText(getcounterText());
-  });
+  }, [duration]);
 
   useInterval(() => {
     if (resetTimerRequested) {
@@ -109,7 +109,7 @@ export const ReactSvgTimer = ({
 
   const getcounterText = () => {
     // This function is not great - complexity is due to counting up once timer goal is reached
-    if (duration >= 3600000) {
+    if (duration >= 3600000 || duration === 0) {
       return `${moment.utc(duration).format("hh:mm:ss")}`;
     } else {
       return `${moment.utc(duration).format("mm:ss")}`;
