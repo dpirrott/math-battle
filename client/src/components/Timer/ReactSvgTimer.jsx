@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import moment from "moment";
 import { TimerSVG } from "./TimerSVG";
 
@@ -41,8 +41,6 @@ export const ReactSvgTimer = ({
   // State variables
   let [draw, setDraw] = useState("");
   let [counterText, setcounterText] = useState("");
-  let [elapsedTime, setElapsedTime] = useState(0);
-  let [startDateMoment, setStartDateMoment] = useState(null);
   // Instance variables
   const goalTimeMilliseconds = timerCount * 1000;
   const degrees = 360 / (timerCount * 1000);
@@ -50,13 +48,16 @@ export const ReactSvgTimer = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setcounterText(getcounterText());
+    if (duration === 0) {
+      setDraw(drawCoord(360));
+    }
   }, [duration]);
 
-  useInterval(() => {
-    if (resetTimerRequested) {
-      reset();
-    }
-  }, resetTimerRequested);
+  // useInterval(() => {
+  //   if (resetTimerRequested) {
+  //     reset();
+  //   }
+  // }, resetTimerRequested);
 
   useInterval(() => {
     // Moments are used to correct drift from JavaScript's setInterval
@@ -73,8 +74,8 @@ export const ReactSvgTimer = ({
   }, timerIsRunning);
 
   const start = () => {
-    setElapsedTime(duration);
-    setStartDateMoment(moment(new Date()));
+    // setElapsedTime(duration);
+    // setStartDateMoment(moment(new Date()));
     setTimerIsRunning(true);
     onResume();
   };
@@ -84,15 +85,15 @@ export const ReactSvgTimer = ({
     onPause();
   };
 
-  const reset = () => {
-    setTimerIsRunning(false);
-    setDuration(0);
-    setElapsedTime(0);
-    setDraw(drawCoord(360));
-    // Call the callback functions on the parent component
-    if (completeTimer) completeTimer(false);
-    if (resetTimer) resetTimer();
-  };
+  // const reset = () => {
+  //   setTimerIsRunning(false);
+  //   setDuration(0);
+  //   setElapsedTime(0);
+  //   setDraw(drawCoord(360));
+  //   // Call the callback functions on the parent component
+  //   if (completeTimer) completeTimer(false);
+  //   if (resetTimer) resetTimer();
+  // };
 
   // Wizardry - for which credit must go to the source: https://jsfiddle.net/prafuitu/xRmGV/
   const drawCoord = (degrees) => {
