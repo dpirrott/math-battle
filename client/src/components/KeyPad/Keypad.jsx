@@ -20,8 +20,9 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           (display.length === 2 && display[0] === "-")
         ) {
           setDisplay("0");
+        } else if (display !== "0") {
+          setDisplay((prev) => prev.slice(0, prev.length - 1));
         }
-        setDisplay((prev) => prev.slice(0, prev.length - 1));
         break;
 
       case "submit":
@@ -35,7 +36,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
         break;
 
       case "neg":
-        if (display === "0" && display === "DISPLAY") {
+        if (display === "0" || display === "DISPLAY") {
           break;
         }
         setDisplay((prev) => {
