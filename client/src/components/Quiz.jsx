@@ -140,7 +140,9 @@ const Quiz = ({ socket, cookies }) => {
 
   useEffect(() => {
     const renderQuestion = () => {
-      const retrievedQuestion = questions[responses.length];
+      const retrievedQuestion = questions[score.total];
+      console.log("retrievedQuestion", retrievedQuestion);
+      console.log("score.total", score.total);
       setQuestion(retrievedQuestion);
     };
 
@@ -154,11 +156,17 @@ const Quiz = ({ socket, cookies }) => {
 
   useEffect(() => {
     if (questions) {
-      setScore({
-        correct: 0,
-        total: 0,
-        points: 0,
-      });
+      localStorage.setItem("questions", JSON.stringify(questions));
+      const scoreCached = JSON.parse(localStorage.getItem("score"));
+      if (scoreCached) {
+        setScore(scoreCached);
+      } else {
+        setScore({
+          correct: 0,
+          total: 0,
+          points: 0,
+        });
+      }
       setResponses([]);
     }
   }, [questions]);
@@ -168,6 +176,10 @@ const Quiz = ({ socket, cookies }) => {
       setClock(0);
       setQuestions(null);
       setQuestion(null);
+    }
+
+    if (score.total > 0) {
+      localStorage.setItem("score", JSON.stringify(score));
     }
 
     socket.emit("opponentScore", { userID: socketID, ...score });
@@ -182,6 +194,21 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     setSocketID(socket.id);
   }, [socket]);
+
+  // Onload check local storage (incase accidental refresh during game)
+  useEffect(() => {
+    const questionsCached = JSON.parse(localStorage.getItem("questions"));
+    const scoreCached = JSON.parse(localStorage.getItem("score"));
+    if (questionsCached) {
+      setQuestions(questionsCached);
+      if (scoreCached) {
+        setScore(scoreCached);
+      }
+      console.log(`scoreCached:`, scoreCached);
+      console.log(`questionsCached[score]`, questionsCached[scoreCached.total]);
+      setQuestion(questionsCached[scoreCached.total]);
+    }
+  }, []);
 
   return (
     <div>
