@@ -1,12 +1,13 @@
 const socketLoad = ({
   socket,
+  socketID,
+  setScore,
   cookies,
   setOpponentName,
   setQuestions,
   setClock,
   setTotalTime,
   setFinish,
-  setQuestion,
   setOpponentResult,
   setTimerIsRunning,
   setDisplay,
@@ -23,15 +24,17 @@ const socketLoad = ({
   });
   socket.on("new player", (name) => {
     console.log("New player joined: ", name);
+    const tempScore = JSON.parse(localStorage.getItem("score"));
+    console.log("sending score:", tempScore);
     setOpponentName(name);
-    setOpponentResult({ points: 0 });
+    socket.emit("opponentScore", { userID: socketID, ...tempScore });
   });
   socket.on("current players", (players) => {
     // For now assume only 1 opponent
     if (players.length > 0) {
       console.log("Player already in lobby: ", players[0].name);
       setOpponentName(players[0].name);
-      setOpponentResult({ points: 0 });
+      // setOpponentResult({ points: 0 });
     }
   });
   socket.on("playerAnswer", (answer) => {
@@ -41,11 +44,18 @@ const socketLoad = ({
 
   socket.on("game questions", (questionsList) => {
     setQuestions(questionsList);
+    localStorage.setItem("questions", JSON.stringify(questionsList));
+    setScore({ points: 0, correct: 0, total: 0 });
+    localStorage.setItem(
+      "score",
+      JSON.stringify({ points: 0, correct: 0, total: 0 })
+    );
   });
 
   socket.on("game timer", (clock, totalGameTime = false) => {
     if (totalGameTime) {
       setTotalTime(totalGameTime);
+      localStorage.setItem("totalTime", JSON.stringify(totalGameTime));
     }
     setClock(clock);
   });
@@ -55,6 +65,10 @@ const socketLoad = ({
     setClock(0);
     setFinish("Game over");
     setTotalTime(null);
+    setQuestions(null);
+    localStorage.removeItem("score");
+    localStorage.removeItem("questions");
+    localStorage.removeItem("totalTime");
   });
 
   socket.on("pause", () => {
@@ -69,6 +83,7 @@ const socketLoad = ({
 
   socket.on("opponentScore", (result) => {
     console.log(result);
+    console.log("Points:", result.points);
     setOpponentResult(result);
   });
 

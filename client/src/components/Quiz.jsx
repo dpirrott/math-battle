@@ -27,7 +27,10 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     if (socket && cookies.name) {
       socketLoad({
+        setScore,
+        score,
         socket,
+        socketID,
         cookies,
         setOpponentName,
         setQuestions,
@@ -44,8 +47,14 @@ const Quiz = ({ socket, cookies }) => {
 
   const startGame = () => {
     socket.emit("start game");
+    // console.log("STARTING GAME");
     setOpponentResult({ points: 0 });
     setFinish(null);
+    setScore({ points: 0, correct: 0, total: 0 });
+    localStorage.setItem(
+      "score",
+      JSON.stringify({ points: 0, correct: 0, total: 0 })
+    );
     setDisplay("0");
     setTimerIsRunning(true);
     socket.emit("resume");
@@ -57,6 +66,10 @@ const Quiz = ({ socket, cookies }) => {
     setClock(0);
     setFinish("Game over");
     setTotalTime(null);
+    setQuestions(null);
+    localStorage.removeItem("score");
+    localStorage.removeItem("questions");
+    localStorage.removeItem("totalTime");
   };
 
   const pause = () => {
@@ -141,8 +154,8 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     const renderQuestion = () => {
       const retrievedQuestion = questions[score.total];
-      console.log("retrievedQuestion", retrievedQuestion);
-      console.log("score.total", score.total);
+      // console.log("retrievedQuestion", retrievedQuestion);
+      // console.log("score.total", score.total);
       setQuestion(retrievedQuestion);
     };
 
@@ -155,8 +168,8 @@ const Quiz = ({ socket, cookies }) => {
   }, [questions, responses]);
 
   useEffect(() => {
+    console.log(questions);
     if (questions) {
-      localStorage.setItem("questions", JSON.stringify(questions));
       const scoreCached = JSON.parse(localStorage.getItem("score"));
       if (scoreCached) {
         setScore(scoreCached);
@@ -172,17 +185,17 @@ const Quiz = ({ socket, cookies }) => {
   }, [questions]);
 
   useEffect(() => {
-    if (finish) {
-      setClock(0);
-      setQuestions(null);
-      setQuestion(null);
-    }
+    // if (finish) {
+    //   setClock(0);
+    //   // setQuestions(null);
+    //   setQuestion(null);
+    // }
 
     if (score.total > 0) {
+      // console.log(score);
       localStorage.setItem("score", JSON.stringify(score));
+      socket.emit("opponentScore", { userID: socketID, ...score });
     }
-
-    socket.emit("opponentScore", { userID: socketID, ...score });
   }, [finish, score, socket, socketID]);
 
   useEffect(() => {
@@ -199,14 +212,26 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     const questionsCached = JSON.parse(localStorage.getItem("questions"));
     const scoreCached = JSON.parse(localStorage.getItem("score"));
+    const totalTimeCached = JSON.parse(localStorage.getItem("totalTime"));
     if (questionsCached) {
       setQuestions(questionsCached);
       if (scoreCached) {
         setScore(scoreCached);
+        console.log("Emitting score: ", scoreCached);
+        socket.emit("opponentScore", { userID: socketID, ...scoreCached });
+        setQuestion(questionsCached[scoreCached.total]);
+        setDisplay("0");
+        setTimerIsRunning(true);
+        setTotalTime(totalTimeCached);
       }
-      console.log(`scoreCached:`, scoreCached);
-      console.log(`questionsCached[score]`, questionsCached[scoreCached.total]);
-      setQuestion(questionsCached[scoreCached.total]);
+      // console.log(`scoreCached:`, scoreCached);
+      // console.log(`questionsCached[score]`, questionsCached[scoreCached.total]);
+    } else {
+      setScore({ points: 0, correct: 0, total: 0 });
+      socket.emit("opponentScore", {
+        userID: socketID,
+        ...{ points: 0, correct: 0, total: 0 },
+      });
     }
   }, []);
 
