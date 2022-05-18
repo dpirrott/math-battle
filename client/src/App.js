@@ -8,25 +8,24 @@ import { useCookies } from "react-cookie";
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [cookies, setCookie] = useCookies(null);
+  const [cookies, setCookie, removeCookie] = useCookies(null);
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
     setSocket(socket);
   }, []);
 
-  useEffect(() => {
-    if (cookies.name) {
-      console.log(cookies.name);
-    }
-  }, [cookies]);
+  // useEffect(() => {
+  //   if (cookies.name) {
+  //     console.log(cookies.name);
+  //   }
+  // }, [cookies]);
 
   const enterBattle = (e) => {
     e.preventDefault();
     const nickName = e.target[0].value.trim();
     if (nickName !== "") {
-      // setName(nickName);
-      setCookie("name", nickName);
+      setCookie("name", nickName, { maxAge: 3600 });
     }
   };
 
@@ -43,7 +42,7 @@ function App() {
             </Form>
           </div>
         ) : (
-          <Quiz socket={socket} cookies={cookies} />
+          <Quiz socket={socket} cookies={cookies} removeCookie={removeCookie} />
         ))}
     </div>
   );

@@ -15,7 +15,7 @@ const io = socketIo(server, {
 let currentUsers = [];
 let pauseState = false;
 let endState = false;
-const TOTAL_TIME = 3600;
+const TOTAL_TIME = 10;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);

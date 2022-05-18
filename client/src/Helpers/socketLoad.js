@@ -1,8 +1,10 @@
 const socketLoad = ({
   socket,
   socketID,
+  score,
   setScore,
   cookies,
+  removeCookie,
   setOpponentName,
   setQuestions,
   setClock,
@@ -13,9 +15,9 @@ const socketLoad = ({
   setDisplay,
 }) => {
   socket.on("connect", () => {
-    console.log(socket.id);
+    // console.log(socket.id);
     if (cookies.name) {
-      console.log("I was previously known as ", cookies.name);
+      // console.log("I was previously known as ", cookies.name);
       socket.emit("new player", { name: cookies.name, socketID: socket.id });
     }
   });
@@ -24,7 +26,7 @@ const socketLoad = ({
   });
   socket.on("new player", (name) => {
     console.log("New player joined: ", name);
-    const tempScore = JSON.parse(localStorage.getItem("score"));
+    const tempScore = JSON.parse(localStorage.getItem("score")) || score;
     console.log("sending score:", tempScore);
     setOpponentName(name);
     socket.emit("opponentScore", { userID: socketID, ...tempScore });
@@ -34,7 +36,6 @@ const socketLoad = ({
     if (players.length > 0) {
       console.log("Player already in lobby: ", players[0].name);
       setOpponentName(players[0].name);
-      // setOpponentResult({ points: 0 });
     }
   });
   socket.on("playerAnswer", (answer) => {
@@ -61,14 +62,21 @@ const socketLoad = ({
   });
 
   socket.on("end game", () => {
+    localStorage.clear();
     setTimerIsRunning(false);
     setClock(0);
     setFinish("Game over");
     setTotalTime(null);
     setQuestions(null);
-    localStorage.removeItem("score");
-    localStorage.removeItem("questions");
-    localStorage.removeItem("totalTime");
+  });
+
+  socket.on("finish", () => {
+    localStorage.clear();
+    setTimerIsRunning(false);
+    setClock(0);
+    setFinish("Game over");
+    setTotalTime(null);
+    setQuestions(null);
   });
 
   socket.on("pause", () => {
@@ -82,8 +90,8 @@ const socketLoad = ({
   });
 
   socket.on("opponentScore", (result) => {
-    console.log(result);
-    console.log("Points:", result.points);
+    // console.log(result);
+    // console.log("Points:", result.points);
     setOpponentResult(result);
   });
 
@@ -94,6 +102,8 @@ const socketLoad = ({
 
   socket.on("disconnect", () => {
     console.log("Disconnected");
+    removeCookie("name", { path: "/", domain: "localhost" });
+    localStorage.clear();
   });
 };
 

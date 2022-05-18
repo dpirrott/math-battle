@@ -4,7 +4,7 @@ import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
 
-const Quiz = ({ socket, cookies }) => {
+const Quiz = ({ socket, cookies, removeCookie }) => {
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
@@ -32,6 +32,7 @@ const Quiz = ({ socket, cookies }) => {
         socket,
         socketID,
         cookies,
+        removeCookie,
         setOpponentName,
         setQuestions,
         setClock,
@@ -67,9 +68,7 @@ const Quiz = ({ socket, cookies }) => {
     setFinish("Game over");
     setTotalTime(null);
     setQuestions(null);
-    localStorage.removeItem("score");
-    localStorage.removeItem("questions");
-    localStorage.removeItem("totalTime");
+    localStorage.clear();
   };
 
   const pause = () => {
@@ -154,8 +153,6 @@ const Quiz = ({ socket, cookies }) => {
   useEffect(() => {
     const renderQuestion = () => {
       const retrievedQuestion = questions[score.total];
-      // console.log("retrievedQuestion", retrievedQuestion);
-      // console.log("score.total", score.total);
       setQuestion(retrievedQuestion);
     };
 
@@ -168,7 +165,6 @@ const Quiz = ({ socket, cookies }) => {
   }, [questions, responses]);
 
   useEffect(() => {
-    console.log(questions);
     if (questions) {
       const scoreCached = JSON.parse(localStorage.getItem("score"));
       if (scoreCached) {
@@ -185,14 +181,7 @@ const Quiz = ({ socket, cookies }) => {
   }, [questions]);
 
   useEffect(() => {
-    // if (finish) {
-    //   setClock(0);
-    //   // setQuestions(null);
-    //   setQuestion(null);
-    // }
-
     if (score.total > 0) {
-      // console.log(score);
       localStorage.setItem("score", JSON.stringify(score));
       socket.emit("opponentScore", { userID: socketID, ...score });
     }
@@ -224,8 +213,6 @@ const Quiz = ({ socket, cookies }) => {
         setTimerIsRunning(true);
         setTotalTime(totalTimeCached);
       }
-      // console.log(`scoreCached:`, scoreCached);
-      // console.log(`questionsCached[score]`, questionsCached[scoreCached.total]);
     } else {
       setScore({ points: 0, correct: 0, total: 0 });
       socket.emit("opponentScore", {
