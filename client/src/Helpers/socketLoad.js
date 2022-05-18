@@ -47,6 +47,7 @@ const socketLoad = ({
     setQuestions(questionsList);
     localStorage.setItem("questions", JSON.stringify(questionsList));
     setScore({ points: 0, correct: 0, total: 0 });
+    setOpponentResult({ points: 0, correct: 0, total: 0 });
     localStorage.setItem(
       "score",
       JSON.stringify({ points: 0, correct: 0, total: 0 })

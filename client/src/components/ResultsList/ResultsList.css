@@ -1,0 +1,8 @@
+#resultsTableContainer {
+  display: flex;
+  justify-content: center;
+}
+
+#resultsTableContainer > ul {
+  width: 40%;
+}

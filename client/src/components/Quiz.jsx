@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
+import { ResultsList } from "./ResultsList/ResultsList";
 
 const Quiz = ({ socket, cookies, removeCookie }) => {
   const [question, setQuestion] = useState(null);
@@ -261,6 +262,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
           handleSubmit={handleSubmit}
         />
       )}
+      <ResultsList />
     </div>
   );
 };
