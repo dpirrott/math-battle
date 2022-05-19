@@ -36,6 +36,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("playerAnswer", answer);
   });
 
+  socket.on("opponentResponses", (responses) => {
+    console.log("Opponents current responses:", responses);
+    socket.broadcast.emit("opponentResponses", responses);
+  });
+
   socket.on("opponentScore", (result) => {
     console.log(result);
     socket.broadcast.emit("opponentScore", result);

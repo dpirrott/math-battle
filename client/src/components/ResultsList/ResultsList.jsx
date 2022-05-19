@@ -32,8 +32,9 @@ const testResults2 = [
   },
 ];
 
-export const ResultsList = ({ responses }) => {
+export const ResultsList = ({ responses, opponentResponses }) => {
   const generateResultsList = (results) => {
+    console.log("Responses:", results);
     return results.map((result, index) => {
       return (
         <li key={index}>
@@ -46,7 +47,7 @@ export const ResultsList = ({ responses }) => {
   return (
     <div id="resultsTableContainer">
       <ul>{generateResultsList(responses)}</ul>
-      <ul>{generateResultsList(testResults2)}</ul>
+      {opponentResponses && <ul>{generateResultsList(opponentResponses)}</ul>}
     </div>
   );
 };

@@ -17,6 +17,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   const [socketID, setSocketID] = useState(null);
   const [opponentName, setOpponentName] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
+  const [opponentResponses, setOpponentResponses] = useState(null);
 
   const [clock, setClock] = useState(0);
   const [totalTime, setTotalTime] = useState(null);
@@ -41,6 +42,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         setFinish,
         setQuestion,
         setOpponentResult,
+        setOpponentResponses,
         setTimerIsRunning,
         setDisplay,
       });
@@ -186,6 +188,10 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       localStorage.setItem("score", JSON.stringify(score));
       socket.emit("opponentScore", { userID: socketID, ...score });
     }
+
+    if (finish) {
+      socket.emit("opponentResponses", [...responses]);
+    }
   }, [finish, score, socket, socketID]);
 
   useEffect(() => {
@@ -262,7 +268,12 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
           handleSubmit={handleSubmit}
         />
       )}
-      <ResultsList responses={responses} />
+      {finish && (
+        <ResultsList
+          responses={responses}
+          opponentResponses={opponentResponses}
+        />
+      )}
     </div>
   );
 };

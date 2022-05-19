@@ -11,6 +11,7 @@ const socketLoad = ({
   setTotalTime,
   setFinish,
   setOpponentResult,
+  setOpponentResponses,
   setTimerIsRunning,
   setDisplay,
 }) => {
@@ -88,6 +89,10 @@ const socketLoad = ({
   socket.on("resume", () => {
     setDisplay("0");
     setTimerIsRunning(true);
+  });
+
+  socket.on("opponentResponses", (opponentResponses) => {
+    setOpponentResponses(opponentResponses);
   });
 
   socket.on("opponentScore", (result) => {
