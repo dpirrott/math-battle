@@ -32,7 +32,7 @@ const testResults2 = [
   },
 ];
 
-export const ResultsList = () => {
+export const ResultsList = ({ responses }) => {
   const generateResultsList = (results) => {
     return results.map((result, index) => {
       return (
@@ -42,9 +42,10 @@ export const ResultsList = () => {
       );
     });
   };
+
   return (
     <div id="resultsTableContainer">
-      <ul>{generateResultsList(testResults)}</ul>
+      <ul>{generateResultsList(responses)}</ul>
       <ul>{generateResultsList(testResults2)}</ul>
     </div>
   );

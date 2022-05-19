@@ -262,7 +262,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
           handleSubmit={handleSubmit}
         />
       )}
-      <ResultsList />
+      <ResultsList responses={responses} />
     </div>
   );
 };
