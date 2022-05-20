@@ -1,9 +1,11 @@
 import React from "react";
+import {ReactComponent as Checkmark} from '../../images/correct.svg'
 
 export const Result = ({ result }) => {
   return (
-    <p>{`Q(${result.number}) ${result.question} ${result.input} - ${
-      result.result ? "Correct" : "incorrect"
-    }`}</p>
+    <div>
+      <p>{`Q(${result.number}) ${result.question} ${result.input}`} <Checkmark /></p>
+
+    </div>
   );
 };
