@@ -15,7 +15,7 @@ const io = socketIo(server, {
 let currentUsers = [];
 let pauseState = false;
 let endState = false;
-const TOTAL_TIME = 10;
+const TOTAL_TIME = 20;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
@@ -91,9 +91,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     console.log(reason);
     socket.broadcast.emit("opponent disconnect");
-    const prevUsers = currentUsers.filter(
-      (user) => user.socketID !== socket.id
-    );
+    const prevUsers = currentUsers.filter((user) => user.socketID !== socket.id);
     console.log("Remaining players:", prevUsers);
     currentUsers = prevUsers;
   });
