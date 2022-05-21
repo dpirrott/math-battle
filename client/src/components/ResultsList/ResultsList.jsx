@@ -4,7 +4,7 @@ import { Result } from "./Result";
 import { ReactComponent as Checkmark } from "../../images/correct.svg";
 import { ReactComponent as RedX } from "../../images/incorrect.svg";
 
-export const ResultsList = ({ responses, opponentResponses }) => {
+export const ResultsList = ({ responses, opponentResponses, opponentName, cookies }) => {
   const generateResultsList = (results) => {
     console.log("Responses:", results);
     return results.map((result, index) => {
@@ -55,7 +55,7 @@ export const ResultsList = ({ responses, opponentResponses }) => {
     const tableResults = combinedArray.map(({ number, question, myInput, myResult, oppInput, oppResult }) => {
       return (
         <tr>
-          <td className="questionNumber">{number}</td>
+          <td className="questionNumber">{number}.</td>
           <td>{question}</td>
           <td className="tableResponse">
             {myInput ? `${myInput} ` : "--"}
@@ -78,8 +78,8 @@ export const ResultsList = ({ responses, opponentResponses }) => {
           <tr>
             <th>Number</th>
             <th>Question</th>
-            <th>My result</th>
-            <th>Opponent result</th>
+            <th>{cookies.name}</th>
+            <th>{opponentName}</th>
           </tr>
         </thead>
         <tbody>{opponentResponses && generateResultsTable(responses, opponentResponses)}</tbody>

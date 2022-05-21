@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
@@ -55,10 +56,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     setOpponentResult({ points: 0 });
     setFinish(null);
     setScore({ points: 0, correct: 0, total: 0 });
-    localStorage.setItem(
-      "score",
-      JSON.stringify({ points: 0, correct: 0, total: 0 })
-    );
+    localStorage.setItem("score", JSON.stringify({ points: 0, correct: 0, total: 0 }));
     setDisplay("0");
     setTimerIsRunning(true);
     socket.emit("resume");
@@ -101,11 +99,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         return {
           correct: prev.correct + 1,
           total: prev.total + 1,
-          points: Math.round(
-            ((prev.correct + 1) / (prev.total + 1)).toFixed(1) *
-              (prev.correct + 1) *
-              10
-          ),
+          points: Math.round(((prev.correct + 1) / (prev.total + 1)).toFixed(1) * (prev.correct + 1) * 10),
         };
       });
     } else {
@@ -113,9 +107,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         return {
           ...prev,
           total: prev.total + 1,
-          points: Math.round(
-            (prev.correct / (prev.total + 1)).toFixed(1) * prev.correct * 10
-          ),
+          points: Math.round((prev.correct / (prev.total + 1)).toFixed(1) * prev.correct * 10),
         };
       });
     }
@@ -232,16 +224,18 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   return (
     <div>
       <h2>
-        "{cookies.name}"{" "}
-        {opponentName
-          ? `Vs. "${opponentName}"`
-          : "--> waiting for opponent to join..."}
+        "{cookies.name}" {opponentName ? `Vs. "${opponentName}"` : "--> waiting for opponent to join..."}
       </h2>
 
       {finish && <h2>{finish}</h2>}
 
       {clock === 0 ? (
-        <Button onClick={() => startGame()}>Start</Button>
+        <>
+          <Button onClick={() => startGame()}>Start</Button>
+          <Button>
+            <SettingsIcon />
+          </Button>
+        </>
       ) : (
         <Button onClick={() => endGame()}>End Game</Button>
       )}
@@ -261,17 +255,14 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       />
       {/* <Timer /> */}
       {questions && (
-        <KeyPad
-          display={display}
-          setDisplay={setDisplay}
-          question={question}
-          handleSubmit={handleSubmit}
-        />
+        <KeyPad display={display} setDisplay={setDisplay} question={question} handleSubmit={handleSubmit} />
       )}
       {finish && (
         <ResultsList
           responses={responses}
           opponentResponses={opponentResponses}
+          opponentName={opponentName}
+          cookies={cookies}
         />
       )}
     </div>
