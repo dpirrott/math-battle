@@ -57,12 +57,12 @@ export const ResultsList = ({ responses, opponentResponses }) => {
         <tr>
           <td className="questionNumber">{number}</td>
           <td>{question}</td>
-          <td>
-            {myInput && `${myInput} `}
+          <td className="tableResponse">
+            {myInput ? `${myInput} ` : "--"}
             {myInput && (myResult ? <Checkmark /> : <RedX />)}
           </td>
-          <td>
-            {oppInput && `${oppInput} `}
+          <td className="tableResponse">
+            {oppInput ? `${oppInput} ` : "--"}
             {oppInput && (oppResult ? <Checkmark /> : <RedX />)}
           </td>
         </tr>

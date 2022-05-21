@@ -12,3 +12,15 @@
 .questionNumber {
   text-align: center;
 }
+
+.tableResponse {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+}
+
+tbody {
+  font-size: 32px;
+}
