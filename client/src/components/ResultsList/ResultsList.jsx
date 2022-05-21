@@ -44,10 +44,24 @@ export const ResultsList = ({ responses, opponentResponses }) => {
     });
   };
 
+  const generateResultsTable = (myResults, opponentResults) => {};
+
   return (
     <div id="resultsTableContainer">
+      <table>
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Question</th>
+            <th>My result</th>
+            <th>Opponent result</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      {/*
       <ul>{generateResultsList(responses)}</ul>
-      {opponentResponses && <ul>{generateResultsList(opponentResponses)}</ul>}
+      {opponentResponses && <ul>{generateResultsList(opponentResponses)}</ul>} */}
     </div>
   );
 };
