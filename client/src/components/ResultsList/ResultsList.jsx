@@ -1,6 +1,8 @@
 import React from "react";
 import "./ResultsList.css";
 import { Result } from "./Result";
+import { ReactComponent as Checkmark } from "../../images/correct.svg";
+import { ReactComponent as RedX } from "../../images/incorrect.svg";
 
 export const ResultsList = ({ responses, opponentResponses }) => {
   const generateResultsList = (results) => {
@@ -53,10 +55,16 @@ export const ResultsList = ({ responses, opponentResponses }) => {
     const tableResults = combinedArray.map(({ number, question, myInput, myResult, oppInput, oppResult }) => {
       return (
         <tr>
-          <td>{number}</td>
+          <td className="questionNumber">{number}</td>
           <td>{question}</td>
-          <td>{myInput && `${myInput} ${myResult}`}</td>
-          <td>{oppInput && `${oppInput} ${oppResult}`}</td>
+          <td>
+            {myInput && `${myInput} `}
+            {myInput && (myResult ? <Checkmark /> : <RedX />)}
+          </td>
+          <td>
+            {oppInput && `${oppInput} `}
+            {oppInput && (oppResult ? <Checkmark /> : <RedX />)}
+          </td>
         </tr>
       );
     });
@@ -76,9 +84,6 @@ export const ResultsList = ({ responses, opponentResponses }) => {
         </thead>
         <tbody>{opponentResponses && generateResultsTable(responses, opponentResponses)}</tbody>
       </table>
-      {/*
-      <ul>{generateResultsList(responses)}</ul>
-      {opponentResponses && <ul>{generateResultsList(opponentResponses)}</ul>} */}
     </div>
   );
 };
