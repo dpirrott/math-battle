@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import SettingsIcon from "@mui/icons-material/Settings";
+import "../App.css";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
@@ -232,7 +233,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       {clock === 0 ? (
         <>
           <Button onClick={() => startGame()}>Start</Button>
-          <Button>
+          <Button id="settingsBtn">
             <SettingsIcon />
           </Button>
         </>
