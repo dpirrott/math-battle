@@ -6,6 +6,7 @@ import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
 import { ResultsList } from "./ResultsList/ResultsList";
+import { Modal } from "./Modal/Modal";
 
 const Quiz = ({ socket, cookies, removeCookie }) => {
   const [question, setQuestion] = useState(null);
@@ -26,6 +27,11 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
   const [timerIsRunning, setTimerIsRunning] = useState(false);
+
+  // Modal show/hide operations
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   // Set-up socket event listeners
   useEffect(() => {
@@ -233,7 +239,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       {clock === 0 ? (
         <>
           <Button onClick={() => startGame()}>Start</Button>
-          <Button id="settingsBtn">
+          <Button id="settingsBtn" onClick={() => handleShow()}>
             <SettingsIcon />
           </Button>
         </>
@@ -266,6 +272,8 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
           cookies={cookies}
         />
       )}
+
+      <Modal handleClose={handleClose} show={show} />
     </div>
   );
 };
