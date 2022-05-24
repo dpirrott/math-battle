@@ -1,19 +1,38 @@
 import { Modal as Popup, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { DifficultyButtons } from "./DifficultyButtons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RangeSlider from "react-bootstrap-range-slider";
 import "./Modal.css";
 
-export const Modal = ({ handleClose, show }) => {
-  const [difficulty, setDifficulty] = useState(1);
-  const [duration, setDuration] = useState("1");
-  const [maxQuestions, setMaxQuestions] = useState(20);
+export const Modal = ({ handleClose, show, gameSettings, socket }) => {
+  const [difficulty, setDifficulty] = useState(2);
+  const [duration, setDuration] = useState(1);
+  const [maxQuestions, setMaxQuestions] = useState(40);
   const difficultyDesc = {
     1: "Easy: numbers from 2 - 12",
     2: "Medium: numbers from 2 - 100",
     3: "Hard: numbers from 2 - 1000",
   };
+
+  const handleSave = () => {
+    const newSettings = {
+      difficulty: difficulty,
+      testDuration: duration * 60,
+      totalQuestions: maxQuestions,
+    };
+    socket.emit("updateGameSettings", newSettings);
+    handleClose();
+  };
+
+  useEffect(() => {
+    if (gameSettings) {
+      setDifficulty(gameSettings.difficulty);
+      setDuration(Math.round((gameSettings.testDuration * 10) / 60) / 10);
+      setMaxQuestions(gameSettings.totalQuestions);
+    }
+  }, [gameSettings]);
+
   return (
     <>
       <Popup show={show} onHide={handleClose}>
@@ -51,7 +70,7 @@ export const Modal = ({ handleClose, show }) => {
               max={100}
               step={1}
               value={maxQuestions}
-              onChange={(changeEvent) => setMaxQuestions(changeEvent.target.value)}
+              onChange={(changeEvent) => setMaxQuestions(Number(changeEvent.target.value))}
               tooltip="on"
               tooltipPlacement="top"
             />
@@ -61,7 +80,7 @@ export const Modal = ({ handleClose, show }) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={() => handleSave()}>
             Save Changes
           </Button>
         </Popup.Footer>

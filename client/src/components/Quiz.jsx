@@ -9,6 +9,7 @@ import { ResultsList } from "./ResultsList/ResultsList";
 import { Modal } from "./Modal/Modal";
 
 const Quiz = ({ socket, cookies, removeCookie }) => {
+  const [gameSettings, setGameSettings] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
@@ -51,6 +52,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         setClock,
         setTotalTime,
         setFinish,
+        setGameSettings,
         setQuestion,
         setOpponentResult,
         setOpponentResponses,
@@ -276,7 +278,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         />
       )}
 
-      <Modal handleClose={handleClose} show={show} />
+      <Modal handleClose={handleClose} show={show} gameSettings={gameSettings} socket={socket} />
     </div>
   );
 };

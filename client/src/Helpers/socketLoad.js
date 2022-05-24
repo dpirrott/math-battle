@@ -6,6 +6,7 @@ const socketLoad = ({
   cookies,
   removeCookie,
   setOpponentName,
+  setGameSettings,
   setQuestions,
   setClock,
   setTotalTime,
@@ -49,6 +50,7 @@ const socketLoad = ({
 
   socket.on("currentSettings", (settings) => {
     console.log(settings);
+    setGameSettings(settings);
   });
 
   socket.on("game questions", (questionsList) => {

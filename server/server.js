@@ -13,7 +13,7 @@ const io = socketIo(server, {
 }); //in case server and client run on different urls
 
 let currentUsers = [];
-const gameSettings = {
+let gameSettings = {
   difficulty: 1,
   testDuration: 60,
   totalQuestions: 20,
@@ -48,6 +48,11 @@ io.on("connection", (socket) => {
 
   socket.on("requestSettings", () => {
     io.to(socket.id).emit("currentSettings", gameSettings);
+  });
+
+  socket.on("updateGameSettings", (newSettings) => {
+    console.log("new settings:", newSettings);
+    gameSettings = { ...newSettings };
   });
 
   socket.on("opponentScore", (result) => {
