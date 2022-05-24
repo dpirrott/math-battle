@@ -55,7 +55,7 @@ export const Timer = ({
   return (
     <div id="timerBox">
       <ReactSvgTimer
-        timerCount={3600}
+        timerCount={totalTime || 60}
         countdownColor="#fff"
         innerColor="#fff"
         outerColor="#000"
