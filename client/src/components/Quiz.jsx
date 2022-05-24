@@ -31,7 +31,10 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   // Modal show/hide operations
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    socket.emit("requestSettings");
+    setShow(true);
+  };
 
   // Set-up socket event listeners
   useEffect(() => {

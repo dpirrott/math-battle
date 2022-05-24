@@ -22,9 +22,11 @@ const socketLoad = ({
       socket.emit("new player", { name: cookies.name, socketID: socket.id });
     }
   });
+
   socket.on("connect_error", () => {
     setTimeout(() => socket.connect(), 5000);
   });
+
   socket.on("new player", (name) => {
     console.log("New player joined: ", name);
     const tempScore = JSON.parse(localStorage.getItem("score")) || score;
@@ -32,6 +34,7 @@ const socketLoad = ({
     setOpponentName(name);
     socket.emit("opponentScore", { userID: socketID, ...tempScore });
   });
+
   socket.on("current players", (players) => {
     // For now assume only 1 opponent
     if (players.length > 0) {
@@ -39,9 +42,13 @@ const socketLoad = ({
       setOpponentName(players[0].name);
     }
   });
+
   socket.on("playerAnswer", (answer) => {
     console.log("Player answered: ", answer);
-    // setOpponentAnswers((prev) => [...prev, answer]);
+  });
+
+  socket.on("currentSettings", (settings) => {
+    console.log(settings);
   });
 
   socket.on("game questions", (questionsList) => {
@@ -49,10 +56,7 @@ const socketLoad = ({
     localStorage.setItem("questions", JSON.stringify(questionsList));
     setScore({ points: 0, correct: 0, total: 0 });
     setOpponentResult({ points: 0, correct: 0, total: 0 });
-    localStorage.setItem(
-      "score",
-      JSON.stringify({ points: 0, correct: 0, total: 0 })
-    );
+    localStorage.setItem("score", JSON.stringify({ points: 0, correct: 0, total: 0 }));
   });
 
   socket.on("game timer", (clock, totalGameTime = false) => {

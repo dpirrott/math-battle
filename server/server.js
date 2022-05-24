@@ -13,6 +13,11 @@ const io = socketIo(server, {
 }); //in case server and client run on different urls
 
 let currentUsers = [];
+const gameSettings = {
+  difficulty: 1,
+  testDuration: 60,
+  totalQuestions: 20,
+};
 let pauseState = false;
 let endState = false;
 const TOTAL_TIME = 20;
@@ -41,6 +46,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("opponentResponses", responses);
   });
 
+  socket.on("requestSettings", () => {
+    io.to(socket.id).emit("currentSettings", gameSettings);
+  });
+
   socket.on("opponentScore", (result) => {
     console.log(result);
     socket.broadcast.emit("opponentScore", result);
@@ -50,7 +59,6 @@ io.on("connection", (socket) => {
     let count = TOTAL_TIME;
     endState = false;
     pauseState = false;
-    io.to("clock-room").emit("game timer", count);
     const questions = generateQuestions(60);
     io.to("clock-room").emit("game questions", questions);
     io.to("clock-room").emit("game timer", count, count);

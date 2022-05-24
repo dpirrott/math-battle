@@ -46,7 +46,6 @@ export const ResultsList = ({ responses, opponentResponses, opponentName, cookie
       }
       mergedArr.push(tempObj);
     }
-    console.log(mergedArr);
     return mergedArr;
   };
 
