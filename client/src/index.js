@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 import { CookiesProvider } from "react-cookie";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

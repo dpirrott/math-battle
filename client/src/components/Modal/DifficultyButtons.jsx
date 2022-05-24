@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 
 export const DifficultyButtons = () => {
-  const [value, setValue] = useState([1, 3]);
+  const [value, setValue] = useState(1);
 
   /*
    * The second argument that will be passed to

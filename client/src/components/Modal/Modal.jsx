@@ -26,6 +26,8 @@ export const Modal = ({ handleClose, show }) => {
               step="0.5"
               value={value}
               onChange={(changeEvent) => setValue(changeEvent.target.value)}
+              tooltip="on"
+              tooltipPlacement="top"
             />
           </Form.Group>
         </Popup.Body>
