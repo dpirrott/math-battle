@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { ToggleButtonGroup, ToggleButton } from "react-bootstrap";
 
-export const DifficultyButtons = () => {
-  const [value, setValue] = useState(1);
-
+export const DifficultyButtons = ({ value, setValue }) => {
   /*
    * The second argument that will be passed to
    * `handleChange` from `ToggleButtonGroup`
@@ -13,15 +11,21 @@ export const DifficultyButtons = () => {
   const handleChange = (val) => setValue(val);
 
   return (
-    <ToggleButtonGroup type="radio" name="Difficulty" value={value} onChange={handleChange}>
+    <ToggleButtonGroup
+      type="radio"
+      name="Difficulty"
+      value={value}
+      onChange={handleChange}
+      style={{ display: "block" }}
+    >
       <ToggleButton id="tbg-btn-1" value={1}>
-        Single
+        Eazy
       </ToggleButton>
       <ToggleButton id="tbg-btn-2" value={2}>
-        Double
+        Medium
       </ToggleButton>
       <ToggleButton id="tbg-btn-3" value={3}>
-        Triple
+        Hard
       </ToggleButton>
     </ToggleButtonGroup>
   );
