@@ -61,10 +61,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start game", () => {
-    let count = TOTAL_TIME;
+    const { difficulty, testDuration, totalQuestions } = gameSettings;
+    let count = testDuration;
     endState = false;
     pauseState = false;
-    const questions = generateQuestions(60);
+    const questions = generateQuestions(totalQuestions, difficulty);
     io.to("clock-room").emit("game questions", questions);
     io.to("clock-room").emit("game timer", count, count);
     let timer = setInterval(() => {
