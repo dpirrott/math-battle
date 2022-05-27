@@ -7,6 +7,7 @@ import { Form, FormControl, Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
+import axios from "axios";
 
 function App() {
   const [socket, setSocket] = useState(null);
@@ -25,7 +26,17 @@ function App() {
   const handleShowRegister = () => {
     setShowRegister(true);
   };
-  const handleRegister = (username, pass, passConf) => {};
+  const handleRegister = (username, pass, passConf) => {
+    console.log({ username, pass, passConf });
+    axios
+      .post("http://localhost:5000/user", { username, pass, passConf })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("err:", err);
+      });
+  };
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
