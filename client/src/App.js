@@ -6,16 +6,25 @@ import { useState, useEffect } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { Login } from "./components/Login/Login";
+import { Register } from "./components/Register/Register";
 
 function App() {
   const [socket, setSocket] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
-  // Modal show/hide operations
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => {
+  // Login show/hide operations
+  const [showLogin, setShowLogin] = useState(false);
+  const handleCloseLogin = () => setShowLogin(false);
+  const handleShowLogin = () => {
     // socket.emit("requestSettings");
-    setShow(true);
+    setShowLogin(true);
+  };
+
+  // Register show/hide operations
+  const [showRegister, setShowRegister] = useState(false);
+  const handleCloseRegister = () => setShowRegister(false);
+  const handleShowRegister = () => {
+    // socket.emit("requestSettings");
+    setShowRegister(true);
   };
 
   useEffect(() => {
@@ -57,8 +66,10 @@ function App() {
       <a target="_blank" href="https://icons8.com">
         Icons8
       </a> */}
-      <Button onClick={() => handleShow()}>Login</Button>
-      <Login handleClose={handleClose} show={show} />
+      <Button onClick={() => handleShowLogin()}>Login</Button>
+      <Button onClick={() => handleShowRegister()}>Register</Button>
+      <Login handleClose={handleCloseLogin} show={showLogin} />
+      <Register handleClose={handleCloseRegister} show={showRegister} />
     </div>
   );
 }
