@@ -5,21 +5,23 @@ import { io } from "socket.io-client";
 import { useState, useEffect } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
+import { Login } from "./components/Login/Login";
 
 function App() {
   const [socket, setSocket] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
+  // Modal show/hide operations
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    // socket.emit("requestSettings");
+    setShow(true);
+  };
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
     setSocket(socket);
   }, []);
-
-  // useEffect(() => {
-  //   if (cookies.name) {
-  //     console.log(cookies.name);
-  //   }
-  // }, [cookies]);
 
   const enterBattle = (e) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Math Battle</h1>
+      {/* <h1>Math Battle</h1>
       {socket &&
         (!cookies.name ? (
           <div>
@@ -54,7 +56,9 @@ function App() {
       icon by{" "}
       <a target="_blank" href="https://icons8.com">
         Icons8
-      </a>
+      </a> */}
+      <Button onClick={() => handleShow()}>Login</Button>
+      <Login handleClose={handleClose} show={show} />
     </div>
   );
 }

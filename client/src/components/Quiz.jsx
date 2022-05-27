@@ -6,7 +6,7 @@ import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
 import { ResultsList } from "./ResultsList/ResultsList";
-import { Modal } from "./Modal/Modal";
+import { SettingsModal } from "./Modal/SettingsModal";
 
 const Quiz = ({ socket, cookies, removeCookie }) => {
   const [gameSettings, setGameSettings] = useState(null);
@@ -278,7 +278,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         />
       )}
 
-      <Modal handleClose={handleClose} show={show} gameSettings={gameSettings} socket={socket} />
+      <SettingsModal handleClose={handleClose} show={show} gameSettings={gameSettings} socket={socket} />
     </div>
   );
 };

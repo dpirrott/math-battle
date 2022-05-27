@@ -3,9 +3,9 @@ import Form from "react-bootstrap/Form";
 import { DifficultyButtons } from "./DifficultyButtons";
 import React, { useEffect, useState } from "react";
 import RangeSlider from "react-bootstrap-range-slider";
-import "./Modal.css";
+import "./Settings.css";
 
-export const Modal = ({ handleClose, show, gameSettings, socket }) => {
+export const SettingsModal = ({ handleClose, show, gameSettings, socket }) => {
   const [difficulty, setDifficulty] = useState(2);
   const [duration, setDuration] = useState(1);
   const [maxQuestions, setMaxQuestions] = useState(40);
