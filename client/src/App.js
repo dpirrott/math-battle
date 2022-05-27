@@ -11,21 +11,21 @@ import { Register } from "./components/Register/Register";
 function App() {
   const [socket, setSocket] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
-  // Login show/hide operations
+
+  // Login operations
   const [showLogin, setShowLogin] = useState(false);
   const handleCloseLogin = () => setShowLogin(false);
   const handleShowLogin = () => {
-    // socket.emit("requestSettings");
     setShowLogin(true);
   };
 
-  // Register show/hide operations
+  // Register operations
   const [showRegister, setShowRegister] = useState(false);
   const handleCloseRegister = () => setShowRegister(false);
   const handleShowRegister = () => {
-    // socket.emit("requestSettings");
     setShowRegister(true);
   };
+  const handleRegister = (username, pass, passConf) => {};
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
@@ -69,7 +69,7 @@ function App() {
       <Button onClick={() => handleShowLogin()}>Login</Button>
       <Button onClick={() => handleShowRegister()}>Register</Button>
       <Login handleClose={handleCloseLogin} show={showLogin} />
-      <Register handleClose={handleCloseRegister} show={showRegister} />
+      <Register handleClose={handleCloseRegister} show={showRegister} register={handleRegister} />
     </div>
   );
 }
