@@ -1,5 +1,6 @@
 const express = require("express");
 const socketIo = require("socket.io");
+const bodyParser = require("body-parser");
 const http = require("http");
 const { clearInterval } = require("timers");
 const { generateQuestions } = require("./helpers/generateQuestions");
@@ -11,6 +12,8 @@ const io = socketIo(server, {
     origin: "http://localhost:3000",
   },
 }); //in case server and client run on different urls
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 let currentUsers = [];
 let gameSettings = {
