@@ -45,16 +45,16 @@ client.connect((err) => {
   const db = client.db("mentalMathBattle");
   const usersCollection = db.collection("users");
   // perform actions on the collection object
-  app.post("/user", (req, res) => {
-    console.log(req.body);
-    usersCollection
-      .insertOne(req.body)
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  app.post("/user", async (req, res) => {
+    // console.log(req.body);
+    try {
+      const result = await usersCollection.insertOne(req.body);
+      console.log(result);
+      res.status(200).send("Successfully added user to db.");
+    } catch (e) {
+      console.error("Error", e);
+      res.status(500).send("Something went wrong.");
+    }
   });
 });
 

@@ -27,15 +27,8 @@ function App() {
     setShowRegister(true);
   };
   const handleRegister = (username, pass, passConf) => {
-    console.log({ username, pass, passConf });
-    axios
-      .post("http://localhost:5000/user", { username, pass, passConf })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log("err:", err);
-      });
+    // console.log({ username, pass, passConf });
+    return axios.post("http://localhost:5000/user", { username, pass, passConf });
   };
 
   useEffect(() => {

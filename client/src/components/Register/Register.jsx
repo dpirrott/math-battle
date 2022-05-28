@@ -9,7 +9,17 @@ export const Register = ({ show, handleClose, register }) => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    register(username, password, passwordConf);
+    register(username, password, passwordConf)
+      .then((res) => {
+        console.log(res.data);
+        setUsername("");
+        setPassword("");
+        setPasswordConf("");
+        handleClose();
+      })
+      .catch((err) => {
+        console.log("err:", err);
+      });
   };
 
   return (
