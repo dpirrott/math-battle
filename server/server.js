@@ -1,5 +1,8 @@
 const express = require("express");
 const socketIo = require("socket.io");
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const bodyParser = require("body-parser");
 const http = require("http");
 const { clearInterval } = require("timers");
@@ -12,6 +15,7 @@ const io = socketIo(server, {
     origin: "http://localhost:3000",
   },
 }); //in case server and client run on different urls
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -27,8 +31,31 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post("/user", (req, res) => {
-  console.log(req.body);
+const DB_PASSWORD = process.env.DB_PASS;
+
+const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
+client.connect((err) => {
+  if (err) return console.error(err);
+  console.log("Connected to Database");
+  const db = client.db("mentalMathBattle");
+  const usersCollection = db.collection("users");
+  // perform actions on the collection object
+  app.post("/user", (req, res) => {
+    console.log(req.body);
+    usersCollection
+      .insertOne(req.body)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  });
 });
 
 let currentUsers = [];
