@@ -6,19 +6,22 @@ export const Register = ({ show, handleClose, register }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const handleRegister = (e) => {
     e.preventDefault();
     register(username, password, passwordConf)
       .then((res) => {
         console.log(res.data);
+        setErrorMsg(null);
         setUsername("");
         setPassword("");
         setPasswordConf("");
         handleClose();
       })
       .catch((err) => {
-        console.log("err:", err);
+        console.log("err:", err.response.data);
+        setErrorMsg(err.response.data);
       });
   };
 
@@ -64,6 +67,7 @@ export const Register = ({ show, handleClose, register }) => {
               />
             </Form.Group>
           </Form>
+          {errorMsg && <p>{errorMsg}</p>}
         </Popup.Body>
 
         <Popup.Footer>

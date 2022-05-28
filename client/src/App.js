@@ -26,9 +26,9 @@ function App() {
   const handleShowRegister = () => {
     setShowRegister(true);
   };
-  const handleRegister = (username, pass, passConf) => {
+  const handleRegister = (username, password, passwordConf) => {
     // console.log({ username, pass, passConf });
-    return axios.post("http://localhost:5000/user", { username, pass, passConf });
+    return axios.post("http://localhost:5000/register", { username, password, passwordConf });
   };
 
   useEffect(() => {

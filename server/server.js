@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
 const socketIo = require("socket.io");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -32,7 +33,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const DB_PASSWORD = process.env.DB_PASS;
-
 const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -44,16 +44,40 @@ client.connect((err) => {
   console.log("Connected to Database");
   const db = client.db("mentalMathBattle");
   const usersCollection = db.collection("users");
-  // perform actions on the collection object
-  app.post("/user", async (req, res) => {
-    // console.log(req.body);
+
+  app.post("/register", async (req, res) => {
     try {
-      const result = await usersCollection.insertOne(req.body);
+      const { username, password, passwordConf } = req.body;
+      if (!username || !password || !passwordConf) {
+        return res.status(400).send("All fields must be populated.");
+      } else if (password !== passwordConf) {
+        return res.status(400).send("Password fields do not match.");
+      }
+      // generate salt to hash password
+      const salt = await bcrypt.genSalt(10);
+      // now we set user password to hashed password
+      const hash = await bcrypt.hash(password, salt);
+      const result = await usersCollection.insertOne({ username, password: hash });
       console.log(result);
       res.status(200).send("Successfully added user to db.");
     } catch (e) {
       console.error("Error", e);
       res.status(500).send("Something went wrong.");
+    }
+  });
+
+  app.post("/login", async (req, res) => {
+    try {
+    } catch (e) {}
+  });
+
+  app.get("/clearUsersDB", async (req, res) => {
+    try {
+      const result = await usersCollection.deleteMany({});
+      console.log(result);
+      res.status(200).send("Users collection successfully cleared!");
+    } catch (e) {
+      console.log(e);
     }
   });
 });
