@@ -68,7 +68,26 @@ client.connect((err) => {
 
   app.post("/login", async (req, res) => {
     try {
-    } catch (e) {}
+      const { username, password } = req.body;
+      if (!username || !password) {
+        return res.status(400).send("All fields must be populated.");
+      }
+      const user = await usersCollection.findOne({ username: username });
+      console.log(user);
+      if (user) {
+        const verifyPassword = await bcrypt.compare(password, user.password);
+        if (verifyPassword) {
+          res.status(200).send("Valid password");
+        } else {
+          return res.status(400).send("Invalid password");
+        }
+      } else {
+        res.status(401).send("User not found.");
+      }
+    } catch (e) {
+      console.error("Error", e);
+      res.status(500).send("Something went wrong.");
+    }
   });
 
   app.get("/clearUsersDB", async (req, res) => {

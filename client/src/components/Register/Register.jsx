@@ -1,22 +1,26 @@
 import { Modal as Popup, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-export const Register = ({ show, handleClose, register }) => {
+export const Register = ({ show, setShow, register }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const handleClose = () => {
+    setShow(false);
+    setErrorMsg(null);
+    setUsername("");
+    setPassword("");
+    setPasswordConf("");
+  };
 
   const handleRegister = (e) => {
     e.preventDefault();
     register(username, password, passwordConf)
       .then((res) => {
         console.log(res.data);
-        setErrorMsg(null);
-        setUsername("");
-        setPassword("");
-        setPasswordConf("");
         handleClose();
       })
       .catch((err) => {

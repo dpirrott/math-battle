@@ -15,14 +15,17 @@ function App() {
 
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
-  const handleCloseLogin = () => setShowLogin(false);
   const handleShowLogin = () => {
     setShowLogin(true);
+  };
+  const handleLogin = (username, password) => {
+    // console.log({ username, pass, passConf });
+    return axios.post("http://localhost:5000/login", { username, password });
   };
 
   // Register operations
   const [showRegister, setShowRegister] = useState(false);
-  const handleCloseRegister = () => setShowRegister(false);
+
   const handleShowRegister = () => {
     setShowRegister(true);
   };
@@ -72,8 +75,8 @@ function App() {
       </a> */}
       <Button onClick={() => handleShowLogin()}>Login</Button>
       <Button onClick={() => handleShowRegister()}>Register</Button>
-      <Login handleClose={handleCloseLogin} show={showLogin} />
-      <Register handleClose={handleCloseRegister} show={showRegister} register={handleRegister} />
+      <Login show={showLogin} setShow={setShowLogin} login={handleLogin} />
+      <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
     </div>
   );
 }

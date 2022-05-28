@@ -1,12 +1,31 @@
 import { Modal as Popup, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-export const Login = ({ show, handleClose }) => {
+export const Login = ({ show, login, setShow }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
 
-  const handleLogin = () => {};
+  const handleClose = () => {
+    setShow(false);
+    setErrorMsg(null);
+    setUsername("");
+    setPassword("");
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    login(username, password)
+      .then((res) => {
+        console.log(res.data);
+        handleClose();
+      })
+      .catch((err) => {
+        console.log("err:", err.response.data);
+        setErrorMsg(err.response.data);
+      });
+  };
 
   return (
     <div>
@@ -35,12 +54,13 @@ export const Login = ({ show, handleClose }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group>
+          {errorMsg && <p>{errorMsg}</p>}
         </Popup.Body>
         <Popup.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={() => handleLogin()}>
+          <Button variant="primary" onClick={(e) => handleLogin(e)}>
             Save Changes
           </Button>
         </Popup.Footer>
