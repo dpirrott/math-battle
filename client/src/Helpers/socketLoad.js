@@ -17,10 +17,9 @@ const socketLoad = ({
   setDisplay,
 }) => {
   socket.on("connect", () => {
-    // console.log(socket.id);
-    if (cookies.name) {
+    if (cookies.username) {
       // console.log("I was previously known as ", cookies.name);
-      socket.emit("new player", { name: cookies.name, socketID: socket.id });
+      socket.emit("new player", { name: cookies.username, socketID: socket.id });
     }
   });
 

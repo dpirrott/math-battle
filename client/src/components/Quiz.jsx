@@ -39,7 +39,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
 
   // Set-up socket event listeners
   useEffect(() => {
-    if (socket && cookies.name) {
+    if (socket && cookies.username) {
       socketLoad({
         setScore,
         score,
@@ -60,7 +60,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         setDisplay,
       });
     }
-  }, [socket, cookies.name]);
+  }, [socket, cookies.username]);
 
   const startGame = () => {
     socket.emit("start game");
@@ -200,12 +200,14 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
 
   useEffect(() => {
     if (socketID) {
-      socket.emit("new player", { name: cookies.name, socketID: socketID });
+      socket.emit("new player", { name: cookies.username, socketID: socketID });
     }
   }, [cookies, socket, socketID]);
 
   useEffect(() => {
-    setSocketID(socket.id);
+    if (socket) {
+      setSocketID(socket.id);
+    }
   }, [socket]);
 
   // Onload check local storage (incase accidental refresh during game)
@@ -236,7 +238,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   return (
     <div>
       <h2>
-        "{cookies.name}" {opponentName ? `Vs. "${opponentName}"` : "--> waiting for opponent to join..."}
+        "{cookies.username}" {opponentName ? `Vs. "${opponentName}"` : "--> waiting for opponent to join..."}
       </h2>
 
       {finish && <h2>{finish}</h2>}

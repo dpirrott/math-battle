@@ -17,6 +17,24 @@ const io = socketIo(server, {
   },
 }); //in case server and client run on different urls
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const DB_PASSWORD = process.env.DB_PASS;
+const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
+
+app.use(
+  session({
+    secret: "nothing to see here folks",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+    store: MongoStore.create({
+      mongoUrl: uri,
+      ttl: 60 * 60,
+      autoRemove: "native",
+    }),
+  })
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,8 +50,6 @@ app.use((req, res, next) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const DB_PASSWORD = process.env.DB_PASS;
-const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -77,6 +93,7 @@ client.connect((err) => {
       if (user) {
         const verifyPassword = await bcrypt.compare(password, user.password);
         if (verifyPassword) {
+          req.session.username = username;
           res.status(200).send("Valid password");
         } else {
           return res.status(400).send("Invalid password");

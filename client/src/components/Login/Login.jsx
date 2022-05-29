@@ -2,7 +2,7 @@ import { Modal as Popup, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 
-export const Login = ({ show, login, setShow }) => {
+export const Login = ({ show, login, setShow, setCookie }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
@@ -19,6 +19,7 @@ export const Login = ({ show, login, setShow }) => {
     login(username, password)
       .then((res) => {
         console.log(res.data);
+        setCookie("username", username, { maxAge: 3600 });
         handleClose();
       })
       .catch((err) => {
@@ -34,26 +35,30 @@ export const Login = ({ show, login, setShow }) => {
           <Popup.Title>Login</Popup.Title>
         </Popup.Header>
         <Popup.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Nickname69"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <Form.Text></Form.Text>
-          </Form.Group>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Nickname69"
+                value={username}
+                autoComplete="username"
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <Form.Text></Form.Text>
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="********"
+                value={password}
+                autoComplete="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
           {errorMsg && <p>{errorMsg}</p>}
         </Popup.Body>
         <Popup.Footer>

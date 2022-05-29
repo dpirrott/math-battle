@@ -77,7 +77,7 @@ export const ResultsList = ({ responses, opponentResponses, opponentName, cookie
           <tr>
             <th>Number</th>
             <th>Question</th>
-            <th>{cookies.name}</th>
+            <th>{cookies.username}</th>
             <th>{opponentName}</th>
           </tr>
         </thead>
