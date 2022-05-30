@@ -113,7 +113,7 @@ const socketLoad = ({
 
   socket.on("disconnect", () => {
     console.log("Disconnected");
-    removeCookie("name", { path: "/", domain: "localhost" });
+    removeCookie("username", { path: "/", domain: "localhost" });
     localStorage.clear();
   });
 };

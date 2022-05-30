@@ -21,7 +21,7 @@ function App() {
   };
   const handleLogin = (username, password) => {
     // console.log({ username, pass, passConf });
-    return axios.post("http://localhost:5000/login", { username, password });
+    return axios.post("/login", { username, password }, { withCredentials: true });
   };
 
   // Register operations
@@ -37,6 +37,18 @@ function App() {
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
+    if (cookies.username) {
+      axios
+        .post("/validUsername", { username: cookies.username }, { withCredentials: true })
+        .then((res) => {
+          console.log(res.data.username);
+          setCookie("username", res.data.username, { maxAge: 3600 });
+        })
+        .catch((err) => {
+          console.log(err.response.data.msg);
+          removeCookie("username", { path: "/" });
+        });
+    }
     setSocket(socket);
   }, []);
 

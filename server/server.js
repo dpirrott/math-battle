@@ -14,30 +14,19 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: "http://localhost:3000",
+    methods: ["POST", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
   },
 }); //in case server and client run on different urls
+const { v4: uuidv4 } = require("uuid");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const DB_PASSWORD = process.env.DB_PASS;
 const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
 
-app.use(
-  session({
-    secret: "nothing to see here folks",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true },
-    store: MongoStore.create({
-      mongoUrl: uri,
-      ttl: 60 * 60,
-      autoRemove: "native",
-    }),
-  })
-);
-
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
   res.setHeader(
     "Access-Control-Allow-Headers",
@@ -46,6 +35,26 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.set("trust proxy", 1); // trust first proxy
+
+app.use(
+  session({
+    secret: "nothing to see here folks",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60,
+      sameSite: "lax",
+      secure: false,
+    },
+    store: MongoStore.create({
+      mongoUrl: uri,
+      ttl: 60 * 60,
+      autoRemove: "native",
+    }),
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -94,6 +103,7 @@ client.connect((err) => {
         const verifyPassword = await bcrypt.compare(password, user.password);
         if (verifyPassword) {
           req.session.username = username;
+          console.log(req);
           res.status(200).send("Valid password");
         } else {
           return res.status(400).send("Invalid password");
@@ -114,6 +124,18 @@ client.connect((err) => {
       res.status(200).send("Users collection successfully cleared!");
     } catch (e) {
       console.log(e);
+    }
+  });
+
+  app.post("/validUsername", (req, res) => {
+    console.log("req.session.username:", req.session.username);
+    console.log("browser cookie.username:", req.body.username);
+    if (req.session.username === req.body.username) {
+      return res.json({ username: req.session.username });
+    } else {
+      req.session.destroy();
+      res.clearCookie("connect.sid");
+      return res.status(400).json({ msg: "Access denied. Please login.", username: "" });
     }
   });
 });
