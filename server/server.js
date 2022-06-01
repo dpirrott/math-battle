@@ -41,8 +41,8 @@ app.set("trust proxy", 1); // trust first proxy
 app.use(
   session({
     secret: "nothing to see here folks",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60,
       sameSite: "lax",
@@ -103,7 +103,7 @@ client.connect((err) => {
         const verifyPassword = await bcrypt.compare(password, user.password);
         if (verifyPassword) {
           req.session.username = username;
-          console.log(req);
+          // console.log(req);
           res.status(200).send("Valid password");
         } else {
           return res.status(400).send("Invalid password");
@@ -127,10 +127,14 @@ client.connect((err) => {
     }
   });
 
-  app.post("/validUsername", (req, res) => {
-    console.log("req.session.username:", req.session.username);
+  app.post("/validUsername", async (req, res) => {
+    console.log("req.session.cookie: ", req.session.cookie);
+    console.log("req.session.username: ", req.session.username);
     console.log("browser cookie.username:", req.body.username);
     if (req.session.username === req.body.username) {
+      return res.json({ username: req.session.username });
+    } else if (!req.body.username && req.session.cookie) {
+      console.log("Testing req.session.username", req.session.username);
       return res.json({ username: req.session.username });
     } else {
       req.session.destroy();

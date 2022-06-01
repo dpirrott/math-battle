@@ -31,7 +31,7 @@ function App() {
     setShowRegister(true);
   };
   const handleRegister = (username, password, passwordConf) => {
-    // console.log({ username, pass, passConf });
+    // console.log({ username, pass, passConf })
     return axios.post("http://localhost:5000/register", { username, password, passwordConf });
   };
 
@@ -53,7 +53,7 @@ function App() {
   }, []);
 
   // const enterBattle = (username) => {
-  //   if (username !== "") {
+  //   if (username !== '') {
   //     setCookie("name", nickName, { maxAge: 3600 });
   //   }
   // };
