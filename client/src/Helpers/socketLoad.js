@@ -106,9 +106,10 @@ const socketLoad = ({
     setOpponentResult(result);
   });
 
-  socket.on("opponent disconnect", () => {
+  socket.on("opponent disconnect", (username) => {
     setOpponentName(null);
     setOpponentResult(null);
+    console.log(`${username} disconnected.`);
   });
 
   socket.on("disconnect", () => {

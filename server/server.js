@@ -36,6 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
+let currentUsers = [];
 app.set("trust proxy", 1); // trust first proxy
 
 app.use(
@@ -43,6 +44,7 @@ app.use(
     secret: "nothing to see here folks",
     resave: false,
     saveUninitialized: false,
+    unset: "destroy",
     cookie: {
       maxAge: 1000 * 60 * 60,
       sameSite: "lax",
@@ -117,6 +119,24 @@ client.connect((err) => {
     }
   });
 
+  app.post("/logout", (req, res) => {
+    try {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log("Failed to logout.");
+          return res.status(400).json({ msg: "Something went wrong with logout." });
+        }
+        const prevUsers = currentUsers.filter((user) => user.name !== req.body.username);
+        console.log("Remaining players:", prevUsers);
+        currentUsers = prevUsers;
+        return res.status(200).json({ msg: "Successfully logged out." });
+      });
+    } catch (e) {
+      console.log("Failed to logout.");
+      return res.status(400).json({ msg: "Something went wrong with logout." });
+    }
+  });
+
   app.get("/clearUsersDB", async (req, res) => {
     try {
       const result = await usersCollection.deleteMany({});
@@ -127,14 +147,14 @@ client.connect((err) => {
     }
   });
 
-  app.post("/validUsername", async (req, res) => {
-    console.log("req.session.cookie: ", req.session.cookie);
-    console.log("req.session.username: ", req.session.username);
-    console.log("browser cookie.username:", req.body.username);
+  app.post("/validUsername", (req, res) => {
+    // console.log("req.session.cookie: ", req.session.cookie);
+    // console.log("req.session.username: ", req.session.username);
+    // console.log("browser cookie.username:", req.body.username);
     if (req.session.username === req.body.username) {
       return res.json({ username: req.session.username });
     } else if (!req.body.username && req.session.cookie) {
-      console.log("Testing req.session.username", req.session.username);
+      // console.log("Testing req.session.username", req.session.username);
       return res.json({ username: req.session.username });
     } else {
       req.session.destroy();
@@ -144,7 +164,6 @@ client.connect((err) => {
   });
 });
 
-let currentUsers = [];
 let gameSettings = {
   difficulty: 1,
   testDuration: 60,
@@ -232,6 +251,11 @@ io.on("connection", (socket) => {
   socket.on("resume", () => {
     pauseState = false;
     socket.broadcast.emit("resume");
+  });
+
+  socket.on("opponent disconnect", (username) => {
+    console.log(`${username} has logged out.`);
+    socket.broadcast.emit("opponent disconnect", username);
   });
 
   socket.on("disconnect", (reason) => {

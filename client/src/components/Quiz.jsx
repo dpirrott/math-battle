@@ -7,6 +7,7 @@ import { Header } from "./Header";
 import { KeyPad } from "./KeyPad/Keypad";
 import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";
+import axios from "axios";
 
 const Quiz = ({ socket, cookies, removeCookie }) => {
   const [gameSettings, setGameSettings] = useState(null);
@@ -135,27 +136,17 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     setResponses((prev) => [...prev, response]);
   };
 
-  // const renderAnswers = () => {
-  //   const testList = responses.map(
-  //     ({ question, answer, input, result }, index) => {
-  //       // console.log(`number: ${number}, index: ${index}`);
-  //       return (
-  //         <li key={index}>{`${question} = ${input} - ${
-  //           result ? "correct" : `incorrect (answer = ${answer})`
-  //         }`}</li>
-  //       );
-  //     }
-  //   );
-  //   return testList;
-  // };
-
-  // const renderOpponentAnswers = () => {
-  //   const oppAnswers = opponentAnswers.map((answer, index) => {
-  //     // console.log(`number: ${number}, index: ${index}`);
-  //     return <li key={index}>{answer}</li>;
-  //   });
-  //   return oppAnswers;
-  // };
+  const handleLogout = () => {
+    axios
+      .post("/logout", { username: cookies.username })
+      .then((res) => {
+        console.log(res.data.msg);
+        socket.emit("opponent disconnect", cookies.username);
+        localStorage.clear();
+        removeCookie("username", { path: "/" });
+      })
+      .catch((err) => console.log("Logout error:", err));
+  };
 
   useEffect(() => {
     const renderQuestion = () => {
@@ -249,6 +240,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
           <Button id="settingsBtn" onClick={() => handleShow()}>
             <SettingsIcon />
           </Button>
+          <Button onClick={() => handleLogout()}>Logout</Button>
         </>
       ) : (
         <Button onClick={() => endGame()}>End Game</Button>

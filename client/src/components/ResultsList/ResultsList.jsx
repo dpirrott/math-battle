@@ -53,7 +53,7 @@ export const ResultsList = ({ responses, opponentResponses, opponentName, cookie
     const combinedArray = joinOpponentAnswer(responses, opponentResponses);
     const tableResults = combinedArray.map(({ number, question, myInput, myResult, oppInput, oppResult }) => {
       return (
-        <tr>
+        <tr key={number}>
           <td className="questionNumber">{number}.</td>
           <td>{question}</td>
           <td className="tableResponse">

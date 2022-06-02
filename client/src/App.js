@@ -26,12 +26,10 @@ function App() {
 
   // Register operations
   const [showRegister, setShowRegister] = useState(false);
-
   const handleShowRegister = () => {
     setShowRegister(true);
   };
   const handleRegister = (username, password, passwordConf) => {
-    // console.log({ username, pass, passConf })
     return axios.post("http://localhost:5000/register", { username, password, passwordConf });
   };
 
@@ -51,12 +49,6 @@ function App() {
     }
     setSocket(socket);
   }, []);
-
-  // const enterBattle = (username) => {
-  //   if (username !== '') {
-  //     setCookie("name", nickName, { maxAge: 3600 });
-  //   }
-  // };
 
   return (
     <div className="App">
