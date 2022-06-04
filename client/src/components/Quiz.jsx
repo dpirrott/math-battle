@@ -189,11 +189,11 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     }
   }, [finish, score, socket, socketID]);
 
-  useEffect(() => {
-    if (socketID) {
-      socket.emit("new player", { name: cookies.username, socketID: socketID });
-    }
-  }, [cookies, socket, socketID]);
+  // useEffect(() => {
+  //   if (socketID) {
+  //     socket.emit("new player", { name: cookies.username, socketID: socketID });
+  //   }
+  // }, [cookies, socket, socketID]);
 
   useEffect(() => {
     if (socket) {

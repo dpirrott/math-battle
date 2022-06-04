@@ -14,6 +14,7 @@ import axios from "axios";
 function App() {
   const [socket, setSocket] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
+  const [roomID, setRoomID] = useState(null);
 
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
@@ -51,17 +52,35 @@ function App() {
     setSocket(socket);
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("current players", ({ connectedUsers, msg, roomID }) => {
+        if (roomID) {
+          setRoomID(roomID);
+          console.log(`Current user in room: ${connectedUsers[0] ? connectedUsers[0] : "empty"}`);
+        } else {
+          console.log(msg);
+        }
+      });
+    }
+  }, [socket]);
+
   return (
     <div className="App">
       {socket && cookies.username ? (
-        <Quiz socket={socket} cookies={cookies} removeCookie={removeCookie} />
+        <>
+          {roomID ? (
+            <Quiz socket={socket} cookies={cookies} removeCookie={removeCookie} />
+          ) : (
+            <LobbyList socket={socket} username={cookies.username} />
+          )}
+        </>
       ) : (
         <>
-          {/* <Button onClick={() => handleShowLogin()}>Login</Button>
+          <Button onClick={() => handleShowLogin()}>Login</Button>
           <Button onClick={() => handleShowRegister()}>Register</Button>
           <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
-          <Register show={showRegister} setShow={setShowRegister} register={handleRegister} /> */}
-          <LobbyList socket={socket} />
+          <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
         </>
       )}
       <Footer />

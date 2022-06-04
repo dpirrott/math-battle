@@ -168,6 +168,23 @@ let gameSettings = {
   testDuration: 60,
   totalQuestions: 20,
 };
+const gamesList = {
+  1: {
+    connectedUsers: [],
+  },
+  2: {
+    connectedUsers: [],
+  },
+  3: {
+    connectedUsers: [],
+  },
+  4: {
+    connectedUsers: [],
+  },
+  5: {
+    connectedUsers: [],
+  },
+};
 let pauseState = false;
 let endState = false;
 const TOTAL_TIME = 20;
@@ -175,7 +192,20 @@ const TOTAL_TIME = 20;
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
 
-  socket.join("clock-room");
+  socket.on("join room", ({ number, username }) => {
+    console.log(`Number: ${number}, Username: ${username}`);
+    socket.join(number);
+    const connectedUsers = gamesList[number].connectedUsers;
+    if (connectedUsers.length < 2) {
+      io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
+      socket.broadcast.to(number).emit("new player", username);
+      connectedUsers.push(username);
+      console.log(gamesList[number]);
+    } else {
+      io.to(socket.id).emit("current players", { msg: "Room is full." });
+      console.log("Room is full");
+    }
+  });
 
   socket.on("new player", (player) => {
     socket.broadcast.emit("new player", player.name);
@@ -266,9 +296,9 @@ io.on("connection", (socket) => {
   });
 });
 
-setInterval(() => {
-  io.to("clock-room").emit("time", new Date());
-}, 1000);
+// setInterval(() => {
+//   io.to("clock-room").emit("time", new Date());
+// }, 1000);
 
 server.listen(PORT, (err) => {
   if (err) console.log(err);
