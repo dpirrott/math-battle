@@ -211,7 +211,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       if (scoreCached) {
         setScore(scoreCached);
         console.log("Emitting score: ", scoreCached);
-        socket.emit("opponentScore", { userID: socketID, ...scoreCached });
+        socket.emit("opponentScore", { userID: cookies.username, ...scoreCached });
         setQuestion(questionsCached[scoreCached.total]);
         setDisplay("0");
         setTimerIsRunning(true);
@@ -220,7 +220,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     } else {
       setScore({ points: 0, correct: 0, total: 0 });
       socket.emit("opponentScore", {
-        userID: socketID,
+        userID: cookies.username,
         ...{ points: 0, correct: 0, total: 0 },
       });
     }

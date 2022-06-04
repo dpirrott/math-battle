@@ -1,6 +1,7 @@
 import "./App.css";
 
 import Quiz from "./components/Quiz";
+import { LobbyList } from "./components/Lobbies/LobbyList";
 import { io } from "socket.io-client";
 import { useState, useEffect } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
@@ -56,10 +57,11 @@ function App() {
         <Quiz socket={socket} cookies={cookies} removeCookie={removeCookie} />
       ) : (
         <>
-          <Button onClick={() => handleShowLogin()}>Login</Button>
+          {/* <Button onClick={() => handleShowLogin()}>Login</Button>
           <Button onClick={() => handleShowRegister()}>Register</Button>
           <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
-          <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
+          <Register show={showRegister} setShow={setShowRegister} register={handleRegister} /> */}
+          <LobbyList socket={socket} />
         </>
       )}
       <Footer />

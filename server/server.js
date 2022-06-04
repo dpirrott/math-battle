@@ -100,7 +100,6 @@ client.connect((err) => {
         return res.status(400).send("All fields must be populated.");
       }
       const user = await usersCollection.findOne({ username: username });
-      console.log(user);
       if (user) {
         const verifyPassword = await bcrypt.compare(password, user.password);
         if (verifyPassword) {

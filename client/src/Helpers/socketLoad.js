@@ -32,7 +32,7 @@ const socketLoad = ({
     const tempScore = JSON.parse(localStorage.getItem("score")) || score;
     console.log("sending score:", tempScore);
     setOpponentName(name);
-    socket.emit("opponentScore", { userID: socketID, ...tempScore });
+    socket.emit("opponentScore", { userID: cookies.username, ...tempScore });
   });
 
   socket.on("current players", (players) => {
