@@ -15,6 +15,7 @@ function App() {
   const [socket, setSocket] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(null);
   const [roomID, setRoomID] = useState(null);
+  const [opponentName, setOpponentName] = useState(null);
 
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
@@ -33,6 +34,13 @@ function App() {
   };
   const handleRegister = (username, password, passwordConf) => {
     return axios.post("http://localhost:5000/register", { username, password, passwordConf });
+  };
+
+  const handleLeaveRoom = () => {
+    console.log("Left the room");
+    console.log(roomID);
+    socket.emit("leave room", { username: cookies.username, roomID: roomID });
+    setRoomID(null);
   };
 
   useEffect(() => {
@@ -57,7 +65,10 @@ function App() {
       socket.on("current players", ({ connectedUsers, msg, roomID }) => {
         if (roomID) {
           setRoomID(roomID);
-          console.log(`Current user in room: ${connectedUsers[0] ? connectedUsers[0] : "empty"}`);
+          setOpponentName(connectedUsers ? connectedUsers[0] : null);
+          console.log(
+            `Joined room: ${roomID}, Current user in room: ${connectedUsers[0] ? connectedUsers[0] : "empty"}`
+          );
         } else {
           console.log(msg);
         }
@@ -70,7 +81,15 @@ function App() {
       {socket && cookies.username ? (
         <>
           {roomID ? (
-            <Quiz socket={socket} cookies={cookies} removeCookie={removeCookie} />
+            <Quiz
+              socket={socket}
+              cookies={cookies}
+              removeCookie={removeCookie}
+              handleLeaveRoom={handleLeaveRoom}
+              opponentName={opponentName}
+              setOpponentName={setOpponentName}
+              roomID={roomID}
+            />
           ) : (
             <LobbyList socket={socket} username={cookies.username} />
           )}

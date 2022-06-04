@@ -9,7 +9,7 @@ import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";
 import axios from "axios";
 
-const Quiz = ({ socket, cookies, removeCookie }) => {
+const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, setOpponentName, roomID }) => {
   const [gameSettings, setGameSettings] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
@@ -20,7 +20,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     total: 0,
   });
   const [socketID, setSocketID] = useState(null);
-  const [opponentName, setOpponentName] = useState(null);
+
   const [opponentResult, setOpponentResult] = useState(null);
   const [opponentResponses, setOpponentResponses] = useState(null);
 
@@ -48,6 +48,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
         socketID,
         cookies,
         removeCookie,
+        roomID,
         setOpponentName,
         setQuestions,
         setClock,
@@ -137,6 +138,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   };
 
   const handleLogout = () => {
+    handleLeaveRoom();
     axios
       .post("/logout", { username: cookies.username })
       .then((res) => {
@@ -181,7 +183,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
   useEffect(() => {
     if (score.total > 0) {
       localStorage.setItem("score", JSON.stringify(score));
-      socket.emit("opponentScore", { userID: socketID, ...score });
+      socket.emit("opponentScore", { score: { userID: socketID, ...score } }, roomID);
     }
 
     if (finish) {
@@ -211,7 +213,7 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
       if (scoreCached) {
         setScore(scoreCached);
         console.log("Emitting score: ", scoreCached);
-        socket.emit("opponentScore", { userID: cookies.username, ...scoreCached });
+        socket.emit("opponentScore", { score: { userID: cookies.username, ...scoreCached }, roomID });
         setQuestion(questionsCached[scoreCached.total]);
         setDisplay("0");
         setTimerIsRunning(true);
@@ -220,8 +222,11 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
     } else {
       setScore({ points: 0, correct: 0, total: 0 });
       socket.emit("opponentScore", {
-        userID: cookies.username,
-        ...{ points: 0, correct: 0, total: 0 },
+        score: {
+          userID: cookies.username,
+          ...{ points: 0, correct: 0, total: 0 },
+        },
+        roomID,
       });
     }
   }, []);
@@ -236,11 +241,18 @@ const Quiz = ({ socket, cookies, removeCookie }) => {
 
       {clock === 0 ? (
         <>
-          <Button onClick={() => startGame()}>Start</Button>
+          <Button variant="success" onClick={() => startGame()}>
+            Start
+          </Button>
           <Button id="settingsBtn" onClick={() => handleShow()}>
             <SettingsIcon />
           </Button>
-          <Button onClick={() => handleLogout()}>Logout</Button>
+          <Button variant="danger" onClick={() => handleLeaveRoom()}>
+            Leave room
+          </Button>
+          <Button variant="secondary" onClick={() => handleLogout()}>
+            Logout
+          </Button>
         </>
       ) : (
         <Button onClick={() => endGame()}>End Game</Button>

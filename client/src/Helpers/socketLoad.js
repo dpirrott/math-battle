@@ -5,6 +5,7 @@ const socketLoad = ({
   setScore,
   cookies,
   removeCookie,
+  roomID,
   setOpponentName,
   setGameSettings,
   setQuestions,
@@ -23,6 +24,12 @@ const socketLoad = ({
     }
   });
 
+  socket.on("player left", (username) => {
+    console.log(`${username} has left the room.`);
+    setOpponentName(null);
+    setOpponentResult(null);
+  });
+
   socket.on("connect_error", () => {
     setTimeout(() => socket.connect(), 5000);
   });
@@ -32,16 +39,16 @@ const socketLoad = ({
     const tempScore = JSON.parse(localStorage.getItem("score")) || score;
     console.log("sending score:", tempScore);
     setOpponentName(name);
-    socket.emit("opponentScore", { userID: cookies.username, ...tempScore });
+    socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
   });
 
-  socket.on("current players", (players) => {
-    // For now assume only 1 opponent
-    if (players.length > 0) {
-      console.log("Player already in lobby: ", players[0].name);
-      setOpponentName(players[0].name);
-    }
-  });
+  // socket.on("current players", (players) => {
+  //   // For now assume only 1 opponent
+  //   if (players.length > 0) {
+  //     console.log("Player already in lobby: ", players[0].name);
+  //     setOpponentName(players[0].name);
+  //   }
+  // });
 
   socket.on("playerAnswer", (answer) => {
     console.log("Player answered: ", answer);
@@ -100,10 +107,10 @@ const socketLoad = ({
     setOpponentResponses(opponentResponses);
   });
 
-  socket.on("opponentScore", (result) => {
+  socket.on("opponentScore", (score) => {
     // console.log(result);
     // console.log("Points:", result.points);
-    setOpponentResult(result);
+    setOpponentResult(score);
   });
 
   socket.on("opponent disconnect", (username) => {

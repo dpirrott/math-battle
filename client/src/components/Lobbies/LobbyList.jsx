@@ -2,7 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 
 export const LobbyList = ({ socket, username }) => {
-  const gameNumbers = [1, 2, 3, 4, 5];
+  const gameNumbers = ["1", "2", "3", "4", "5"];
 
   const gameRooms = () => {
     return gameNumbers.map((number) => (

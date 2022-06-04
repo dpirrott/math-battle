@@ -168,7 +168,7 @@ let gameSettings = {
   testDuration: 60,
   totalQuestions: 20,
 };
-const gamesList = {
+let gamesList = {
   1: {
     connectedUsers: [],
   },
@@ -200,11 +200,24 @@ io.on("connection", (socket) => {
       io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
       connectedUsers.push(username);
-      console.log(gamesList[number]);
+      console.log(gamesList);
     } else {
       io.to(socket.id).emit("current players", { msg: "Room is full." });
       console.log("Room is full");
+      console.log(gamesList);
     }
+  });
+
+  socket.on("leave room", ({ username, roomID }) => {
+    console.log("Type of:", typeof roomID);
+    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
+    console.log(remainingPlayer);
+    gamesList = { ...gamesList, [roomID]: { connectedUsers: remainingPlayer } };
+    io.emit("update rooms", gamesList);
+    if (remainingPlayer.length === 1) {
+      socket.broadcast.to(roomID).emit("player left", username);
+    }
+    console.log("GamesList:", gamesList);
   });
 
   socket.on("new player", (player) => {
@@ -235,9 +248,9 @@ io.on("connection", (socket) => {
     gameSettings = { ...newSettings };
   });
 
-  socket.on("opponentScore", (result) => {
-    console.log(result);
-    socket.broadcast.emit("opponentScore", result);
+  socket.on("opponentScore", ({ score, roomID }) => {
+    console.log(score);
+    socket.broadcast.to(roomID).emit("opponentScore", score);
   });
 
   socket.on("start game", () => {
