@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import RangeSlider from "react-bootstrap-range-slider";
 import "./Settings.css";
 
-export const SettingsModal = ({ handleClose, show, gameSettings, socket }) => {
+export const SettingsModal = ({ handleClose, show, gameSettings, socket, roomID }) => {
   const [difficulty, setDifficulty] = useState(2);
   const [duration, setDuration] = useState(1);
   const [maxQuestions, setMaxQuestions] = useState(40);
@@ -21,7 +21,7 @@ export const SettingsModal = ({ handleClose, show, gameSettings, socket }) => {
       testDuration: duration * 60,
       totalQuestions: maxQuestions,
     };
-    socket.emit("updateGameSettings", newSettings);
+    socket.emit("updateGameSettings", { newSettings, roomID });
     handleClose();
   };
 

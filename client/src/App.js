@@ -41,10 +41,13 @@ function App() {
     console.log(roomID);
     socket.emit("leave room", { username: cookies.username, roomID: roomID });
     setRoomID(null);
+    localStorage.clear("roomID");
   };
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
+    const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
+    setRoomID(roomIDCached);
     if (cookies.username) {
       axios
         .post("/validUsername", { username: cookies.username }, { withCredentials: true })
@@ -63,8 +66,11 @@ function App() {
   useEffect(() => {
     if (socket) {
       socket.on("current players", ({ connectedUsers, msg, roomID }) => {
-        if (roomID) {
+        const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
+        roomID = roomIDCached || roomID;
+        if (roomIDCached || roomID) {
           setRoomID(roomID);
+          localStorage.setItem("roomID", roomID);
           setOpponentName(connectedUsers ? connectedUsers[0] : null);
           console.log(
             `Joined room: ${roomID}, Current user in room: ${connectedUsers[0] ? connectedUsers[0] : "empty"}`
@@ -89,6 +95,7 @@ function App() {
               opponentName={opponentName}
               setOpponentName={setOpponentName}
               roomID={roomID}
+              setRoomID={setRoomID}
             />
           ) : (
             <LobbyList socket={socket} username={cookies.username} />

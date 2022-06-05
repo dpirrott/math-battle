@@ -171,18 +171,43 @@ let gameSettings = {
 let gamesList = {
   1: {
     connectedUsers: [],
+    gameSettings: {
+      difficulty: 1,
+      testDuration: 60,
+      totalQuestions: 20,
+    },
   },
   2: {
     connectedUsers: [],
+    gameSettings: {
+      difficulty: 1,
+      testDuration: 60,
+      totalQuestions: 20,
+    },
   },
   3: {
     connectedUsers: [],
+    gameSettings: {
+      difficulty: 1,
+      testDuration: 60,
+      totalQuestions: 20,
+    },
   },
   4: {
     connectedUsers: [],
+    gameSettings: {
+      difficulty: 1,
+      testDuration: 60,
+      totalQuestions: 20,
+    },
   },
   5: {
     connectedUsers: [],
+    gameSettings: {
+      difficulty: 1,
+      testDuration: 60,
+      totalQuestions: 20,
+    },
   },
 };
 let pauseState = false;
@@ -197,6 +222,14 @@ io.on("connection", (socket) => {
     socket.join(number);
     const connectedUsers = gamesList[number].connectedUsers;
     if (connectedUsers.length < 2) {
+      if (connectedUsers.length === 0) {
+        //Reset game settings, fresh lobby
+        gamesList[number].gameSettings = {
+          difficulty: 1,
+          testDuration: 60,
+          totalQuestions: 20,
+        };
+      }
       io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
       connectedUsers.push(username);
@@ -239,13 +272,13 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("opponentResponses", responses);
   });
 
-  socket.on("requestSettings", () => {
-    io.to(socket.id).emit("currentSettings", gameSettings);
+  socket.on("requestSettings", (roomID) => {
+    io.to(roomID).emit("currentSettings", gamesList[roomID].gameSettings);
   });
 
-  socket.on("updateGameSettings", (newSettings) => {
+  socket.on("updateGameSettings", ({ newSettings, roomID }) => {
     console.log("new settings:", newSettings);
-    gameSettings = { ...newSettings };
+    gamesList[roomID].gameSettings = { ...newSettings };
   });
 
   socket.on("opponentScore", ({ score, roomID }) => {

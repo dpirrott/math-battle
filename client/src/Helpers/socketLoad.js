@@ -108,8 +108,6 @@ const socketLoad = ({
   });
 
   socket.on("opponentScore", (score) => {
-    // console.log(result);
-    // console.log("Points:", result.points);
     setOpponentResult(score);
   });
 

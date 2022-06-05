@@ -34,7 +34,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    socket.emit("requestSettings");
+    socket.emit("requestSettings", roomID);
     setShow(true);
   };
 
@@ -208,6 +208,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
     const questionsCached = JSON.parse(localStorage.getItem("questions"));
     const scoreCached = JSON.parse(localStorage.getItem("score"));
     const totalTimeCached = JSON.parse(localStorage.getItem("totalTime"));
+
     if (questionsCached) {
       setQuestions(questionsCached);
       if (scoreCached) {
@@ -284,7 +285,13 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
         />
       )}
 
-      <SettingsModal handleClose={handleClose} show={show} gameSettings={gameSettings} socket={socket} />
+      <SettingsModal
+        handleClose={handleClose}
+        show={show}
+        gameSettings={gameSettings}
+        socket={socket}
+        roomID={roomID}
+      />
     </div>
   );
 };
