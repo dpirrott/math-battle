@@ -6,6 +6,7 @@ const socketLoad = ({
   cookies,
   removeCookie,
   roomID,
+  setRoomID,
   setOpponentName,
   setGameSettings,
   setQuestions,
@@ -18,9 +19,12 @@ const socketLoad = ({
   setDisplay,
 }) => {
   socket.on("connect", () => {
-    if (cookies.username) {
+    const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
+    console.log(`cookies:${cookies}, cookies.username:${cookies.username}`);
+    if (cookies && roomIDCached) {
       // console.log("I was previously known as ", cookies.name);
-      socket.emit("new player", { name: cookies.username, socketID: socket.id });
+      setRoomID(roomIDCached);
+      socket.emit("join room", { username: cookies.username, number: Number(roomIDCached) });
     }
   });
 
@@ -39,6 +43,7 @@ const socketLoad = ({
     const tempScore = JSON.parse(localStorage.getItem("score")) || score;
     console.log("sending score:", tempScore);
     setOpponentName(name);
+    setOpponentResult({ points: 0, correct: 0, total: 0 });
     socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
   });
 
@@ -118,6 +123,7 @@ const socketLoad = ({
   });
 
   socket.on("disconnect", () => {
+    socket.emit("opponent disconnect", { username: cookies.username, roomID });
     console.log("Disconnected");
     localStorage.clear();
   });

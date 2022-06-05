@@ -9,7 +9,7 @@ import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";
 import axios from "axios";
 
-const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, setOpponentName, roomID }) => {
+const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, setOpponentName, roomID, setRoomID }) => {
   const [gameSettings, setGameSettings] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
@@ -49,6 +49,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
         cookies,
         removeCookie,
         roomID,
+        setRoomID,
         setOpponentName,
         setQuestions,
         setClock,
@@ -143,7 +144,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
       .post("/logout", { username: cookies.username })
       .then((res) => {
         console.log(res.data.msg);
-        socket.emit("opponent disconnect", cookies.username);
+        socket.emit("opponent disconnect", { username: cookies.username, roomID });
         localStorage.clear();
         removeCookie("username", { path: "/" });
       })
@@ -192,8 +193,9 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   }, [finish, score, socket, socketID]);
 
   // useEffect(() => {
-  //   if (socketID) {
-  //     socket.emit("new player", { name: cookies.username, socketID: socketID });
+  //   const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
+  //   if (socketID && roomIDCached && !roomID) {
+  //     socket.emit("join room", { username: cookies.username, number: roomID });
   //   }
   // }, [cookies, socket, socketID]);
 
@@ -221,14 +223,15 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
         setTotalTime(totalTimeCached);
       }
     } else {
-      setScore({ points: 0, correct: 0, total: 0 });
-      socket.emit("opponentScore", {
-        score: {
-          userID: cookies.username,
-          ...{ points: 0, correct: 0, total: 0 },
-        },
-        roomID,
-      });
+      if (scoreCached && !score) setScore({ points: 0, correct: 0, total: 0 });
+      localStorage.setItem("score", JSON.stringify({ points: 0, correct: 0, total: 0 }));
+      // socket.emit("opponentScore", {
+      //   score: {
+      //     userID: cookies.username,
+      //     ...{ points: 0, correct: 0, total: 0 },
+      //   },
+      //   roomID,
+      // });
     }
   }, []);
 

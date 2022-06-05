@@ -68,12 +68,13 @@ function App() {
       socket.on("current players", ({ connectedUsers, msg, roomID }) => {
         const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
         roomID = roomIDCached || roomID;
-        if (roomIDCached || roomID) {
+        if (roomID) {
           setRoomID(roomID);
           localStorage.setItem("roomID", roomID);
-          setOpponentName(connectedUsers ? connectedUsers[0] : null);
+          console.log(connectedUsers);
+          setOpponentName(connectedUsers.length > 0 ? connectedUsers[0] : null);
           console.log(
-            `Joined room: ${roomID}, Current user in room: ${connectedUsers[0] ? connectedUsers[0] : "empty"}`
+            `Joined room: ${roomID}, Current user in room: ${connectedUsers.length > 0 ? connectedUsers[0] : "empty"}`
           );
         } else {
           console.log(msg);

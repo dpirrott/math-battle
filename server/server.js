@@ -163,11 +163,6 @@ client.connect((err) => {
   });
 });
 
-let gameSettings = {
-  difficulty: 1,
-  testDuration: 60,
-  totalQuestions: 20,
-};
 let gamesList = {
   1: {
     connectedUsers: [],
@@ -221,6 +216,13 @@ io.on("connection", (socket) => {
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
     const connectedUsers = gamesList[number].connectedUsers;
+    if (connectedUsers.includes(username)) {
+      const otherUser = connectedUsers.filter((player) => player !== username);
+      io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
+      socket.broadcast.to(number).emit("new player", username);
+      console.log(gamesList);
+      return;
+    }
     if (connectedUsers.length < 2) {
       if (connectedUsers.length === 0) {
         //Reset game settings, fresh lobby
@@ -235,7 +237,7 @@ io.on("connection", (socket) => {
       connectedUsers.push(username);
       console.log(gamesList);
     } else {
-      io.to(socket.id).emit("current players", { msg: "Room is full." });
+      io.to(socket.id).emit("current players", { connectedUsers, msg: "Room is full." });
       console.log("Room is full");
       console.log(gamesList);
     }
@@ -245,7 +247,10 @@ io.on("connection", (socket) => {
     console.log("Type of:", typeof roomID);
     const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
     console.log(remainingPlayer);
-    gamesList = { ...gamesList, [roomID]: { connectedUsers: remainingPlayer } };
+    gamesList = {
+      ...gamesList,
+      [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
+    };
     io.emit("update rooms", gamesList);
     if (remainingPlayer.length === 1) {
       socket.broadcast.to(roomID).emit("player left", username);
@@ -328,17 +333,31 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("resume");
   });
 
-  socket.on("opponent disconnect", (username) => {
+  socket.on("opponent disconnect", ({ username, roomID }) => {
     console.log(`${username} has logged out.`);
-    socket.broadcast.emit("opponent disconnect", username);
+    socket.broadcast.to(roomID).emit("opponent disconnect", username);
+    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
+    console.log(remainingPlayer);
+    gamesList = {
+      ...gamesList,
+      [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
+    };
+    io.emit("update rooms", gamesList);
+    if (remainingPlayer.length === 1) {
+      socket.broadcast.to(roomID).emit("player left", username);
+    }
+  });
+
+  socket.on("disconnecting", () => {
+    const currentRooms = [...socket.rooms];
+    if (currentRooms.length > 1) {
+      socket.broadcast.to(currentRooms[1]).emit("opponent disconnect");
+    }
+    console.log(currentRooms); // the Set contains at least the socket ID
   });
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
-    socket.broadcast.emit("opponent disconnect");
-    const prevUsers = currentUsers.filter((user) => user.socketID !== socket.id);
-    console.log("Remaining players:", prevUsers);
-    currentUsers = prevUsers;
   });
 });
 
