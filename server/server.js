@@ -22,6 +22,7 @@ const { v4: uuidv4 } = require("uuid");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const { json } = require("body-parser");
 const DB_PASSWORD = process.env.DB_PASS;
 const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -211,16 +212,17 @@ const TOTAL_TIME = 20;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
+  console.log(socket);
 
   socket.on("join room", ({ number, username }) => {
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
     const connectedUsers = gamesList[number].connectedUsers;
-    if (connectedUsers.includes(username)) {
-      const otherUser = connectedUsers.filter((player) => player !== username);
+    if (connectedUsers.find((player) => player.username === username)) {
+      const otherUser = connectedUsers.filter((player) => player.username !== username);
       io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
-      console.log(gamesList);
+      console.log(JSON.stringify(gamesList, null, " "));
       return;
     }
     if (connectedUsers.length < 2) {
@@ -234,18 +236,19 @@ io.on("connection", (socket) => {
       }
       io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
-      connectedUsers.push(username);
-      console.log(gamesList);
+      connectedUsers.push({ username, ready: false });
+      console.log(JSON.stringify(gamesList, null, " "));
     } else {
       io.to(socket.id).emit("current players", { connectedUsers, msg: "Room is full." });
       console.log("Room is full");
-      console.log(gamesList);
+      console.log(JSON.stringify(gamesList, null, " "));
     }
   });
 
   socket.on("leave room", ({ username, roomID }) => {
     console.log("Type of:", typeof roomID);
-    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
+    socket.leave(roomID);
+    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player.username !== username);
     console.log(remainingPlayer);
     gamesList = {
       ...gamesList,
@@ -255,7 +258,7 @@ io.on("connection", (socket) => {
     if (remainingPlayer.length === 1) {
       socket.broadcast.to(roomID).emit("player left", username);
     }
-    console.log("GamesList:", gamesList);
+    console.log("GamesList:", JSON.stringify(gamesList, null, " "));
   });
 
   socket.on("new player", (player) => {
@@ -291,31 +294,44 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomID).emit("opponentScore", score);
   });
 
-  socket.on("start game", () => {
-    const { difficulty, testDuration, totalQuestions } = gameSettings;
-    let count = testDuration;
-    endState = false;
-    pauseState = false;
-    const questions = generateQuestions(totalQuestions, difficulty);
-    io.to("clock-room").emit("game questions", questions);
-    io.to("clock-room").emit("game timer", count, count);
-    let timer = setInterval(() => {
-      if (!pauseState) {
-        count--;
+  socket.on("player ready", ({ username, roomID }) => {
+    // Update users ready status in gamesList
+    const connectedUsers = gamesList[roomID].connectedUsers;
+    const user = connectedUsers.find((user, i) => {
+      if (user.username === username) {
+        gamesList[roomID].connectedUsers[i].ready = true;
+        return true;
       }
-      if (endState) {
-        clearInterval(timer);
-        io.to("clock-room").emit("game timer", 0);
-        io.to("clock-room").emit("finish", "Game over");
-        endState = false;
-      } else if (count === 0) {
-        clearInterval(timer);
-        io.to("clock-room").emit("game timer", count);
-        io.to("clock-room").emit("finish", "Game over");
-      } else {
-        io.to("clock-room").emit("game timer", count);
-      }
-    }, 1000);
+    });
+    const readyCount = connectedUsers.filter((user) => user.ready === true).length;
+
+    console.log(JSON.stringify(gamesList, null, " "));
+    console.log("readyCount", readyCount);
+
+    // const { difficulty, testDuration, totalQuestions } = gamesList[roomID].gameSettings;
+    // let count = testDuration;
+    // endState = false;
+    // pauseState = false;
+    // const questions = generateQuestions(totalQuestions, difficulty);
+    // io.to("clock-room").emit("game questions", questions);
+    // io.to("clock-room").emit("game timer", count, count);
+    // let timer = setInterval(() => {
+    //   if (!pauseState) {
+    //     count--;
+    //   }
+    //   if (endState) {
+    //     clearInterval(timer);
+    //     io.to("clock-room").emit("game timer", 0);
+    //     io.to("clock-room").emit("finish", "Game over");
+    //     endState = false;
+    //   } else if (count === 0) {
+    //     clearInterval(timer);
+    //     io.to("clock-room").emit("game timer", count);
+    //     io.to("clock-room").emit("finish", "Game over");
+    //   } else {
+    //     io.to("clock-room").emit("game timer", count);
+    //   }
+    // }, 1000);
   });
 
   socket.on("end game", () => {

@@ -72,9 +72,11 @@ function App() {
           setRoomID(roomID);
           localStorage.setItem("roomID", roomID);
           console.log(connectedUsers);
-          setOpponentName(connectedUsers.length > 0 ? connectedUsers[0] : null);
+          setOpponentName(connectedUsers.length > 0 ? connectedUsers[0].username : null);
           console.log(
-            `Joined room: ${roomID}, Current user in room: ${connectedUsers.length > 0 ? connectedUsers[0] : "empty"}`
+            `Joined room: ${roomID}, Current user in room: ${
+              connectedUsers.length > 0 ? connectedUsers[0].username : "empty"
+            }`
           );
         } else {
           console.log(msg);

@@ -66,7 +66,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   }, [socket, cookies.username]);
 
   const startGame = () => {
-    socket.emit("start game");
+    socket.emit("player ready", { username: cookies.username, roomID });
     // console.log("STARTING GAME");
     setOpponentResult({ points: 0 });
     setFinish(null);
@@ -191,13 +191,6 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
       socket.emit("opponentResponses", [...responses]);
     }
   }, [finish, score, socket, socketID]);
-
-  // useEffect(() => {
-  //   const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
-  //   if (socketID && roomIDCached && !roomID) {
-  //     socket.emit("join room", { username: cookies.username, number: roomID });
-  //   }
-  // }, [cookies, socket, socketID]);
 
   useEffect(() => {
     if (socket) {

@@ -47,14 +47,6 @@ const socketLoad = ({
     socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
   });
 
-  // socket.on("current players", (players) => {
-  //   // For now assume only 1 opponent
-  //   if (players.length > 0) {
-  //     console.log("Player already in lobby: ", players[0].name);
-  //     setOpponentName(players[0].name);
-  //   }
-  // });
-
   socket.on("playerAnswer", (answer) => {
     console.log("Player answered: ", answer);
   });
