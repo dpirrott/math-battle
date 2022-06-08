@@ -294,12 +294,12 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomID).emit("opponentScore", score);
   });
 
-  socket.on("player ready", ({ username, roomID }) => {
+  socket.on("player ready", ({ username, roomID, playerReady }) => {
     // Update users ready status in gamesList
     const connectedUsers = gamesList[roomID].connectedUsers;
     const user = connectedUsers.find((user, i) => {
       if (user.username === username) {
-        gamesList[roomID].connectedUsers[i].ready = true;
+        gamesList[roomID].connectedUsers[i].ready = playerReady;
         return true;
       }
     });
