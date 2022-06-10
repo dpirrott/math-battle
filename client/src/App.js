@@ -16,6 +16,7 @@ function App() {
   const [cookies, setCookie, removeCookie] = useCookies(null);
   const [roomID, setRoomID] = useState(null);
   const [opponentName, setOpponentName] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
@@ -73,6 +74,7 @@ function App() {
           localStorage.setItem("roomID", roomID);
           console.log(connectedUsers);
           setOpponentName(connectedUsers.length > 0 ? connectedUsers[0].username : null);
+          setErrorMsg(null);
           console.log(
             `Joined room: ${roomID}, Current user in room: ${
               connectedUsers.length > 0 ? connectedUsers[0].username : "empty"
@@ -80,6 +82,7 @@ function App() {
           );
         } else {
           console.log(msg);
+          setErrorMsg(msg);
         }
       });
     }
@@ -101,7 +104,7 @@ function App() {
               setRoomID={setRoomID}
             />
           ) : (
-            <LobbyList socket={socket} username={cookies.username} />
+            <LobbyList socket={socket} username={cookies.username} errorMsg={errorMsg} />
           )}
         </>
       ) : (

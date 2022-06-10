@@ -193,7 +193,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
     }
 
     if (finish) {
-      socket.emit("opponentResponses", [...responses]);
+      socket.emit("opponentResponses", { responses: [...responses], roomID });
     }
   }, [finish, score, socket, socketID]);
 

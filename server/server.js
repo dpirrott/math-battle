@@ -262,14 +262,13 @@ io.on("connection", (socket) => {
       connectedUsers.push({ username, ready: false });
       console.log(JSON.stringify(gamesList, null, " "));
     } else {
-      io.to(socket.id).emit("current players", { connectedUsers, msg: "Room is full." });
+      io.to(socket.id).emit("current players", { connectedUsers, msg: `Room ${number} is full.` });
       console.log("Room is full");
       console.log(JSON.stringify(gamesList, null, " "));
     }
   });
 
   socket.on("leave room", ({ username, roomID }) => {
-    console.log("Type of:", typeof roomID);
     socket.leave(roomID);
     const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player.username !== username);
     console.log(remainingPlayer);
@@ -298,9 +297,9 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("playerAnswer", answer);
   });
 
-  socket.on("opponentResponses", (responses) => {
+  socket.on("opponentResponses", ({ responses, roomID }) => {
     console.log("Opponents current responses:", responses);
-    socket.broadcast.emit("opponentResponses", responses);
+    socket.broadcast.to(roomID).emit("opponentResponses", responses);
   });
 
   socket.on("requestSettings", (roomID) => {

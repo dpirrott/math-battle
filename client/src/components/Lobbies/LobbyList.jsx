@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 
-export const LobbyList = ({ socket, username }) => {
+export const LobbyList = ({ socket, username, errorMsg }) => {
   const gameNumbers = [1, 2, 3, 4, 5];
 
   const gameRooms = () => {
@@ -16,5 +16,10 @@ export const LobbyList = ({ socket, username }) => {
     ));
   };
 
-  return <div className="d-grid gap-2">{gameRooms()}</div>;
+  return (
+    <div className="d-grid gap-2">
+      {gameRooms()}
+      {errorMsg && <p>{errorMsg}</p>}
+    </div>
+  );
 };
