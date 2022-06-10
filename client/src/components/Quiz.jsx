@@ -83,7 +83,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   };
 
   const endGame = () => {
-    socket.emit("end game");
+    socket.emit("end game", roomID);
     setTimerIsRunning(false);
     setClock(0);
     setFinish("Game over");
@@ -93,12 +93,12 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   };
 
   const pause = () => {
-    socket.emit("pause");
+    socket.emit("pause", roomID);
     setDisplay("PAUSED");
   };
 
   const resume = () => {
-    socket.emit("resume");
+    socket.emit("resume", roomID);
     setDisplay("0");
   };
 
@@ -189,7 +189,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
   useEffect(() => {
     if (score.total > 0) {
       localStorage.setItem("score", JSON.stringify(score));
-      socket.emit("opponentScore", { score: { userID: socketID, ...score } }, roomID);
+      socket.emit("opponentScore", { score: { userID: socketID, ...score }, roomID });
     }
 
     if (finish) {

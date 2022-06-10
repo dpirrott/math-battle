@@ -172,6 +172,11 @@ let gamesList = {
       testDuration: 60,
       totalQuestions: 20,
     },
+    gameStatus: {
+      endState: false,
+      pauseState: false,
+      // timerCount,
+    },
   },
   2: {
     connectedUsers: [],
@@ -179,6 +184,11 @@ let gamesList = {
       difficulty: 1,
       testDuration: 60,
       totalQuestions: 20,
+    },
+    gameStatus: {
+      endState: false,
+      pauseState: false,
+      // timerCount,
     },
   },
   3: {
@@ -188,6 +198,11 @@ let gamesList = {
       testDuration: 60,
       totalQuestions: 20,
     },
+    gameStatus: {
+      endState: false,
+      pauseState: false,
+      // timerCount,
+    },
   },
   4: {
     connectedUsers: [],
@@ -195,6 +210,11 @@ let gamesList = {
       difficulty: 1,
       testDuration: 60,
       totalQuestions: 20,
+    },
+    gameStatus: {
+      endState: false,
+      pauseState: false,
+      // timerCount,
     },
   },
   5: {
@@ -204,15 +224,18 @@ let gamesList = {
       testDuration: 60,
       totalQuestions: 20,
     },
+    gameStatus: {
+      endState: false,
+      pauseState: false,
+      // timerCount,
+    },
   },
 };
-let pauseState = false;
-let endState = false;
 const TOTAL_TIME = 20;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
-  console.log(socket);
+  // console.log(socket);
 
   socket.on("join room", ({ number, username }) => {
     console.log(`Number: ${number}, Username: ${username}`);
@@ -308,45 +331,47 @@ io.on("connection", (socket) => {
     console.log(JSON.stringify(gamesList, null, " "));
     console.log("readyCount", readyCount);
 
-    // const { difficulty, testDuration, totalQuestions } = gamesList[roomID].gameSettings;
-    // let count = testDuration;
-    // endState = false;
-    // pauseState = false;
-    // const questions = generateQuestions(totalQuestions, difficulty);
-    // io.to("clock-room").emit("game questions", questions);
-    // io.to("clock-room").emit("game timer", count, count);
-    // let timer = setInterval(() => {
-    //   if (!pauseState) {
-    //     count--;
-    //   }
-    //   if (endState) {
-    //     clearInterval(timer);
-    //     io.to("clock-room").emit("game timer", 0);
-    //     io.to("clock-room").emit("finish", "Game over");
-    //     endState = false;
-    //   } else if (count === 0) {
-    //     clearInterval(timer);
-    //     io.to("clock-room").emit("game timer", count);
-    //     io.to("clock-room").emit("finish", "Game over");
-    //   } else {
-    //     io.to("clock-room").emit("game timer", count);
-    //   }
-    // }, 1000);
+    if (readyCount > 1) {
+      const { difficulty, testDuration, totalQuestions } = gamesList[roomID].gameSettings;
+      let count = testDuration;
+      gamesList[roomID].gameStatus.endState = false;
+      gamesList[roomID].gameStatus.pauseState = false;
+      const questions = generateQuestions(totalQuestions, difficulty);
+      io.to(roomID).emit("game questions", questions);
+      io.to(roomID).emit("game timer", count, count);
+      let timer = setInterval(() => {
+        if (!gamesList[roomID].gameStatus.pauseState) {
+          count--;
+        }
+        if (gamesList[roomID].gameStatus.endState) {
+          clearInterval(timer);
+          io.to(roomID).emit("game timer", 0);
+          io.to(roomID).emit("finish", "Game over");
+          endState = false;
+        } else if (count === 0) {
+          clearInterval(timer);
+          io.to(roomID).emit("game timer", count);
+          io.to(roomID).emit("end game");
+        } else {
+          io.to(roomID).emit("game timer", count);
+        }
+      }, 1000);
+    }
   });
 
-  socket.on("end game", () => {
-    endState = true;
-    socket.broadcast.emit("end game");
+  socket.on("end game", (roomID) => {
+    gamesList[roomID].gameStatus.endState = true;
+    io.to(roomID).emit("end game");
   });
 
-  socket.on("pause", () => {
-    pauseState = true;
-    socket.broadcast.emit("pause");
+  socket.on("pause", (roomID) => {
+    gamesList[roomID].gameStatus.pauseState = true;
+    io.to(roomID).emit("pause");
   });
 
-  socket.on("resume", () => {
-    pauseState = false;
-    socket.broadcast.emit("resume");
+  socket.on("resume", (roomID) => {
+    gamesList[roomID].gameStatus.pauseState = false;
+    io.to(roomID).emit("resume");
   });
 
   socket.on("opponent disconnect", ({ username, roomID }) => {
