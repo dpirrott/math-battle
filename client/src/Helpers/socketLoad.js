@@ -8,6 +8,7 @@ const socketLoad = ({
   roomID,
   setRoomID,
   setOpponentName,
+  setPlayerReady,
   setGameSettings,
   setQuestions,
   setClock,
@@ -78,6 +79,7 @@ const socketLoad = ({
   socket.on("end game", () => {
     localStorage.clear();
     setTimerIsRunning(false);
+    setPlayerReady(false);
     setClock(0);
     setFinish("Game over");
     setTotalTime(null);

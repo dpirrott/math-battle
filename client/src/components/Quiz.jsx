@@ -52,6 +52,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
         roomID,
         setRoomID,
         setOpponentName,
+        setPlayerReady,
         setQuestions,
         setClock,
         setTotalTime,

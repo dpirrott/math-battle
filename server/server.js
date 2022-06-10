@@ -47,7 +47,7 @@ app.use(
     saveUninitialized: false,
     unset: "destroy",
     cookie: {
-      maxAge: 1000 * 60 * 60,
+      maxAge: 1000 * 120 * 60,
       sameSite: "lax",
       secure: false,
     },
@@ -231,7 +231,6 @@ let gamesList = {
     },
   },
 };
-const TOTAL_TIME = 20;
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
