@@ -1,0 +1,43 @@
+.lobbyList {
+  justify-content: center;
+}
+
+.lobbyCard {
+  background: #606060;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  width: 95vw;
+}
+
+.joinBtn {
+  border-radius: 10px !important;
+  min-width: fit-content;
+}
+
+.playerVsPlayerCard {
+  width: 100%;
+  background: #aeaeb6;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.playerVsPlayerCard > p {
+  margin-bottom: 0;
+}
+
+.playerVsPlayerCard > div > h3 {
+  margin-bottom: 0;
+}
+
+.versusCircle {
+  width: 42px;
+  height: 42px;
+  background: #bf0000;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+}

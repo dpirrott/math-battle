@@ -86,14 +86,14 @@ const socketLoad = ({
     setQuestions(null);
   });
 
-  socket.on("finish", () => {
-    localStorage.clear();
-    setTimerIsRunning(false);
-    setClock(0);
-    setFinish("Game over");
-    setTotalTime(null);
-    setQuestions(null);
-  });
+  // socket.on("finish", () => {
+  //   localStorage.clear();
+  //   setTimerIsRunning(false);
+  //   setClock(0);
+  //   setFinish("Game over");
+  //   setTotalTime(null);
+  //   setQuestions(null);
+  // });
 
   socket.on("pause", () => {
     setTimerIsRunning(false);
