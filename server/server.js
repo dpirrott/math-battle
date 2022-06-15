@@ -18,13 +18,16 @@ const io = socketIo(server, {
     credentials: true,
   },
 }); //in case server and client run on different urls
-const { v4: uuidv4 } = require("uuid");
+
+const registerJoinLeaveEvents = require("./helpers/socketIO/joinLeaveEvents");
+
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const { json } = require("body-parser");
 const DB_PASSWORD = process.env.DB_PASS;
 const uri = `mongodb+srv://dpirrott:${DB_PASSWORD}@personalprojectsdb.i8bpvzf.mongodb.net/?retryWrites=true&w=majority`;
+const resetRoomCollection = require("./helpers/mongoDB/resetRoomsDB");
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -72,6 +75,9 @@ client.connect((err) => {
   console.log("Connected to Database");
   const db = client.db("mentalMathBattle");
   const usersCollection = db.collection("users");
+  const roomsCollection = db.collection("rooms");
+
+  resetRoomCollection(roomsCollection);
 
   app.post("/register", async (req, res) => {
     try {
@@ -234,52 +240,61 @@ let gamesList = {
 
 io.on("connection", (socket) => {
   console.log("client connected: ", socket.id);
+
+  registerJoinLeaveEvents(io, socket, gamesList);
+
   // console.log(socket);
 
-  socket.on("join room", ({ number, username }) => {
-    console.log(`Number: ${number}, Username: ${username}`);
-    socket.join(number);
-    const connectedUsers = gamesList[number].connectedUsers;
-    if (connectedUsers.find((player) => player.username === username)) {
-      const otherUser = connectedUsers.filter((player) => player.username !== username);
-      io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
-      socket.broadcast.to(number).emit("new player", username);
-      console.log(JSON.stringify(gamesList, null, " "));
-      return;
-    }
-    if (connectedUsers.length < 2) {
-      if (connectedUsers.length === 0) {
-        //Reset game settings, fresh lobby
-        gamesList[number].gameSettings = {
-          difficulty: 1,
-          testDuration: 60,
-          totalQuestions: 20,
-        };
-      }
-      io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
-      socket.broadcast.to(number).emit("new player", username);
-      connectedUsers.push({ username, ready: false });
-      console.log(JSON.stringify(gamesList, null, " "));
-    } else {
-      io.to(socket.id).emit("current players", { connectedUsers, msg: `Room ${number} is full.` });
-      console.log("Room is full");
-      console.log(JSON.stringify(gamesList, null, " "));
-    }
-  });
+  // socket.on("join room", ({ number, username }) => {
+  //   console.log(`Number: ${number}, Username: ${username}`);
+  //   socket.join(number);
+  //   const connectedUsers = gamesList[number].connectedUsers;
+  //   if (connectedUsers.find((player) => player.username === username)) {
+  //     const otherUser = connectedUsers.filter((player) => player.username !== username);
+  //     io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
+  //     socket.broadcast.to(number).emit("new player", username);
+  //     console.log(JSON.stringify(gamesList, null, " "));
+  //     return;
+  //   }
+  //   if (connectedUsers.length < 2) {
+  //     if (connectedUsers.length === 0) {
+  //       //Reset game settings, fresh lobby
+  //       gamesList[number].gameSettings = {
+  //         difficulty: 1,
+  //         testDuration: 60,
+  //         totalQuestions: 20,
+  //       };
+  //     }
+  //     io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
+  //     socket.broadcast.to(number).emit("new player", username);
+  //     connectedUsers.push({ username, ready: false });
+  //     io.emit("update rooms", gamesList);
+  //     console.log(JSON.stringify(gamesList, null, " "));
+  //   } else {
+  //     io.to(socket.id).emit("current players", { connectedUsers, msg: `Room ${number} is full.` });
+  //     io.to(socket.id).emit("update rooms", gamesList);
+  //     console.log("Room is full");
+  //     console.log(JSON.stringify(gamesList, null, " "));
+  //   }
+  // });
 
-  socket.on("leave room", ({ username, roomID }) => {
-    socket.leave(roomID);
-    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player.username !== username);
-    console.log(remainingPlayer);
-    gamesList = {
-      ...gamesList,
-      [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
-    };
-    io.emit("update rooms", gamesList);
-    if (remainingPlayer.length === 1) {
-      socket.broadcast.to(roomID).emit("player left", username);
-    }
-    console.log("GamesList:", JSON.stringify(gamesList, null, " "));
+  // socket.on("leave room", ({ username, roomID }) => {
+  //   socket.leave(roomID);
+  //   const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player.username !== username);
+  //   console.log(remainingPlayer);
+  //   gamesList = {
+  //     ...gamesList,
+  //     [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
+  //   };
+  //   io.emit("update rooms", gamesList);
+  //   if (remainingPlayer.length === 1) {
+  //     socket.broadcast.to(roomID).emit("player left", username);
+  //   }
+  //   console.log("GamesList:", JSON.stringify(gamesList, null, " "));
+  // });
+
+  socket.on("request updated rooms", () => {
+    io.to(socket.id).emit("update rooms", gamesList);
   });
 
   socket.on("new player", (player) => {
@@ -372,32 +387,33 @@ io.on("connection", (socket) => {
     io.to(roomID).emit("resume");
   });
 
-  socket.on("opponent disconnect", ({ username, roomID }) => {
-    console.log(`${username} has logged out.`);
-    socket.broadcast.to(roomID).emit("opponent disconnect", username);
-    const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
-    console.log(remainingPlayer);
-    gamesList = {
-      ...gamesList,
-      [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
-    };
-    io.emit("update rooms", gamesList);
-    if (remainingPlayer.length === 1) {
-      socket.broadcast.to(roomID).emit("player left", username);
-    }
-  });
+  // socket.on("opponent disconnect", ({ username, roomID }) => {
+  //   console.log(`${username} has logged out.`);
+  //   socket.broadcast.to(roomID).emit("opponent disconnect", username);
+  //   const remainingPlayer = gamesList[roomID].connectedUsers.filter((player) => player !== username);
+  //   console.log(remainingPlayer);
+  //   gamesList = {
+  //     ...gamesList,
+  //     [roomID]: { connectedUsers: remainingPlayer, gameSettings: gamesList[roomID].gameSettings },
+  //   };
+  //   io.emit("update rooms", gamesList);
+  //   if (remainingPlayer.length === 1) {
+  //     socket.broadcast.to(roomID).emit("player left", username);
+  //   }
+  // });
 
-  socket.on("disconnecting", () => {
-    const currentRooms = [...socket.rooms];
-    if (currentRooms.length > 1) {
-      socket.broadcast.to(currentRooms[1]).emit("opponent disconnect");
-    }
-    console.log(currentRooms); // the Set contains at least the socket ID
-  });
+  // socket.on("disconnecting", () => {
+  //   const currentRooms = [...socket.rooms];
+  //   if (currentRooms.length > 1) {
+  //     socket.broadcast.to(currentRooms[1]).emit("opponent disconnect");
+  //   }
+  //   console.log(currentRooms); // the Set contains at least the socket ID
+  // });
 
-  socket.on("disconnect", (reason) => {
-    console.log(reason);
-  });
+  // socket.on("disconnect", (reason) => {
+  //   io.emit("update rooms", gamesList);
+  //   console.log(reason);
+  // });
 });
 
 // setInterval(() => {
