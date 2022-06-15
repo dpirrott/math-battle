@@ -1,29 +1,32 @@
-module.exports = (io, socket, gamesList) => {
-  socket.on("join room", ({ number, username }) => {
+module.exports = (io, socket, roomsCollection) => {
+  socket.on("join room", async ({ number, username }) => {
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
-    const connectedUsers = gamesList[number].connectedUsers;
-    if (connectedUsers.find((player) => player.username === username)) {
-      const otherUser = connectedUsers.filter((player) => player.username !== username);
+    const roomData = await roomsCollection.findOne({ room: number });
+    console.log(roomData);
+    const playerAlreadyInRoom = roomData.connectedUsers.find((player) => player.username === username);
+    if (playerAlreadyInRoom) {
+      const otherUser = roomData.connectedUsers.filter((player) => player.username !== username);
       io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
-      console.log(JSON.stringify(gamesList, null, " "));
+      // console.log(JSON.stringify(gamesList, null, " "));
       return;
     }
-    if (connectedUsers.length < 2) {
-      if (connectedUsers.length === 0) {
+    if (roomData.connectedUsers.length < 2) {
+      if (roomData.connectedUsers.length === 0) {
         //Reset game settings, fresh lobby
-        gamesList[number].gameSettings = {
+        roomData.gameSettings = {
           difficulty: 1,
           testDuration: 60,
           totalQuestions: 20,
         };
       }
-      io.to(socket.id).emit("current players", { connectedUsers, roomID: number });
+      io.to(socket.id).emit("current players", { connectedUsers: roomData.connectedUsers, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
-      connectedUsers.push({ username, ready: false });
-      io.emit("update rooms", gamesList);
-      console.log(JSON.stringify(gamesList, null, " "));
+      roomData.connectedUsers.push({ username, ready: false });
+      await roomsCollection.replaceOne({ room: 1 }, roomData);
+      // io.emit("update rooms", gamesList);
+      // console.log(JSON.stringify(gamesList, null, " "));
     } else {
       io.to(socket.id).emit("current players", { connectedUsers, msg: `Room ${number} is full.` });
       io.to(socket.id).emit("update rooms", gamesList);
