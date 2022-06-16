@@ -7,7 +7,6 @@ import "./LobbyCss.css";
 export const LobbyList = ({ socket, username, errorMsg }) => {
   const [allRoomsData, setAllRoomsData] = useState(null);
   const [lobbyCards, setLobbyCards] = useState(null);
-  const gameNumbers = [1, 2, 3, 4, 5];
 
   useEffect(() => {
     if (socket) {

@@ -225,10 +225,6 @@ client.connect((err) => {
     //   console.log("GamesList:", JSON.stringify(gamesList, null, " "));
     // });
 
-    socket.on("request updated rooms", () => {
-      io.to(socket.id).emit("update rooms", gamesList);
-    });
-
     socket.on("new player", (player) => {
       socket.broadcast.emit("new player", player.name);
       io.to(player.socketID).emit("current players", currentUsers);
@@ -273,8 +269,8 @@ client.connect((err) => {
       });
       const readyCount = connectedUsers.filter((user) => user.ready === true).length;
 
-      console.log(JSON.stringify(gamesList, null, " "));
-      console.log("readyCount", readyCount);
+      // console.log(JSON.stringify(gamesList, null, " "));
+      // console.log("readyCount", readyCount);
 
       if (readyCount > 1) {
         const { difficulty, testDuration, totalQuestions } = gamesList[roomID].gameSettings;

@@ -1,4 +1,12 @@
+const cursorToObject = require("../mongoDB/cursorToObject");
+
 module.exports = (io, socket, roomsCollection) => {
+  socket.on("request updated rooms", async () => {
+    const gamesList = await roomsCollection.find({}).toArray();
+    const gamesListObj = cursorToObject(gamesList);
+    io.to(socket.id).emit("update rooms", gamesListObj);
+  });
+
   socket.on("join room", async ({ number, username }) => {
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
@@ -24,15 +32,20 @@ module.exports = (io, socket, roomsCollection) => {
       io.to(socket.id).emit("current players", { connectedUsers: roomData.connectedUsers, roomID: number });
       socket.broadcast.to(number).emit("new player", username);
       roomData.connectedUsers.push({ username, ready: false });
-      await roomsCollection.replaceOne({ room: 1 }, roomData);
+      await roomsCollection.replaceOne({ room: number }, roomData);
       // io.emit("update rooms", gamesList);
       // console.log(JSON.stringify(gamesList, null, " "));
     } else {
-      io.to(socket.id).emit("current players", { connectedUsers, msg: `Room ${number} is full.` });
-      io.to(socket.id).emit("update rooms", gamesList);
+      io.to(socket.id).emit("current players", {
+        connectedUsers: roomData.connectedUsers,
+        msg: `Room ${number} is full.`,
+      });
       console.log("Room is full");
-      console.log(JSON.stringify(gamesList, null, " "));
     }
+    const gamesList = await roomsCollection.find({}).toArray();
+    const gamesListObj = cursorToObject(gamesList);
+    console.log("GamesList:", gamesListObj);
+    io.emit("update rooms", gamesListObj);
   });
 
   socket.on("leave room", ({ username, roomID }) => {
