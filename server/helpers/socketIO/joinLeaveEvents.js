@@ -8,6 +8,7 @@ module.exports = (io, socket, roomsCollection) => {
   });
 
   socket.on("join room", async ({ number, username }) => {
+    socket.username = username;
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
     const roomData = await roomsCollection.findOne({ room: number });
@@ -84,7 +85,7 @@ module.exports = (io, socket, roomsCollection) => {
   socket.on("disconnecting", () => {
     const currentRooms = [...socket.rooms];
     if (currentRooms.length > 1) {
-      socket.broadcast.to(currentRooms[1]).emit("opponent disconnect");
+      socket.broadcast.to(currentRooms[1]).emit("opponent disconnect", socket.username);
     }
     console.log(currentRooms); // the Set contains at least the socket ID
   });
