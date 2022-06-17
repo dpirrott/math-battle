@@ -48,10 +48,6 @@ const socketLoad = ({
     socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
   });
 
-  socket.on("playerAnswer", (answer) => {
-    console.log("Player answered: ", answer);
-  });
-
   socket.on("currentSettings", (settings) => {
     console.log(settings);
     setGameSettings(settings);

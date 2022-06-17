@@ -110,8 +110,6 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
       return;
     }
 
-    socket.emit("playerAnswer", formatInput);
-
     const result = Number(formatInput) === question.answer;
     console.log(result);
 
