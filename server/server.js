@@ -159,10 +159,7 @@ client.connect((err) => {
     // console.log("req.session.cookie: ", req.session.cookie);
     // console.log("req.session.username: ", req.session.username);
     // console.log("browser cookie.username:", req.body.username);
-    if (req.session.username === req.body.username) {
-      return res.json({ username: req.session.username });
-    } else if (!req.body.username && req.session.cookie) {
-      // console.log("Testing req.session.username", req.session.username);
+    if (req.session.username === req.body.username || (!req.body.username && req.session.cookie)) {
       return res.json({ username: req.session.username });
     } else {
       req.session.destroy();
@@ -187,156 +184,8 @@ client.connect((err) => {
       }
       console.log(currentUsers);
     });
-
-    // socket.on("opponentResponses", ({ responses, roomID }) => {
-    //   console.log("Opponents current responses:", responses);
-    //   socket.broadcast.to(roomID).emit("opponentResponses", responses);
-    // });
-
-    // socket.on("requestSettings", (roomID) => {
-    //   io.to(roomID).emit("currentSettings", gamesList[roomID].gameSettings);
-    // });
-
-    // socket.on("updateGameSettings", ({ newSettings, roomID }) => {
-    //   console.log("new settings:", newSettings);
-    //   gamesList[roomID].gameSettings = { ...newSettings };
-    // });
-
-    // socket.on("opponentScore", ({ score, roomID }) => {
-    //   console.log(score);
-    //   socket.broadcast.to(roomID).emit("opponentScore", score);
-    // });
-
-    // socket.on("player ready", ({ username, roomID, playerReady }) => {
-    //   // Update users ready status in gamesList
-    //   const connectedUsers = gamesList[roomID].connectedUsers;
-    //   const user = connectedUsers.find((user, i) => {
-    //     if (user.username === username) {
-    //       gamesList[roomID].connectedUsers[i].ready = playerReady;
-    //       return true;
-    //     }
-    //   });
-    //   const readyCount = connectedUsers.filter((user) => user.ready === true).length;
-
-    //   // console.log(JSON.stringify(gamesList, null, " "));
-    //   // console.log("readyCount", readyCount);
-
-    //   if (readyCount > 1) {
-    //     const { difficulty, testDuration, totalQuestions } = gamesList[roomID].gameSettings;
-    //     let count = testDuration;
-    //     gamesList[roomID].gameStatus.endState = false;
-    //     gamesList[roomID].gameStatus.pauseState = false;
-    //     const questions = generateQuestions(totalQuestions, difficulty);
-    //     io.to(roomID).emit("game questions", questions);
-    //     io.to(roomID).emit("game timer", count, count);
-    //     let timer = setInterval(() => {
-    //       if (!gamesList[roomID].gameStatus.pauseState) {
-    //         count--;
-    //       }
-    //       if (gamesList[roomID].gameStatus.endState) {
-    //         clearInterval(timer);
-    //         io.to(roomID).emit("game timer", 0);
-    //         io.to(roomID).emit("finish", "Game over");
-    //         endState = false;
-    //       } else if (count === 0) {
-    //         clearInterval(timer);
-    //         io.to(roomID).emit("game timer", count);
-    //         io.to(roomID).emit("end game");
-    //       } else {
-    //         io.to(roomID).emit("game timer", count);
-    //       }
-    //     }, 1000);
-    //   }
-    // });
-
-    // socket.on("end game", (roomID) => {
-    //   gamesList[roomID].gameStatus.endState = true;
-    //   io.to(roomID).emit("end game");
-    // });
-
-    // socket.on("pause", (roomID) => {
-    //   gamesList[roomID].gameStatus.pauseState = true;
-    //   io.to(roomID).emit("pause");
-    // });
-
-    // socket.on("resume", (roomID) => {
-    //   gamesList[roomID].gameStatus.pauseState = false;
-    //   io.to(roomID).emit("resume");
-    // });
   });
 });
-
-let gamesList = {
-  1: {
-    connectedUsers: [],
-    gameSettings: {
-      difficulty: 1,
-      testDuration: 60,
-      totalQuestions: 20,
-    },
-    gameStatus: {
-      endState: false,
-      pauseState: false,
-      // timerCount,
-    },
-  },
-  2: {
-    connectedUsers: [],
-    gameSettings: {
-      difficulty: 1,
-      testDuration: 60,
-      totalQuestions: 20,
-    },
-    gameStatus: {
-      endState: false,
-      pauseState: false,
-      // timerCount,
-    },
-  },
-  3: {
-    connectedUsers: [],
-    gameSettings: {
-      difficulty: 1,
-      testDuration: 60,
-      totalQuestions: 20,
-    },
-    gameStatus: {
-      endState: false,
-      pauseState: false,
-      // timerCount,
-    },
-  },
-  4: {
-    connectedUsers: [],
-    gameSettings: {
-      difficulty: 1,
-      testDuration: 60,
-      totalQuestions: 20,
-    },
-    gameStatus: {
-      endState: false,
-      pauseState: false,
-      // timerCount,
-    },
-  },
-  5: {
-    connectedUsers: [],
-    gameSettings: {
-      difficulty: 1,
-      testDuration: 60,
-      totalQuestions: 20,
-    },
-    gameStatus: {
-      endState: false,
-      pauseState: false,
-      // timerCount,
-    },
-  },
-};
-
-// setInterval(() => {
-//   io.to("clock-room").emit("time", new Date());
-// }, 1000);
 
 server.listen(PORT, (err) => {
   if (err) console.log(err);

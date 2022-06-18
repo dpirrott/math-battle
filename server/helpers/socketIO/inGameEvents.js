@@ -35,7 +35,7 @@ module.exports = (io, socket, roomsCollection) => {
     let roomData = await roomsCollection.findOne({ room: roomID });
     const connectedUsers = roomData.connectedUsers;
     console.log(`username ${username}, playerReady ${playerReady}`);
-    const user = connectedUsers.find((user, i) => {
+    connectedUsers.find((user, i) => {
       if (user.username === username) {
         roomData.connectedUsers[i].ready = playerReady;
         const specificUserReady = `connectedUsers.${i}.ready`;

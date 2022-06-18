@@ -20,6 +20,8 @@ export const LobbyList = ({ socket, username, errorMsg }) => {
   useEffect(() => {
     if (allRoomsData) {
       setLobbyCards(gameRooms(allRoomsData));
+    } else {
+      socket.emit("request updated rooms");
     }
   }, [allRoomsData]);
 
