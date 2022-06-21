@@ -91,7 +91,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header cookies={cookies} />
+      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} />
       {socket && cookies.username ? (
         <>
           {roomID ? (
@@ -110,12 +110,16 @@ function App() {
           )}
         </>
       ) : (
-        <>
-          <Button onClick={() => handleShowLogin()}>Login</Button>
-          <Button onClick={() => handleShowRegister()}>Register</Button>
+        <div className="landingPageContent">
+          <Button className="landingPageBtn login" onClick={() => handleShowLogin()}>
+            Login
+          </Button>
+          <Button className="landingPageBtn register" onClick={() => handleShowRegister()}>
+            Register
+          </Button>
           <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
           <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
-        </>
+        </div>
       )}
       <Footer />
     </div>

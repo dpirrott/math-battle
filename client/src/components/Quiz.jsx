@@ -248,9 +248,6 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
           <Button id="settingsBtn" onClick={() => handleShow()}>
             <SettingsIcon />
           </Button>
-          <Button variant="danger" onClick={() => handleLeaveRoom()}>
-            Leave room
-          </Button>
           <Button variant="secondary" onClick={() => handleLogout()}>
             Logout
           </Button>
