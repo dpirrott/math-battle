@@ -18,6 +18,7 @@ function App() {
   const [roomID, setRoomID] = useState(null);
   const [opponentName, setOpponentName] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [inGame, setInGame] = useState(false);
 
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
@@ -91,7 +92,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} />
+      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} />
       {socket && cookies.username ? (
         <>
           {roomID ? (
@@ -104,9 +105,17 @@ function App() {
               setOpponentName={setOpponentName}
               roomID={roomID}
               setRoomID={setRoomID}
+              setInGame={setInGame}
             />
           ) : (
-            <LobbyList socket={socket} username={cookies.username} errorMsg={errorMsg} />
+            <LobbyList
+              socket={socket}
+              username={cookies.username}
+              errorMsg={errorMsg}
+              handleLeaveRoom={handleLeaveRoom}
+              roomID={roomID}
+              removeCookie={removeCookie}
+            />
           )}
         </>
       ) : (

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
-import SettingsIcon from "@mui/icons-material/Settings";
+
 import "../App.css";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./InGameHeader";
 import { KeyPad } from "./KeyPad/Keypad";
 import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";
-import axios from "axios";
+import { PreGameLobby } from "./PreGameLobby";
 
-const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, setOpponentName, roomID, setRoomID }) => {
+const Quiz = ({ socket, cookies, removeCookie, opponentName, setOpponentName, roomID, setRoomID, setInGame }) => {
   const [gameSettings, setGameSettings] = useState(null);
   const [question, setQuestion] = useState(null);
   const [questions, setQuestions] = useState(null);
@@ -142,19 +142,6 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
     setResponses((prev) => [...prev, response]);
   };
 
-  const handleLogout = () => {
-    handleLeaveRoom();
-    axios
-      .post("/logout", { username: cookies.username })
-      .then((res) => {
-        console.log(res.data.msg);
-        socket.emit("opponent disconnect", { username: cookies.username, roomID });
-        localStorage.clear();
-        removeCookie("username", { path: "/" });
-      })
-      .catch((err) => console.log("Logout error:", err));
-  };
-
   useEffect(() => {
     const renderQuestion = () => {
       const retrievedQuestion = questions[score.total];
@@ -171,6 +158,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
 
   useEffect(() => {
     if (questions) {
+      setInGame(true);
       const scoreCached = JSON.parse(localStorage.getItem("score"));
       if (scoreCached) {
         setScore(scoreCached);
@@ -192,6 +180,7 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
     }
 
     if (finish) {
+      setInGame(false);
       socket.emit("opponentResponses", { responses: [...responses], roomID });
     }
   }, [finish, score, socket, socketID]);
@@ -222,53 +211,34 @@ const Quiz = ({ socket, cookies, removeCookie, handleLeaveRoom, opponentName, se
     } else {
       if (scoreCached && !score) setScore({ points: 0, correct: 0, total: 0 });
       localStorage.setItem("score", JSON.stringify({ points: 0, correct: 0, total: 0 }));
-      // socket.emit("opponentScore", {
-      //   score: {
-      //     userID: cookies.username,
-      //     ...{ points: 0, correct: 0, total: 0 },
-      //   },
-      //   roomID,
-      // });
     }
   }, []);
 
   return (
     <div>
-      <h2>
-        "{cookies.username}" {opponentName ? `Vs. "${opponentName}"` : "--> waiting for opponent to join..."}
-      </h2>
-
       {finish && <h2>{finish}</h2>}
 
       {clock === 0 ? (
         <>
-          <Button variant="success" onClick={() => startGame()}>
-            {playerReady ? "Unready" : "Ready"}
-          </Button>
-          <Button id="settingsBtn" onClick={() => handleShow()}>
-            <SettingsIcon />
-          </Button>
-          <Button variant="secondary" onClick={() => handleLogout()}>
-            Logout
-          </Button>
+          <PreGameLobby handleShow={handleShow} startGame={startGame} />
         </>
       ) : (
-        <Button onClick={() => endGame()}>End Game</Button>
+        <Header
+          cookies={cookies}
+          score={score}
+          opponentName={opponentName}
+          opponentResult={opponentResult}
+          clock={clock}
+          finish={finish}
+          setFinish={setFinish}
+          timerIsRunning={timerIsRunning}
+          setTimerIsRunning={setTimerIsRunning}
+          totalTime={totalTime}
+          onPause={() => pause()}
+          onResume={() => resume()}
+        />
       )}
-      <Header
-        cookies={cookies}
-        score={score}
-        opponentName={opponentName}
-        opponentResult={opponentResult}
-        clock={clock}
-        finish={finish}
-        setFinish={setFinish}
-        timerIsRunning={timerIsRunning}
-        setTimerIsRunning={setTimerIsRunning}
-        totalTime={totalTime}
-        onPause={() => pause()}
-        onResume={() => resume()}
-      />
+
       {/* <Timer /> */}
       {questions && (
         <KeyPad display={display} setDisplay={setDisplay} question={question} handleSubmit={handleSubmit} />

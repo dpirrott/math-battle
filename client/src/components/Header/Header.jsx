@@ -2,7 +2,7 @@ import React from "react";
 import "./Header.css";
 import Button from "react-bootstrap/Button";
 
-export const Header = ({ cookies, roomID, handleLeaveRoom }) => {
+export const Header = ({ cookies, roomID, handleLeaveRoom, inGame, endGame }) => {
   return (
     <div className="headerContainer">
       {!cookies.username && <h1 className="headerText">Math Battle</h1>}
@@ -12,6 +12,7 @@ export const Header = ({ cookies, roomID, handleLeaveRoom }) => {
           Leave room
         </Button>
       )}
+      {inGame && <Button onClick={() => endGame()}>End Game</Button>}
     </div>
   );
 };
