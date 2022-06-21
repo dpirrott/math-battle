@@ -1,5 +1,6 @@
-const cursorToObject = require("../mongoDB/cursorToObject");
 const { generateQuestions } = require("../generateQuestions");
+const cursorToObject = require("../mongoDB/cursorToObject");
+const { clearInterval } = require("timers");
 
 module.exports = (io, socket, roomsCollection) => {
   socket.on("opponentResponses", ({ responses, roomID }) => {

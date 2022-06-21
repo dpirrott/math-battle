@@ -10,6 +10,7 @@ import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { Footer } from "./components/Footer";
 import axios from "axios";
+import { Header } from "./components/Header/Header";
 
 function App() {
   const [socket, setSocket] = useState(null);
@@ -90,6 +91,7 @@ function App() {
 
   return (
     <div className="App">
+      <Header cookies={cookies} />
       {socket && cookies.username ? (
         <>
           {roomID ? (

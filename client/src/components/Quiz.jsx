@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import SettingsIcon from "@mui/icons-material/Settings";
 import "../App.css";
 import { socketLoad } from "../Helpers/socketLoad";
-import { Header } from "./Header";
+import { Header } from "./InGameHeader";
 import { KeyPad } from "./KeyPad/Keypad";
 import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";

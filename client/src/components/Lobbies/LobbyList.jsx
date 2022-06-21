@@ -50,9 +50,6 @@ export const LobbyList = ({ socket, username, errorMsg }) => {
 
   return (
     <div>
-      <header>
-        <h1>Choose a room</h1>
-      </header>
       <div className="d-grid gap-2 lobbyList">
         {lobbyCards}
         {errorMsg && <p>{errorMsg}</p>}

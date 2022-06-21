@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background: #3d5253;
+  min-height: 100vh;
 }
 
 #settingsBtn {
