@@ -20,6 +20,13 @@ function App() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [inGame, setInGame] = useState(false);
 
+  // Quiz state variables
+  const [clock, setClock] = useState(0);
+  const [totalTime, setTotalTime] = useState(null);
+  const [finish, setFinish] = useState(null);
+  const [timerIsRunning, setTimerIsRunning] = useState(false);
+  const [questions, setQuestions] = useState(null);
+
   // Login operations
   const [showLogin, setShowLogin] = useState(false);
   const handleShowLogin = () => {
@@ -45,6 +52,16 @@ function App() {
     socket.emit("leave room", { username: cookies.username, roomID: roomID });
     setRoomID(null);
     localStorage.clear("roomID");
+  };
+
+  const endGame = () => {
+    socket.emit("end game", roomID);
+    setTimerIsRunning(false);
+    setClock(0);
+    setFinish("Game over");
+    setTotalTime(null);
+    setQuestions(null);
+    localStorage.clear();
   };
 
   useEffect(() => {
@@ -92,7 +109,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} />
+      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} endGame={endGame} />
       {socket && cookies.username ? (
         <>
           {roomID ? (
@@ -106,6 +123,16 @@ function App() {
               roomID={roomID}
               setRoomID={setRoomID}
               setInGame={setInGame}
+              clock={clock}
+              setClock={setClock}
+              finish={finish}
+              setFinish={setFinish}
+              totalTime={totalTime}
+              setTotalTime={setTotalTime}
+              timerIsRunning={timerIsRunning}
+              setTimerIsRunning={setTimerIsRunning}
+              questions={questions}
+              setQuestions={setQuestions}
             />
           ) : (
             <LobbyList

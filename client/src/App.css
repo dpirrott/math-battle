@@ -86,6 +86,10 @@
   background: #d38105;
 }
 
-.opponent {
+.waiting {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.opponent {
+  background: #00bf91;
 }

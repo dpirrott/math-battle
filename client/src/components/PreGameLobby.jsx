@@ -24,7 +24,7 @@ export const PreGameLobby = ({ startGame, handleShow, playerReady, opponentName 
           </div>
         ) : (
           <div>
-            <div className="preGameNamePlate opponent">Waiting for player...</div>
+            <div className="preGameNamePlate waiting">Waiting for player...</div>
           </div>
         )}
       </div>

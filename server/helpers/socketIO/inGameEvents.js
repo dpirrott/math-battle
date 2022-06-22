@@ -69,6 +69,7 @@ module.exports = (io, socket, roomsCollection) => {
             io.to(roomID).emit("finish", "Game over");
             roomData.gameStatus.endState = false;
             roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.endState": false } });
+            roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
           } else if (count === 0) {
             clearInterval(timer);
             io.to(roomID).emit("game timer", count);

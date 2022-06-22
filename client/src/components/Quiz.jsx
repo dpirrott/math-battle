@@ -9,10 +9,28 @@ import { ResultsList } from "./ResultsList/ResultsList";
 import { SettingsModal } from "./Modal/SettingsModal";
 import { PreGameLobby } from "./PreGameLobby";
 
-const Quiz = ({ socket, cookies, removeCookie, opponentName, setOpponentName, roomID, setRoomID, setInGame }) => {
+const Quiz = ({
+  socket,
+  cookies,
+  removeCookie,
+  opponentName,
+  setOpponentName,
+  roomID,
+  setRoomID,
+  setInGame,
+  clock,
+  setClock,
+  finish,
+  setFinish,
+  totalTime,
+  setTotalTime,
+  timerIsRunning,
+  setTimerIsRunning,
+  questions,
+  setQuestions,
+}) => {
   const [gameSettings, setGameSettings] = useState(null);
   const [question, setQuestion] = useState(null);
-  const [questions, setQuestions] = useState(null);
   const [responses, setResponses] = useState([]);
   const [score, setScore] = useState({
     points: 0,
@@ -24,11 +42,8 @@ const Quiz = ({ socket, cookies, removeCookie, opponentName, setOpponentName, ro
   const [opponentResult, setOpponentResult] = useState(null);
   const [opponentResponses, setOpponentResponses] = useState(null);
 
-  const [clock, setClock] = useState(0);
-  const [totalTime, setTotalTime] = useState(null);
-  const [finish, setFinish] = useState(null);
   const [display, setDisplay] = useState("DISPLAY");
-  const [timerIsRunning, setTimerIsRunning] = useState(false);
+
   const [playerReady, setPlayerReady] = useState(false);
 
   // Modal show/hide operations
@@ -81,16 +96,6 @@ const Quiz = ({ socket, cookies, removeCookie, opponentName, setOpponentName, ro
     // setDisplay("0");
     // setTimerIsRunning(true);
     // socket.emit("resume");
-  };
-
-  const endGame = () => {
-    socket.emit("end game", roomID);
-    setTimerIsRunning(false);
-    setClock(0);
-    setFinish("Game over");
-    setTotalTime(null);
-    setQuestions(null);
-    localStorage.clear();
   };
 
   const pause = () => {
