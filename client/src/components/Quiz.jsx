@@ -220,7 +220,12 @@ const Quiz = ({ socket, cookies, removeCookie, opponentName, setOpponentName, ro
 
       {clock === 0 ? (
         <>
-          <PreGameLobby handleShow={handleShow} startGame={startGame} />
+          <PreGameLobby
+            handleShow={handleShow}
+            startGame={startGame}
+            opponentName={opponentName}
+            playerReady={playerReady}
+          />
         </>
       ) : (
         <Header
