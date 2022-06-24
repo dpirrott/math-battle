@@ -48,6 +48,9 @@ module.exports = (io, socket, roomsCollection) => {
     const readyCount = roomData.connectedUsers.filter((user) => user.ready === true).length;
     console.log("ReadyCount:", readyCount);
 
+    // Let opponent know ready status of current user
+    socket.broadcast.to(roomID).emit("opponent ready", { opponentReady: playerReady });
+
     if (readyCount > 1) {
       const { difficulty, testDuration, totalQuestions } = roomData.gameSettings;
       let count = testDuration;
@@ -81,6 +84,17 @@ module.exports = (io, socket, roomsCollection) => {
           console.log("Timer error", e);
         }
       }, 1000);
+    }
+  });
+
+  socket.on("request ready status", async ({ roomID, username }) => {
+    const roomData = await roomsCollection.findOne({ room: roomID });
+    const otherPlayer = roomData.connectedUsers.filter((user) => user.username !== username);
+    console.log("Otherplayer:", otherPlayer);
+    if (otherPlayer) {
+      const user = roomData.connectedUsers.filter((user) => user.username === username);
+      console.log("USER:", user);
+      io.to(socket.id).emit("opponent ready", { opponentReady: otherPlayer[0].ready, userReady: user[0].ready });
     }
   });
 

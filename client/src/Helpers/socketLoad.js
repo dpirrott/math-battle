@@ -7,6 +7,7 @@ const socketLoad = ({
   removeCookie,
   roomID,
   setRoomID,
+  setOpponentReady,
   setOpponentName,
   setPlayerReady,
   setGameSettings,
@@ -99,6 +100,13 @@ const socketLoad = ({
   socket.on("resume", () => {
     setDisplay("0");
     setTimerIsRunning(true);
+  });
+
+  socket.on("opponent ready", ({ opponentReady, userReady = null }) => {
+    setOpponentReady(opponentReady);
+    if (userReady) {
+      setPlayerReady(userReady);
+    }
   });
 
   socket.on("opponentResponses", (opponentResponses) => {

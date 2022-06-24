@@ -39,12 +39,13 @@ const Quiz = ({
   });
   const [socketID, setSocketID] = useState(null);
 
+  const [opponentReady, setOpponentReady] = useState(null);
   const [opponentResult, setOpponentResult] = useState(null);
   const [opponentResponses, setOpponentResponses] = useState(null);
 
   const [display, setDisplay] = useState("DISPLAY");
 
-  const [playerReady, setPlayerReady] = useState(false);
+  const [playerReady, setPlayerReady] = useState(null);
 
   // Modal show/hide operations
   const [show, setShow] = useState(false);
@@ -66,6 +67,7 @@ const Quiz = ({
         removeCookie,
         roomID,
         setRoomID,
+        setOpponentReady,
         setOpponentName,
         setPlayerReady,
         setQuestions,
@@ -83,19 +85,13 @@ const Quiz = ({
   }, [socket, cookies.username]);
 
   useEffect(() => {
-    socket.emit("player ready", { username: cookies.username, roomID, playerReady });
+    if (playerReady || playerReady === false) {
+      socket.emit("player ready", { username: cookies.username, roomID, playerReady });
+    }
   }, [playerReady]);
 
   const startGame = () => {
-    // console.log("STARTING GAME");
     setPlayerReady((prev) => !prev);
-    // setOpponentResult({ points: 0 });
-    // setFinish(null);
-    // setScore({ points: 0, correct: 0, total: 0 });
-    // localStorage.setItem("score", JSON.stringify({ points: 0, correct: 0, total: 0 }));
-    // setDisplay("0");
-    // setTimerIsRunning(true);
-    // socket.emit("resume");
   };
 
   const pause = () => {
@@ -230,6 +226,8 @@ const Quiz = ({
             startGame={startGame}
             opponentName={opponentName}
             playerReady={playerReady}
+            opponentReady={opponentReady}
+            cookies={cookies}
           />
         </>
       ) : (
