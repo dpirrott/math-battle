@@ -67,8 +67,8 @@ function App() {
   useEffect(() => {
     const socket = io("http://localhost:5000");
     const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
-    setRoomID(roomIDCached);
     if (cookies.username) {
+      setRoomID(roomIDCached);
       axios
         .post("/validUsername", { username: cookies.username }, { withCredentials: true })
         .then((res) => {
@@ -79,6 +79,8 @@ function App() {
           console.log(err.response.data.msg);
           removeCookie("username", { path: "/" });
         });
+    } else {
+      localStorage.clear();
     }
     setSocket(socket);
   }, []);
