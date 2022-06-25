@@ -17,7 +17,7 @@ export const Header = ({
 }) => {
   return (
     <div id="header">
-      <div className="scoreCard">
+      <div className="scoreCard user">
         <h2>{cookies.username}</h2>
         <h1>{opponentName && score.points}</h1>
       </div>
@@ -34,7 +34,7 @@ export const Header = ({
         />
       )}
 
-      <div className="scoreCard">
+      <div className="scoreCard opponent">
         <h2>{opponentName || "Waiting for opponent..."}</h2>
         <h1>{opponentResult && opponentResult.points}</h1>
       </div>

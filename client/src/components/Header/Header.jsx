@@ -7,12 +7,16 @@ export const Header = ({ cookies, roomID, handleLeaveRoom, inGame, endGame }) =>
     <div className="headerContainer">
       {!cookies.username && <h1 className="headerText">Math Battle</h1>}
       {!roomID && cookies.username && <h1 className="headerText">Choose a room</h1>}
-      {roomID && cookies.username && (
+      {roomID && cookies.username && !inGame && (
         <Button variant="danger" className="headerBtn" onClick={() => handleLeaveRoom()}>
           Leave room
         </Button>
       )}
-      {inGame && <Button onClick={() => endGame()}>End Game</Button>}
+      {inGame && (
+        <Button variant="danger" className="headerBtn" onClick={() => endGame()}>
+          End Game
+        </Button>
+      )}
     </div>
   );
 };
