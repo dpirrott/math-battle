@@ -88,28 +88,47 @@ module.exports = (io, socket, roomsCollection) => {
   });
 
   socket.on("request ready status", async ({ roomID, username }) => {
-    const roomData = await roomsCollection.findOne({ room: roomID });
-    const otherPlayer = roomData.connectedUsers.filter((user) => user.username !== username);
-    console.log("Otherplayer:", otherPlayer);
-    if (otherPlayer) {
-      const user = roomData.connectedUsers.filter((user) => user.username === username);
-      console.log("USER:", user);
-      io.to(socket.id).emit("opponent ready", { opponentReady: otherPlayer[0].ready, userReady: user[0].ready });
+    try {
+      const roomData = await roomsCollection.findOne({ room: roomID });
+      const otherPlayer = roomData.connectedUsers.filter((user) => {
+        console.log(`user.username: ${user.username}, username: ${username}`);
+        return user.username !== username;
+      });
+      console.log("Otherplayer:", otherPlayer);
+      if (otherPlayer.length > 0) {
+        const user = roomData.connectedUsers.filter((user) => user.username === username);
+        console.log("USER:", user);
+        io.to(socket.id).emit("opponent ready", { opponentReady: otherPlayer[0].ready, userReady: user[0].ready });
+      }
+    } catch (e) {
+      console.log("Error:", e);
     }
   });
 
   socket.on("end game", async (roomID) => {
-    io.to(roomID).emit("end game");
-    await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.endState": true } });
+    try {
+      io.to(roomID).emit("end game");
+      await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.endState": true } });
+    } catch (e) {
+      console.log("Error:", e);
+    }
   });
 
   socket.on("pause", async (roomID) => {
-    io.to(roomID).emit("pause");
-    await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": true } });
+    try {
+      io.to(roomID).emit("pause");
+      await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": true } });
+    } catch (e) {
+      console.log("Error:", e);
+    }
   });
 
   socket.on("resume", async (roomID) => {
-    io.to(roomID).emit("resume");
-    await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
+    try {
+      io.to(roomID).emit("resume");
+      await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
+    } catch (e) {
+      console.log("Error:", e);
+    }
   });
 };

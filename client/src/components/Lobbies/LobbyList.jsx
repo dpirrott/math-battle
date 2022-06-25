@@ -35,12 +35,12 @@ export const LobbyList = ({ socket, username, errorMsg, handleLeaveRoom, roomID,
   };
 
   const handleLogout = () => {
-    handleLeaveRoom();
     axios
       .post("/logout", { username: username })
       .then((res) => {
         console.log(res.data.msg);
         socket.emit("opponent disconnect", { username: username, roomID });
+        handleLeaveRoom();
         localStorage.clear();
         removeCookie("username", { path: "/" });
       })

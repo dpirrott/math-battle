@@ -7,7 +7,7 @@ module.exports = (io, socket, roomsCollection) => {
     io.to(socket.id).emit("update rooms", gamesListObj);
   });
 
-  socket.on("join room", async ({ number, username }) => {
+  socket.on("join room", async ({ number, username }, callback) => {
     socket.username = username;
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
@@ -40,6 +40,7 @@ module.exports = (io, socket, roomsCollection) => {
       });
       console.log("Room is full");
     }
+    callback("join room successful");
     const gamesList = await roomsCollection.find({}).toArray();
     const gamesListObj = cursorToObject(gamesList);
     console.log("GamesList:", gamesListObj);
@@ -48,37 +49,47 @@ module.exports = (io, socket, roomsCollection) => {
 
   socket.on("leave room", async ({ username, roomID }) => {
     try {
-      socket.leave(roomID);
-      const roomData = await roomsCollection.findOne({ room: roomID });
-      const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
-      console.log(remainingPlayer);
-      roomData.connectedUsers = remainingPlayer;
-      await roomsCollection.replaceOne({ room: roomID }, roomData);
-      const gamesList = await roomsCollection.find({}).toArray();
-      const gamesListObj = cursorToObject(gamesList);
-      io.emit("update rooms", gamesListObj);
-      if (remainingPlayer.length === 1) {
-        socket.broadcast.to(roomID).emit("player left", username);
+      if (roomID) {
+        socket.leave(roomID);
+        const roomData = await roomsCollection.findOne({ room: roomID });
+        console.log("RoomID", roomID);
+        console.log("RoomsData:", roomData);
+        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
+        console.log("Remaining Player", remainingPlayer);
+        roomData.connectedUsers = remainingPlayer;
+        await roomsCollection.replaceOne({ room: roomID }, roomData);
+        const gamesList = await roomsCollection.find({}).toArray();
+        const gamesListObj = cursorToObject(gamesList);
+        io.emit("update rooms", gamesListObj);
+        if (remainingPlayer.length === 1) {
+          socket.broadcast.to(roomID).emit("player left", username);
+        }
+        console.log("GamesList:", gamesListObj);
       }
-      console.log("GamesList:", gamesListObj);
     } catch (e) {
       console.log("Error:", e);
     }
   });
 
-  socket.on("opponent disconnect", async ({ username, roomID }) => {
-    console.log(`${username} has logged out.`);
-    socket.broadcast.to(roomID).emit("opponent disconnect", username);
-    const roomData = await roomsCollection.findOne({ room: roomID });
-    const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
-    console.log(remainingPlayer);
-    roomData.connectedUsers = remainingPlayer;
-    await roomsCollection.replaceOne({ room: roomID }, roomData);
-    const gamesList = await roomsCollection.find({}).toArray();
-    const gamesListObj = cursorToObject(gamesList);
-    io.emit("update rooms", gamesListObj);
-    if (remainingPlayer.length === 1) {
-      socket.broadcast.to(roomID).emit("player left", username);
+  socket.on("opponent disconnect", async ({ username, roomID = null }) => {
+    try {
+      console.log(`${username} has logged out.`);
+      if (roomID) {
+        socket.broadcast.to(roomID).emit("opponent disconnect", username);
+        const roomData = await roomsCollection.findOne({ room: roomID });
+        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
+        console.log(remainingPlayer);
+        roomData.connectedUsers = remainingPlayer;
+        await roomsCollection.replaceOne({ room: roomID }, roomData);
+        const gamesList = await roomsCollection.find({}).toArray();
+        const gamesListObj = cursorToObject(gamesList);
+        io.emit("update rooms", gamesListObj);
+        if (remainingPlayer.length === 1) {
+          socket.broadcast.to(roomID).emit("player left", username);
+        }
+      }
+    } catch (e) {
+      console.log("Error:", e);
     }
   });
 

@@ -92,7 +92,6 @@ function App() {
         roomID = roomIDCached || roomID;
         if (roomID) {
           setRoomID(roomID);
-          socket.emit("request ready status", { roomID, username: cookies.username });
           localStorage.setItem("roomID", roomID);
           console.log(connectedUsers);
           setOpponentName(connectedUsers.length > 0 ? connectedUsers[0].username : null);

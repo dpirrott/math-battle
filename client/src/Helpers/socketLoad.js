@@ -45,6 +45,8 @@ const socketLoad = ({
     const tempScore = JSON.parse(localStorage.getItem("score")) || score;
     console.log("sending score:", tempScore);
     setOpponentName(name);
+    setOpponentReady(false);
+    setPlayerReady(false);
     setOpponentResult({ points: 0, correct: 0, total: 0 });
     socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
   });

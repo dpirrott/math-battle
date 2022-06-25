@@ -8,7 +8,10 @@ export const LobbyCard = ({ i, room, socket, username }) => {
         className="joinBtn"
         size="lg"
         onClick={() => {
-          socket.emit("join room", { number: i + 1, username });
+          socket.emit("join room", { number: i + 1, username }, (response) => {
+            console.log("response", response);
+            socket.emit("request ready status", { roomID: i + 1, username });
+          });
         }}
       >{`Room ${i + 1}`}</Button>
 
