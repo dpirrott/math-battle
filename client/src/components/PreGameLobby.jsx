@@ -47,7 +47,7 @@ export const PreGameLobby = ({
       </div>
 
       {opponentName && (
-        <Button variant="success" onClick={() => startGame()}>
+        <Button variant={playerReady ? "secondary" : "success"} onClick={() => startGame()}>
           {playerReady ? "Unready" : "Ready"}
         </Button>
       )}
