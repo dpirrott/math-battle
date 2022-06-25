@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
 
 import "../App.css";
 import { socketLoad } from "../Helpers/socketLoad";
@@ -227,7 +226,10 @@ const Quiz = ({
             opponentName={opponentName}
             playerReady={playerReady}
             opponentReady={opponentReady}
+            opponentResult={opponentResult}
             cookies={cookies}
+            score={score}
+            finish={finish}
           />
         </>
       ) : (
