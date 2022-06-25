@@ -34,6 +34,7 @@ const socketLoad = ({
     console.log(`${username} has left the room.`);
     setOpponentName(null);
     setOpponentResult(null);
+    setFinish(null);
   });
 
   socket.on("connect_error", () => {

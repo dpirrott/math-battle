@@ -51,6 +51,7 @@ function App() {
     console.log(roomID);
     socket.emit("leave room", { username: cookies.username, roomID: roomID });
     setRoomID(null);
+    setFinish(null);
     localStorage.clear("roomID");
   };
 
