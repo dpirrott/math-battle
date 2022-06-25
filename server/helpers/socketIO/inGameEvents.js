@@ -53,31 +53,41 @@ module.exports = (io, socket, roomsCollection) => {
 
     if (readyCount > 1) {
       const { difficulty, testDuration, totalQuestions } = roomData.gameSettings;
-      let count = testDuration;
+      let count = 3;
       roomData.gameStatus.endState = false;
       roomData.gameStatus.pauseState = false;
+      roomData.gameStatus.preGameState = true;
       await roomsCollection.replaceOne({ room: roomID }, roomData);
       const questions = generateQuestions(totalQuestions, difficulty);
-      io.to(roomID).emit("game questions", questions);
-      io.to(roomID).emit("game timer", count, count);
+      io.to(roomID).emit("pre game countdown", count);
+
       let timer = setInterval(async () => {
         try {
           roomData = await roomsCollection.findOne({ room: roomID });
           if (!roomData.gameStatus.pauseState) {
             count--;
           }
+          if (roomData.gameStatus.preGameState && count > 0) {
+            io.to(roomID).emit("pre game countdown", count);
+          } else if (roomData.gameStatus.preGameState && count === 0) {
+            roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
+            roomData.gameStatus.preGameState = false;
+            count = testDuration;
+            io.to(roomID).emit("pre game finished");
+            io.to(roomID).emit("game questions", questions);
+            io.to(roomID).emit("game timer", count, count);
+          }
           if (roomData.gameStatus.endState) {
             clearInterval(timer);
             io.to(roomID).emit("game timer", 0);
             io.to(roomID).emit("finish", "Game over");
-            roomData.gameStatus.endState = false;
             roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.endState": false } });
             roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
           } else if (count === 0) {
             clearInterval(timer);
             io.to(roomID).emit("game timer", count);
             io.to(roomID).emit("end game");
-          } else {
+          } else if (!roomData.gameStatus.preGameState) {
             io.to(roomID).emit("game timer", count);
           }
         } catch (e) {

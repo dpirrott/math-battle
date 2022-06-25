@@ -12,6 +12,7 @@ export const PreGameLobby = ({
   opponentName,
   opponentReady,
   opponentResult,
+  preGameCount,
   score,
   finish,
 }) => {
@@ -49,6 +50,12 @@ export const PreGameLobby = ({
         <Button variant="success" onClick={() => startGame()}>
           {playerReady ? "Unready" : "Ready"}
         </Button>
+      )}
+      {preGameCount && (
+        <>
+          <h2>Game starting in...</h2>
+          <h1>{preGameCount}</h1>
+        </>
       )}
     </div>
   );

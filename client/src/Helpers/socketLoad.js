@@ -17,6 +17,7 @@ const socketLoad = ({
   setFinish,
   setOpponentResult,
   setOpponentResponses,
+  setPreGameCount,
   setTimerIsRunning,
   setDisplay,
 }) => {
@@ -62,6 +63,7 @@ const socketLoad = ({
     localStorage.setItem("questions", JSON.stringify(questionsList));
     setScore({ points: 0, correct: 0, total: 0 });
     setFinish(null);
+    setPreGameCount(null);
     setDisplay("0");
     setTimerIsRunning(true);
     setOpponentResult({ points: 0, correct: 0, total: 0 });
@@ -74,6 +76,14 @@ const socketLoad = ({
       localStorage.setItem("totalTime", JSON.stringify(totalGameTime));
     }
     setClock(clock);
+  });
+
+  socket.on("pre game countdown", (count) => {
+    setPreGameCount(count);
+  });
+
+  socket.on("pre game finished", () => {
+    setPreGameCount(null);
   });
 
   socket.on("end game", () => {

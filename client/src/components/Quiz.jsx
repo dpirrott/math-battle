@@ -45,6 +45,7 @@ const Quiz = ({
   const [display, setDisplay] = useState("DISPLAY");
 
   const [playerReady, setPlayerReady] = useState(null);
+  const [preGameCount, setPreGameCount] = useState(null);
 
   // Modal show/hide operations
   const [show, setShow] = useState(false);
@@ -77,6 +78,7 @@ const Quiz = ({
         setQuestion,
         setOpponentResult,
         setOpponentResponses,
+        setPreGameCount,
         setTimerIsRunning,
         setDisplay,
       });
@@ -230,6 +232,7 @@ const Quiz = ({
             cookies={cookies}
             score={score}
             finish={finish}
+            preGameCount={preGameCount}
           />
         </>
       ) : (
