@@ -103,24 +103,52 @@
   background: #00bf91;
 }
 
+.countDownContainer {
+  animation-name: appear;
+  animation-duration: 300ms;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+  transform: scaleY(0);
+
+  height: 0px;
+}
+
+@keyframes appear {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scale(1);
+    height: 87px;
+  }
+}
+
 .countDownNum {
   animation-name: growAndShrink;
   animation-duration: 1000ms;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
   opacity: 0;
   font-size: 1px;
 }
 
 @keyframes growAndShrink {
   0% {
-    font-size: 1px;
+    transform: scaleY(0);
     opacity: 0;
   }
-  50% {
+  30% {
     opacity: 1;
+    transform: scaleY(1);
+    font-size: 3rem;
+  }
+  60% {
+    opacity: 1;
+    transform: scaleY(1);
     font-size: 3rem;
   }
   100% {
+    transform: scaleY(0);
     font-size: 1px;
     opacity: 0;
   }
