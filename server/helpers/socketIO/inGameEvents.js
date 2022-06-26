@@ -45,7 +45,7 @@ module.exports = (io, socket, roomsCollection) => {
       }
     });
     console.log(roomData.connectedUsers);
-    const readyCount = roomData.connectedUsers.filter((user) => user.ready === true).length;
+    let readyCount = roomData.connectedUsers.filter((user) => user.ready === true).length;
     console.log("ReadyCount:", readyCount);
 
     // Let opponent know ready status of current user
@@ -67,15 +67,27 @@ module.exports = (io, socket, roomsCollection) => {
           if (!roomData.gameStatus.pauseState) {
             count--;
           }
-          if (roomData.gameStatus.preGameState && count > 0) {
+          if (roomData.gameStatus.preGameState) {
+            readyCount = roomData.connectedUsers.filter((user) => user.ready === true).length;
+            console.log("ReadyCount:", readyCount);
+
+            if (readyCount < 2) {
+              clearInterval(timer);
+              io.to(roomID).emit("pre game finished");
+              await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
+              return;
+            }
+
             io.to(roomID).emit("pre game countdown", count);
-          } else if (roomData.gameStatus.preGameState && count === 0) {
-            roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
-            roomData.gameStatus.preGameState = false;
-            count = testDuration;
-            io.to(roomID).emit("pre game finished");
-            io.to(roomID).emit("game questions", questions);
-            io.to(roomID).emit("game timer", count, count);
+
+            if (count === 0) {
+              roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
+              roomData.gameStatus.preGameState = false;
+              count = testDuration;
+              io.to(roomID).emit("pre game finished");
+              io.to(roomID).emit("game questions", questions);
+              io.to(roomID).emit("game timer", count, count);
+            }
           }
           if (roomData.gameStatus.endState) {
             clearInterval(timer);

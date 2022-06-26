@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Button from "react-bootstrap/Button";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { ReactComponent as NotReady } from "../images/notReady.svg";
