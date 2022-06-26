@@ -28,7 +28,9 @@ export const PreGameLobby = ({
             <h2>{cookies.username}</h2>
             {opponentName && finish && <h1>{score.points}</h1>}
           </div>
-          {opponentName && (playerReady ? <Ready /> : <NotReady />)}
+          <div className={finish ? "appearAfterFinish" : ""}>
+            {opponentName && (playerReady ? <Ready /> : <NotReady />)}
+          </div>
         </div>
 
         {opponentName ? (
@@ -37,7 +39,7 @@ export const PreGameLobby = ({
               <h2>{opponentName}</h2>
               {opponentName && finish && <h1>{opponentResult.points}</h1>}
             </div>
-            {opponentReady ? <Ready /> : <NotReady />}
+            <div className={finish ? "appearAfterFinish" : ""}>{opponentReady ? <Ready /> : <NotReady />}</div>
           </div>
         ) : (
           <div>
@@ -47,7 +49,11 @@ export const PreGameLobby = ({
       </div>
 
       {opponentName && (
-        <Button variant={playerReady ? "secondary" : "success"} onClick={() => startGame()}>
+        <Button
+          className={finish ? "appearAfterFinish" : ""}
+          variant={playerReady ? "secondary" : "success"}
+          onClick={() => startGame()}
+        >
           {playerReady ? "Unready" : "Ready"}
         </Button>
       )}

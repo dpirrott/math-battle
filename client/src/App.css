@@ -153,3 +153,23 @@
     opacity: 0;
   }
 }
+
+.appearAfterFinish {
+  animation: fade-in;
+  animation-duration: 1000ms;
+  animation-delay: 1000ms;
+  animation-fill-mode: forwards;
+  opacity: 0;
+  visibility: hidden;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    visibility: visible;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
