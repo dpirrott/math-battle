@@ -2,6 +2,9 @@
   text-align: center;
   background: #3d5253;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .landingPageContent {
@@ -98,4 +101,27 @@
 
 .opponent {
   background: #00bf91;
+}
+
+.countDownNum {
+  animation-name: growAndShrink;
+  animation-duration: 1000ms;
+  animation-timing-function: ease-in-out;
+  opacity: 0;
+  font-size: 1px;
+}
+
+@keyframes growAndShrink {
+  0% {
+    font-size: 1px;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+    font-size: 3rem;
+  }
+  100% {
+    font-size: 1px;
+    opacity: 0;
+  }
 }

@@ -112,55 +112,59 @@ function App() {
 
   return (
     <div className="App">
-      <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} endGame={endGame} />
-      {socket && cookies.username ? (
-        <>
-          {roomID ? (
-            <Quiz
-              socket={socket}
-              cookies={cookies}
-              removeCookie={removeCookie}
-              handleLeaveRoom={handleLeaveRoom}
-              opponentName={opponentName}
-              setOpponentName={setOpponentName}
-              roomID={roomID}
-              setRoomID={setRoomID}
-              setInGame={setInGame}
-              clock={clock}
-              setClock={setClock}
-              finish={finish}
-              setFinish={setFinish}
-              totalTime={totalTime}
-              setTotalTime={setTotalTime}
-              timerIsRunning={timerIsRunning}
-              setTimerIsRunning={setTimerIsRunning}
-              questions={questions}
-              setQuestions={setQuestions}
-            />
-          ) : (
-            <LobbyList
-              socket={socket}
-              username={cookies.username}
-              errorMsg={errorMsg}
-              handleLeaveRoom={handleLeaveRoom}
-              roomID={roomID}
-              removeCookie={removeCookie}
-            />
-          )}
-        </>
-      ) : (
-        <div className="landingPageContent">
-          <Button className="landingPageBtn login" onClick={() => handleShowLogin()}>
-            Login
-          </Button>
-          <Button className="landingPageBtn register" onClick={() => handleShowRegister()}>
-            Register
-          </Button>
-          <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
-          <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
-        </div>
-      )}
-      <Footer />
+      <div>
+        <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} endGame={endGame} />
+        {socket && cookies.username ? (
+          <>
+            {roomID ? (
+              <Quiz
+                socket={socket}
+                cookies={cookies}
+                removeCookie={removeCookie}
+                handleLeaveRoom={handleLeaveRoom}
+                opponentName={opponentName}
+                setOpponentName={setOpponentName}
+                roomID={roomID}
+                setRoomID={setRoomID}
+                setInGame={setInGame}
+                clock={clock}
+                setClock={setClock}
+                finish={finish}
+                setFinish={setFinish}
+                totalTime={totalTime}
+                setTotalTime={setTotalTime}
+                timerIsRunning={timerIsRunning}
+                setTimerIsRunning={setTimerIsRunning}
+                questions={questions}
+                setQuestions={setQuestions}
+              />
+            ) : (
+              <LobbyList
+                socket={socket}
+                username={cookies.username}
+                errorMsg={errorMsg}
+                handleLeaveRoom={handleLeaveRoom}
+                roomID={roomID}
+                removeCookie={removeCookie}
+              />
+            )}
+          </>
+        ) : (
+          <div className="landingPageContent">
+            <Button className="landingPageBtn login" onClick={() => handleShowLogin()}>
+              Login
+            </Button>
+            <Button className="landingPageBtn register" onClick={() => handleShowRegister()}>
+              Register
+            </Button>
+            <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
+            <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
+          </div>
+        )}
+      </div>
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 }

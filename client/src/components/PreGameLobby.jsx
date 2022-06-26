@@ -54,7 +54,9 @@ export const PreGameLobby = ({
       {preGameCount && (
         <>
           <h2>Game starting in...</h2>
-          <h1>{preGameCount}</h1>
+          <h1 key={preGameCount} className="countDownNum">
+            {preGameCount}
+          </h1>
         </>
       )}
     </div>
