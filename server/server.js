@@ -45,7 +45,7 @@ app.use(
     saveUninitialized: false,
     unset: "destroy",
     cookie: {
-      maxAge: 1000 * 120 * 60,
+      maxAge: 1000 * 600 * 60,
       sameSite: "lax",
       secure: false,
     },

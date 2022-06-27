@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { ReactComponent as NotReady } from "../images/notReady.svg";
@@ -16,15 +16,33 @@ export const PreGameLobby = ({
   score,
   finish,
 }) => {
+  const [winner, setWinner] = useState(null);
+
+  useEffect(() => {
+    if (finish) {
+      if (score.points > opponentResult.points) {
+        setWinner(cookies.username);
+      } else if (score.points < opponentResult.points) {
+        setWinner(opponentName);
+      } else {
+        setWinner("Tie");
+      }
+    } else {
+      setWinner(null);
+    }
+  }, [finish]);
+
   return (
     <div>
       <Button id="settingsBtn" onClick={() => handleShow()}>
         <SettingsIcon />
       </Button>
 
+      <h1 className="gameWinnerText">{winner === "Tie" ? "Tie game!" : `${winner} wins!`}</h1>
+
       <div className="namePlatesContainer">
         <div>
-          <div className="preGameNamePlate user">
+          <div className={`preGameNamePlate user ${winner === cookies.username ? "winner" : ""}`}>
             <h2>{cookies.username}</h2>
             {opponentName && finish && <h1>{score.points}</h1>}
           </div>
@@ -35,7 +53,7 @@ export const PreGameLobby = ({
 
         {opponentName ? (
           <div>
-            <div className="preGameNamePlate opponent">
+            <div className={`preGameNamePlate opponent ${winner === opponentName ? "winner" : ""}`}>
               <h2>{opponentName}</h2>
               {opponentName && finish && <h1>{opponentResult.points}</h1>}
             </div>
