@@ -218,7 +218,7 @@ const Quiz = ({
 
   return (
     <div>
-      {finish && <h2>{finish}</h2>}
+      {finish && <h2 style={{ marginTop: "1rem", color: "white" }}>{finish}</h2>}
 
       {clock === 0 ? (
         <>

@@ -38,7 +38,11 @@ export const PreGameLobby = ({
         <SettingsIcon />
       </Button>
 
-      <h1 className="gameWinnerText">{winner === "Tie" ? "Tie game!" : `${winner} wins!`}</h1>
+      {finish && (
+        <h1 style={{ color: `${winner === cookies.username ? "#00dd00" : "red"}` }} className="gameWinnerText">
+          {winner === "Tie" ? "Tie game!" : `${winner} wins!`}
+        </h1>
+      )}
 
       <div className="namePlatesContainer">
         <div>

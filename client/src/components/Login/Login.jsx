@@ -20,6 +20,7 @@ export const Login = ({ show, login, setShow, setCookie }) => {
       .then((res) => {
         console.log(res.data);
         setCookie("username", username, { maxAge: 3600 });
+        localStorage.clear();
         handleClose();
       })
       .catch((err) => {
