@@ -7,13 +7,14 @@ export const LobbyCard = ({ i, room, socket, username }) => {
       <Button
         className="joinBtn"
         size="lg"
+        disabled={room.connectedUsers.length > 1 ? true : false}
         onClick={() => {
           socket.emit("join room", { number: i + 1, username }, (response) => {
             console.log("response", response);
             socket.emit("request ready status", { roomID: i + 1, username });
           });
         }}
-      >{`Room ${i + 1}`}</Button>
+      >{`Room ${room.connectedUsers.length > 1 ? "full" : i + 1}`}</Button>
 
       <div className="playerVsPlayerCard">
         <p>{(room.connectedUsers[0] && room.connectedUsers[0].username) || "Waiting for player..."}</p>

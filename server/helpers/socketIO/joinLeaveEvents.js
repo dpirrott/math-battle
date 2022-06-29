@@ -7,19 +7,23 @@ module.exports = (io, socket, roomsCollection) => {
     io.to(socket.id).emit("update rooms", gamesListObj);
   });
 
-  socket.on("join room", async ({ number, username }, callback) => {
+  socket.on("join room", async ({ number, username, verify = false }, callback) => {
     socket.username = username;
     console.log(`Number: ${number}, Username: ${username}`);
     socket.join(number);
     const roomData = await roomsCollection.findOne({ room: number });
     console.log(roomData);
     const playerAlreadyInRoom = roomData.connectedUsers.find((player) => player.username === username);
-    if (playerAlreadyInRoom) {
-      const otherUser = roomData.connectedUsers.filter((player) => player.username !== username);
-      io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
-      socket.broadcast.to(number).emit("new player", username);
-      return;
-    }
+
+    console.log(`playerAlreadyInRoom: ${playerAlreadyInRoom}, verify: ${verify}`);
+
+    // if (playerAlreadyInRoom && verify) {
+    //   const otherUser = roomData.connectedUsers.filter((player) => player.username !== username);
+    //   io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
+    //   socket.broadcast.to(number).emit("new player", username);
+    //   callback("success");
+    //   return;
+    // }
     if (roomData.connectedUsers.length < 2) {
       if (roomData.connectedUsers.length === 0) {
         //Reset game settings, fresh lobby
@@ -40,7 +44,7 @@ module.exports = (io, socket, roomsCollection) => {
       });
       console.log("Room is full");
     }
-    callback("join room successful");
+    // callback("join room successful");
     const gamesList = await roomsCollection.find({}).toArray();
     const gamesListObj = cursorToObject(gamesList);
     console.log("GamesList:", gamesListObj);
@@ -79,7 +83,7 @@ module.exports = (io, socket, roomsCollection) => {
         const roomData = await roomsCollection.findOne({ room: roomID });
         const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
         console.log(remainingPlayer);
-        roomData.connectedUsers = remainingPlayer;
+        roomData.connectedUsers = [...remainingPlayer];
         await roomsCollection.replaceOne({ room: roomID }, roomData);
         const gamesList = await roomsCollection.find({}).toArray();
         const gamesListObj = cursorToObject(gamesList);
@@ -93,12 +97,23 @@ module.exports = (io, socket, roomsCollection) => {
     }
   });
 
-  socket.on("disconnecting", () => {
+  socket.on("disconnecting", async () => {
     const currentRooms = [...socket.rooms];
     if (currentRooms.length > 1) {
-      socket.broadcast.to(currentRooms[1]).emit("opponent disconnect", socket.username);
+      try {
+        socket.broadcast.to(currentRooms[1]).emit("opponent disconnect", socket.username);
+        const roomData = await roomsCollection.findOne({ room: currentRooms[1] });
+        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== socket.username);
+        roomData.connectedUsers = [...remainingPlayer];
+        await roomsCollection.replaceOne({ room: currentRooms[1] }, roomData);
+        const gamesList = await roomsCollection.find({}).toArray();
+        const gamesListObj = cursorToObject(gamesList);
+        io.emit("update rooms", gamesListObj);
+      } catch (e) {
+        console.log("Error from disconnecting event:", e);
+      }
     }
-    console.log(currentRooms); // the Set contains at least the socket ID
+    console.log("CURRENT ROOMS:", currentRooms); // the Set contains at least the socket ID
   });
 
   socket.on("disconnect", async (reason) => {

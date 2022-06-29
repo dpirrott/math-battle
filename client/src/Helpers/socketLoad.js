@@ -26,8 +26,18 @@ const socketLoad = ({
     console.log(`cookies:${cookies}, cookies.username:${cookies.username}`);
     if (cookies && roomIDCached) {
       // console.log("I was previously known as ", cookies.name);
-      setRoomID(roomIDCached);
-      socket.emit("join room", { username: cookies.username, number: Number(roomIDCached) });
+      socket.emit(
+        "join room",
+        { username: cookies.username, number: Number(roomIDCached), verify: true }
+        // (roomVerification) => {
+        //   console.log(roomVerification);
+        //   if (roomVerification === "success") {
+        //     setRoomID(roomIDCached);
+        //   } else {
+        //     localStorage.clear();
+        //   }
+        // }
+      );
     }
   });
 
@@ -139,7 +149,6 @@ const socketLoad = ({
   socket.on("disconnect", () => {
     socket.emit("opponent disconnect", { username: cookies.username, roomID });
     console.log("Disconnected");
-    localStorage.clear();
   });
 };
 

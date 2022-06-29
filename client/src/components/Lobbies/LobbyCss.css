@@ -14,7 +14,7 @@
 
 .joinBtn {
   border-radius: 10px !important;
-  min-width: fit-content;
+  min-width: 105px;
 }
 
 .playerVsPlayerCard {
