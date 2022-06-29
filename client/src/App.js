@@ -2,7 +2,7 @@ import "./App.css";
 
 import Quiz from "./components/Quiz";
 import { LobbyList } from "./components/Lobbies/LobbyList";
-import { io } from "socket.io-client";
+import { connect, io } from "socket.io-client";
 import { useState, useEffect } from "react";
 import { Form, FormControl, Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
@@ -91,7 +91,7 @@ function App() {
       socket.on("current players", ({ connectedUsers, msg, roomID }) => {
         const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
         roomID = roomIDCached || roomID;
-        if (roomID) {
+        if (roomID && connectedUsers.length < 2) {
           setRoomID(roomID);
           localStorage.setItem("roomID", roomID);
           console.log(connectedUsers);
@@ -103,6 +103,10 @@ function App() {
             }`
           );
         } else {
+          if (roomIDCached) {
+            localStorage.clear("roomID");
+            setRoomID(null);
+          }
           console.log(msg);
           setErrorMsg(msg);
         }

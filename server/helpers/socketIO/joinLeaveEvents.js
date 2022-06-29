@@ -10,20 +10,27 @@ module.exports = (io, socket, roomsCollection) => {
   socket.on("join room", async ({ number, username, verify = false }, callback) => {
     socket.username = username;
     console.log(`Number: ${number}, Username: ${username}`);
-    socket.join(number);
     const roomData = await roomsCollection.findOne({ room: number });
     console.log(roomData);
     const playerAlreadyInRoom = roomData.connectedUsers.find((player) => player.username === username);
 
     console.log(`playerAlreadyInRoom: ${playerAlreadyInRoom}, verify: ${verify}`);
 
-    // if (playerAlreadyInRoom && verify) {
-    //   const otherUser = roomData.connectedUsers.filter((player) => player.username !== username);
-    //   io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
-    //   socket.broadcast.to(number).emit("new player", username);
-    //   callback("success");
-    //   return;
-    // }
+    if (playerAlreadyInRoom) {
+      console.log(`Detected that player ${username} just refreshed the page.`);
+      const otherUser = roomData.connectedUsers.filter((player) => player.username !== username);
+      io.to(socket.id).emit("current players", { connectedUsers: otherUser, roomID: number });
+      socket.broadcast.to(number).emit("new player", username);
+      socket.join(number);
+      callback("success");
+      return;
+    } else if (verify) {
+    }
+
+    socket.join(number);
+
+    console.log("USERS IN ROOM ALREADY:", roomData.connectedUsers.length);
+
     if (roomData.connectedUsers.length < 2) {
       if (roomData.connectedUsers.length === 0) {
         //Reset game settings, fresh lobby
@@ -106,9 +113,18 @@ module.exports = (io, socket, roomsCollection) => {
         const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== socket.username);
         roomData.connectedUsers = [...remainingPlayer];
         await roomsCollection.replaceOne({ room: currentRooms[1] }, roomData);
-        const gamesList = await roomsCollection.find({}).toArray();
-        const gamesListObj = cursorToObject(gamesList);
-        io.emit("update rooms", gamesListObj);
+
+        setTimeout(async () => {
+          const gamesList = await roomsCollection.find({}).toArray();
+          const gamesListObj = cursorToObject(gamesList);
+          const detectUserRefresh = gamesListObj[currentRooms[1]].connectedUsers.find(
+            (player) => player.username === socket.username
+          );
+          if (detectUserRefresh) {
+            console.log("Detected user refresh");
+          }
+          io.emit("update rooms", gamesListObj);
+        }, 500);
       } catch (e) {
         console.log("Error from disconnecting event:", e);
       }
