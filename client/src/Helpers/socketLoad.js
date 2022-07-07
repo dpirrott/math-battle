@@ -26,18 +26,11 @@ const socketLoad = ({
     console.log(`cookies:${cookies}, cookies.username:${cookies.username}`);
     if (cookies && roomIDCached) {
       // console.log("I was previously known as ", cookies.name);
-      socket.emit(
-        "join room",
-        { username: cookies.username, number: Number(roomIDCached), verify: true }
-        // (roomVerification) => {
-        //   console.log(roomVerification);
-        //   if (roomVerification === "success") {
-        //     setRoomID(roomIDCached);
-        //   } else {
-        //     localStorage.clear();
-        //   }
-        // }
-      );
+      socket.emit("join room", {
+        username: cookies.username,
+        number: Number(roomIDCached),
+        verify: true,
+      });
     }
   });
 

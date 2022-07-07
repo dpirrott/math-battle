@@ -16,10 +16,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
   const handleClickSpecial = (e) => {
     switch (e.target.id) {
       case "delete":
-        if (
-          display === "DISPLAY" ||
-          (display.length === 2 && display[0] === "-")
-        ) {
+        if (display === "DISPLAY" || (display.length === 2 && display[0] === "-")) {
           setDisplay("0");
         } else if (display !== "0") {
           setDisplay((prev) => prev.slice(0, prev.length - 1));
@@ -46,16 +43,16 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
         break;
 
       case "dot":
-        if (
-          display === "DISPLAY" ||
-          (display[0] === "0" && display.length === 1)
-        ) {
+        if (display === "DISPLAY" || (display[0] === "0" && display.length === 1)) {
           setDisplay(["0", "."]);
         } else if (display.includes(".")) {
           break;
         } else {
           setDisplay((prev) => [...prev, "."]);
         }
+        break;
+
+      default:
         break;
     }
   };

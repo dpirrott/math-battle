@@ -12,7 +12,9 @@ module.exports = (io, socket, roomsCollection) => {
     console.log(`Number: ${number}, Username: ${username}`);
     const roomData = await roomsCollection.findOne({ room: number });
     console.log(roomData);
-    const playerAlreadyInRoom = roomData.connectedUsers.find((player) => player.username === username);
+    const playerAlreadyInRoom = roomData.connectedUsers.find(
+      (player) => player.username === username
+    );
 
     console.log(`playerAlreadyInRoom: ${playerAlreadyInRoom}, verify: ${verify}`);
 
@@ -40,7 +42,10 @@ module.exports = (io, socket, roomsCollection) => {
           totalQuestions: 20,
         };
       }
-      io.to(socket.id).emit("current players", { connectedUsers: roomData.connectedUsers, roomID: number });
+      io.to(socket.id).emit("current players", {
+        connectedUsers: roomData.connectedUsers,
+        roomID: number,
+      });
       socket.broadcast.to(number).emit("new player", username);
       roomData.connectedUsers.push({ username, ready: false });
       await roomsCollection.replaceOne({ room: number }, roomData);
@@ -65,7 +70,9 @@ module.exports = (io, socket, roomsCollection) => {
         const roomData = await roomsCollection.findOne({ room: roomID });
         console.log("RoomID", roomID);
         console.log("RoomsData:", roomData);
-        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
+        const remainingPlayer = roomData.connectedUsers.filter(
+          (player) => player.username !== username
+        );
         console.log("Remaining Player", remainingPlayer);
         roomData.connectedUsers = remainingPlayer;
         await roomsCollection.replaceOne({ room: roomID }, roomData);
@@ -88,7 +95,9 @@ module.exports = (io, socket, roomsCollection) => {
       if (roomID) {
         socket.broadcast.to(roomID).emit("opponent disconnect", username);
         const roomData = await roomsCollection.findOne({ room: roomID });
-        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== username);
+        const remainingPlayer = roomData.connectedUsers.filter(
+          (player) => player.username !== username
+        );
         console.log(remainingPlayer);
         roomData.connectedUsers = [...remainingPlayer];
         await roomsCollection.replaceOne({ room: roomID }, roomData);
@@ -110,7 +119,9 @@ module.exports = (io, socket, roomsCollection) => {
       try {
         socket.broadcast.to(currentRooms[1]).emit("opponent disconnect", socket.username);
         const roomData = await roomsCollection.findOne({ room: currentRooms[1] });
-        const remainingPlayer = roomData.connectedUsers.filter((player) => player.username !== socket.username);
+        const remainingPlayer = roomData.connectedUsers.filter(
+          (player) => player.username !== socket.username
+        );
         roomData.connectedUsers = [...remainingPlayer];
         await roomsCollection.replaceOne({ room: currentRooms[1] }, roomData);
 

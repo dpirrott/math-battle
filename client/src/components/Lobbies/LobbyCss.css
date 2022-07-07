@@ -14,12 +14,12 @@
 
 .joinBtn {
   border-radius: 10px !important;
+  border-color: black !important;
   min-width: 105px;
 }
 
 .joinBtn:disabled {
   background-color: #fffb00 !important;
-  border-color: black !important;
   color: #000000 !important;
   font-weight: 700 !important;
 }
