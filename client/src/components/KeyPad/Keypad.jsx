@@ -80,7 +80,9 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
             <span>{paused ? "(?? x ??) =" : `${question.question}`}</span>
           </p>
         )}
-        <p id="display">{display}</p>
+        <p title="mainDisplayText" id="display">
+          {display}
+        </p>
       </div>
 
       <div className="row">

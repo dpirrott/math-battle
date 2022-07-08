@@ -2,9 +2,9 @@ import "./App.css";
 
 import Quiz from "./components/Quiz";
 import { LobbyList } from "./components/Lobbies/LobbyList";
-import { connect, io } from "socket.io-client";
+import { io } from "socket.io-client";
 import { useState, useEffect } from "react";
-import { Form, FormControl, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
@@ -117,7 +117,13 @@ function App() {
   return (
     <div className="App">
       <div>
-        <Header cookies={cookies} roomID={roomID} handleLeaveRoom={handleLeaveRoom} inGame={inGame} endGame={endGame} />
+        <Header
+          cookies={cookies}
+          roomID={roomID}
+          handleLeaveRoom={handleLeaveRoom}
+          inGame={inGame}
+          endGame={endGame}
+        />
         {socket && cookies.username ? (
           <>
             {roomID ? (
@@ -161,7 +167,12 @@ function App() {
             <Button className="landingPageBtn register" onClick={() => handleShowRegister()}>
               Register
             </Button>
-            <Login show={showLogin} setShow={setShowLogin} login={handleLogin} setCookie={setCookie} />
+            <Login
+              show={showLogin}
+              setShow={setShowLogin}
+              login={handleLogin}
+              setCookie={setCookie}
+            />
             <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
           </div>
         )}
