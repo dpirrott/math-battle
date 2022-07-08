@@ -44,17 +44,34 @@ describe("Header component responding to different props", () => {
     const { rerender } = render(
       <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
     );
-    let mainDisplayText = screen.getByTitle("mainDisplayText");
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
     const num7Btn = screen.getByRole("button", { name: /7/i });
     const num5Btn = screen.getByRole("button", { name: /5/i });
+
     expect(mainDisplayText).toHaveTextContent("0");
+
     fireEvent.click(num7Btn);
     rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
     fireEvent.click(num5Btn);
-    console.log(result.current.display);
+
     expect(result.current.display).toStrictEqual(["7", "5"]);
     rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
     expect(mainDisplayText).toHaveTextContent("75");
+  });
+
+  test("Renders 0. when dot operator pressed before other numbers", () => {
+    const { result } = renderHook(() => useDisplay());
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const dotBtn = screen.getByRole("button", { name: /\./i });
+
+    fireEvent.click(dotBtn);
+    expect(result.current.display).toStrictEqual(["0", "."]);
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent("0.");
   });
 
   // next tests:

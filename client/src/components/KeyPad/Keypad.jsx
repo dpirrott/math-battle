@@ -10,7 +10,6 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
     } else {
       setDisplay((prev) => [...prev, e.target.id]);
     }
-    console.log(e.target.id);
   };
 
   const handleClickSpecial = (e) => {
