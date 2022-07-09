@@ -111,9 +111,9 @@
   border-bottom-left-radius: 10px;
 }
 
-.scoreCard > h1 {
-  font-size: 40px;
-  font-weight: 900;
+.scoreCard > h2 {
+  font-size: 36px;
+  font-weight: 700;
 }
 
 svg > text {

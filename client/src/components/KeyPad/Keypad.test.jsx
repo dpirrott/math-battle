@@ -1,5 +1,4 @@
 import { render, screen, renderHook, fireEvent, waitFor } from "@testing-library/react";
-import { isDisabled, wait } from "@testing-library/user-event/dist/utils";
 import { useState } from "react";
 import { KeyPad } from "./Keypad";
 

@@ -19,7 +19,17 @@ export const Header = ({
     <div id="header">
       <div className="scoreCard user">
         <h2>{cookies.username}</h2>
-        <h1>{opponentName && score.points}</h1>
+
+        <div className="questionScoreContainer">
+          <div className="questionContainer">
+            <h3>Question</h3>
+            <h1>{score.total}</h1>
+          </div>
+          <div className="scoreContainer">
+            <h3>Score</h3>
+            <h1>{score.points}</h1>
+          </div>
+        </div>
       </div>
       {totalTime && (
         <Timer
