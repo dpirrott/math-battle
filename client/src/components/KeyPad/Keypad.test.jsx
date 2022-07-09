@@ -74,8 +74,54 @@ describe("Header component responding to different props", () => {
     expect(mainDisplayText).toHaveTextContent("0.");
   });
 
+  test("Renders x.0 when dot operator pressed after number button x", () => {
+    const { result } = renderHook(() => useDisplay());
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const num5Btn = screen.getByRole("button", { name: /5/i });
+    const dotBtn = screen.getByRole("button", { name: /\./i });
+
+    fireEvent.click(num5Btn);
+    expect(result.current.display).toStrictEqual(["5"]);
+
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    fireEvent.click(dotBtn);
+    expect(result.current.display).toStrictEqual(["5", "."]);
+
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent("5.");
+  });
+
+  test("Renders -x when negative sign is pressed after number button x", () => {
+    const { result } = renderHook(() => useDisplay());
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const num5Btn = screen.getByRole("button", { name: /5/i });
+    const negBtn = screen.getByRole("button", { name: /-/i });
+
+    fireEvent.click(num5Btn);
+    expect(result.current.display).toStrictEqual(["5"]);
+
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    fireEvent.click(negBtn);
+    expect(result.current.display).toStrictEqual(["-", "5"]);
+
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent("-5");
+  });
+
   // next tests:
-  // - Check if special characters work
+  // - Check if decimal works before pressing other nums --DONE
+  // - Check if decimal works after pressing other nums --DONE
+  // - Check if negative button works on a number
   // - Verify users cant delete past 0
   // - Test what happens when a question is present
   // - Test what happens when game is paused
