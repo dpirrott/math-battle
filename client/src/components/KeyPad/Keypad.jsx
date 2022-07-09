@@ -17,7 +17,9 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
       case "delete":
         if (display === "DISPLAY" || (display.length === 2 && display[0] === "-")) {
           setDisplay("0");
-        } else if (display !== "0") {
+        } else if (display.length === 1) {
+          setDisplay("0");
+        } else {
           setDisplay((prev) => prev.slice(0, prev.length - 1));
         }
         break;
@@ -57,9 +59,6 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
   };
 
   useEffect(() => {
-    if (display.length === 0) {
-      setDisplay("0");
-    }
     if (display.length > 1 && display[0] === "0" && display[1] !== ".") {
       setDisplay((prev) => prev.slice(1));
     }
@@ -75,8 +74,8 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
       <div className="row" id="displayContainer">
         {question && (
           <p id="question">
-            <span>{`Q#${question.number}`}</span>
-            <span>{paused ? "(?? x ??) =" : `${question.question}`}</span>
+            <span title="questionNumber">{`Q#${question.number}`}</span>
+            <span title="question">{paused ? "(?? x ??) =" : `${question.question}`}</span>
           </p>
         )}
         <p title="mainDisplayText" id="display">
