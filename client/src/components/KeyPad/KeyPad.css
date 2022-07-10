@@ -99,6 +99,8 @@
 .scoreCard {
   width: calc((100%-85px) / 2);
   height: fit-content;
+  border: 2px solid black;
+  background: #000000;
 }
 
 .scoreCard.user {
@@ -106,14 +108,25 @@
   border-bottom-right-radius: 10px;
 }
 
+.scoreCard > h2 {
+  border-radius: 10px;
+  margin-bottom: 0;
+  border: 2px solid black;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.user > h2 {
+  background: #d38105;
+}
+
+.opponent > h2 {
+  background: #00bf91;
+}
+
 .scoreCard.opponent {
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-}
-
-.scoreCard > h2 {
-  font-size: 36px;
-  font-weight: 700;
 }
 
 svg > text {

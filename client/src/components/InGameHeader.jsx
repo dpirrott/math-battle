@@ -22,8 +22,8 @@ export const Header = ({
 
         <div className="questionScoreContainer">
           <div className="questionContainer">
-            <h3>Question</h3>
-            <h1>{score.total}</h1>
+            <h3>Q#</h3>
+            <h1>{score.total + 1}</h1>
           </div>
           <div className="scoreContainer">
             <h3>Score</h3>
@@ -46,7 +46,16 @@ export const Header = ({
 
       <div className="scoreCard opponent">
         <h2>{opponentName || "Waiting for opponent..."}</h2>
-        <h1>{opponentResult && opponentResult.points}</h1>
+        <div className="questionScoreContainer">
+          <div className="questionContainer">
+            <h3>Q#</h3>
+            <h1>{opponentResult.total + 1}</h1>
+          </div>
+          <div className="scoreContainer">
+            <h3>Score</h3>
+            <h1>{opponentResult.points}</h1>
+          </div>
+        </div>
       </div>
     </div>
   );
