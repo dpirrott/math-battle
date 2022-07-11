@@ -107,6 +107,22 @@ describe("Header component responding to different props", () => {
     expect(mainDisplayText).toHaveTextContent(/^0$/i);
   });
 
+  test("Renders only one 0 if 0 is pressed before other buttons", () => {
+    const { result } = renderHook(() => useDisplay());
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const zeroBtn = screen.getByRole("button", { name: /0/i });
+
+    fireEvent.click(zeroBtn);
+    fireEvent.click(zeroBtn);
+    expect(result.current.display).toStrictEqual(["0"]);
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent(/^0$/i);
+  });
+
   test("Renders -x when negative sign is pressed after number button x", () => {
     const { result } = renderHook(() => useDisplay());
     const { rerender } = render(

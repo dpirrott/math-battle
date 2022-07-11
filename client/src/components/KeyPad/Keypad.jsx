@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import "./KeyPad.css";
 
 export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
-  const [paused, setPaused] = useState(false);
   const handleClickNum = (e) => {
-    if (display === "DISPLAY" || display === "0") {
+    if (display === "0" || (display[0] === "0" && display[1] !== ".")) {
       setDisplay([e.target.id]);
     } else {
       setDisplay((prev) => [...prev, e.target.id]);
@@ -38,13 +37,11 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
         if (display === "0" || display === "DISPLAY") {
           break;
         }
-        setDisplay((prev) => {
-          return String(prev.join("") - 2 * prev.join("")).split("");
-        });
+        setDisplay((prev) => String(prev.join("") * -1).split(""));
         break;
 
       case "dot":
-        if (display === "DISPLAY" || (display[0] === "0" && display.length === 1)) {
+        if (display === "DISPLAY" || display[0] === "0") {
           setDisplay(["0", "."]);
         } else if (display.includes(".")) {
           break;
@@ -58,24 +55,15 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
     }
   };
 
-  useEffect(() => {
-    if (display.length > 1 && display[0] === "0" && display[1] !== ".") {
-      setDisplay((prev) => prev.slice(1));
-    }
-    if (display === "PAUSED" && paused === false) {
-      setPaused(true);
-    } else if (display === "0" && paused === true) {
-      setPaused(false);
-    }
-  }, [display]);
-
   return (
     <div className="container">
       <div className="row" id="displayContainer">
         {question && (
           <p id="question">
             <span title="questionNumber">{`Q#${question.number}`}</span>
-            <span title="question">{paused ? "(?? x ??) =" : `${question.question}`}</span>
+            <span title="question">
+              {display === "PAUSED" ? "(?? x ??) =" : `${question.question}`}
+            </span>
           </p>
         )}
         <p title="mainDisplayText" id="display">
@@ -85,7 +73,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
 
       <div className="row">
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickSpecial(e)}
           className="row-item"
           id="delete"
@@ -93,7 +81,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           Del
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickSpecial(e)}
           className="row-item"
           id="submit"
@@ -104,7 +92,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
 
       <div className="row">
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="7"
@@ -112,7 +100,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           7
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="8"
@@ -120,7 +108,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           8
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="9"
@@ -131,7 +119,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
 
       <div className="row">
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="4"
@@ -139,7 +127,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           4
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="5"
@@ -147,7 +135,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           5
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="6"
@@ -158,7 +146,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
 
       <div className="row">
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="1"
@@ -166,7 +154,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           1
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="2"
@@ -174,7 +162,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           2
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="3"
@@ -185,7 +173,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
 
       <div className="row">
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickSpecial(e)}
           className="row-item number"
           id="dot"
@@ -193,7 +181,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           .
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickNum(e)}
           className="row-item number"
           id="0"
@@ -201,7 +189,7 @@ export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
           0
         </button>
         <button
-          disabled={paused}
+          disabled={display === "PAUSED"}
           onClick={(e) => handleClickSpecial(e)}
           className="row-item operation"
           id="neg"
