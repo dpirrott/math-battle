@@ -17,10 +17,13 @@ module.exports = (io, socket, roomsCollection) => {
   socket.on("updateGameSettings", async ({ newSettings, roomID }) => {
     try {
       console.log("new settings:", newSettings);
-      await roomsCollection.updateOne({ room: roomID }, { $set: { gameSettings: { ...newSettings } } });
+      await roomsCollection.updateOne(
+        { room: roomID },
+        { $set: { gameSettings: { ...newSettings } } }
+      );
       const gamesList = await roomsCollection.find({}).toArray();
       const gamesListObj = cursorToObject(gamesList);
-      socket.broadcast.to(roomID).emit("updateRooms", gamesListObj);
+      io.to(roomID).emit("currentSettings", gamesListObj[roomID].gameSettings);
     } catch (e) {
       console.log("Error:", e);
     }
@@ -74,14 +77,20 @@ module.exports = (io, socket, roomsCollection) => {
             if (readyCount < 2) {
               clearInterval(timer);
               io.to(roomID).emit("pre game finished");
-              await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
+              await roomsCollection.updateOne(
+                { room: roomID },
+                { $set: { "gameStatus.preGameState": false } }
+              );
               return;
             }
 
             io.to(roomID).emit("pre game countdown", count);
 
             if (count === 0) {
-              roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.preGameState": false } });
+              roomsCollection.updateOne(
+                { room: roomID },
+                { $set: { "gameStatus.preGameState": false } }
+              );
               roomData.gameStatus.preGameState = false;
               count = testDuration;
               io.to(roomID).emit("pre game finished");
@@ -94,7 +103,10 @@ module.exports = (io, socket, roomsCollection) => {
             io.to(roomID).emit("game timer", 0);
             io.to(roomID).emit("finish", "Game over");
             roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.endState": false } });
-            roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
+            roomsCollection.updateOne(
+              { room: roomID },
+              { $set: { "gameStatus.pauseState": false } }
+            );
           } else if (count === 0) {
             clearInterval(timer);
             io.to(roomID).emit("game timer", count);
@@ -120,10 +132,45 @@ module.exports = (io, socket, roomsCollection) => {
       if (otherPlayer.length > 0) {
         const user = roomData.connectedUsers.filter((user) => user.username === username);
         console.log("USER:", user);
-        io.to(socket.id).emit("opponent ready", { opponentReady: otherPlayer[0].ready, userReady: user[0].ready });
+        io.to(socket.id).emit("opponent ready", {
+          opponentReady: otherPlayer[0].ready,
+          userReady: user[0].ready,
+        });
       }
     } catch (e) {
       console.log("Error:", e);
+    }
+  });
+
+  socket.on("player finished", async ({ roomID, username }) => {
+    // Update users finish status in gamesList
+    let roomData = await roomsCollection.findOne({ room: roomID });
+    const connectedUsers = roomData.connectedUsers;
+    console.log(`username ${username}, finished: true`);
+    connectedUsers.find((user, i) => {
+      if (user.username === username) {
+        roomData.connectedUsers[i].finish = true;
+        const specificUserFinished = `connectedUsers.${i}.finish`;
+        roomsCollection.updateOne({ room: roomID }, { $set: { [specificUserFinished]: true } });
+        return true;
+      }
+    });
+    console.log(roomData.connectedUsers);
+    let finishCount = roomData.connectedUsers.filter((user) => user.finish === true).length;
+    console.log("FinishCount:", finishCount);
+
+    if (finishCount > 1) {
+      roomData.connectedUsers = connectedUsers.map((user) => {
+        return { ...user, finish: false, ready: false };
+      });
+      roomData.gameStatus.endState = true;
+      console.log(roomData);
+      try {
+        io.to(roomID).emit("end game");
+        await roomsCollection.replaceOne({ room: roomID }, roomData);
+      } catch (e) {
+        console.log("Error:", e);
+      }
     }
   });
 
@@ -139,7 +186,10 @@ module.exports = (io, socket, roomsCollection) => {
   socket.on("pause", async (roomID) => {
     try {
       io.to(roomID).emit("pause");
-      await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": true } });
+      await roomsCollection.updateOne(
+        { room: roomID },
+        { $set: { "gameStatus.pauseState": true } }
+      );
     } catch (e) {
       console.log("Error:", e);
     }
@@ -148,7 +198,10 @@ module.exports = (io, socket, roomsCollection) => {
   socket.on("resume", async (roomID) => {
     try {
       io.to(roomID).emit("resume");
-      await roomsCollection.updateOne({ room: roomID }, { $set: { "gameStatus.pauseState": false } });
+      await roomsCollection.updateOne(
+        { room: roomID },
+        { $set: { "gameStatus.pauseState": false } }
+      );
     } catch (e) {
       console.log("Error:", e);
     }

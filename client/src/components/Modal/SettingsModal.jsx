@@ -8,7 +8,7 @@ import "./Settings.css";
 export const SettingsModal = ({ handleClose, show, gameSettings, socket, roomID }) => {
   const [difficulty, setDifficulty] = useState(2);
   const [duration, setDuration] = useState(1);
-  const [maxQuestions, setMaxQuestions] = useState(40);
+  const [maxQuestions, setMaxQuestions] = useState(5);
   const difficultyDesc = {
     1: "Easy: numbers from 2 - 12",
     2: "Medium: numbers from 2 - 100",
@@ -66,7 +66,7 @@ export const SettingsModal = ({ handleClose, show, gameSettings, socket, roomID 
               <Form.Label>Total Questions</Form.Label>
             </h5>
             <RangeSlider
-              min={20}
+              min={5}
               max={100}
               step={1}
               value={maxQuestions}

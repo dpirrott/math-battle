@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import "../App.css";
 import { socketLoad } from "../Helpers/socketLoad";
 import { Header } from "./InGameHeader";
@@ -115,22 +114,21 @@ const Quiz = ({
     const result = Number(formatInput) === question.answer;
     console.log(result);
 
-    if (result) {
-      setScore((prev) => {
-        return {
-          correct: prev.correct + 1,
-          total: prev.total + 1,
-          points: Math.round(((prev.correct + 1) / (prev.total + 1)).toFixed(1) * (prev.correct + 1) * 10),
-        };
-      });
-    } else {
-      setScore((prev) => {
-        return {
-          ...prev,
-          total: prev.total + 1,
-          points: Math.round((prev.correct / (prev.total + 1)).toFixed(1) * prev.correct * 10),
-        };
-      });
+    setScore((prev) => {
+      return {
+        correct: prev.correct + (result ? 1 : 0),
+        total: prev.total + 1,
+        points: Math.round(
+          ((prev.correct + (result ? 1 : 0)) / (prev.total + 1)).toFixed(1) *
+            (prev.correct + (result ? 1 : 0)) *
+            10
+        ),
+      };
+    });
+    console.log("total Questions", gameSettings.totalQuestions);
+
+    if (score.total + 1 === gameSettings.totalQuestions) {
+      socket.emit("player finished", { roomID, username: cookies.username });
     }
 
     const response = {
@@ -140,7 +138,6 @@ const Quiz = ({
     };
 
     setDisplay("0");
-
     setResponses((prev) => [...prev, response]);
   };
 
@@ -204,7 +201,10 @@ const Quiz = ({
       if (scoreCached) {
         setScore(scoreCached);
         console.log("Emitting score: ", scoreCached);
-        socket.emit("opponentScore", { score: { userID: cookies.username, ...scoreCached }, roomID });
+        socket.emit("opponentScore", {
+          score: { userID: cookies.username, ...scoreCached },
+          roomID,
+        });
         setQuestion(questionsCached[scoreCached.total]);
         setDisplay("0");
         setTimerIsRunning(true);
@@ -254,7 +254,12 @@ const Quiz = ({
 
       {/* <Timer /> */}
       {questions && (
-        <KeyPad display={display} setDisplay={setDisplay} question={question} handleSubmit={handleSubmit} />
+        <KeyPad
+          display={display}
+          setDisplay={setDisplay}
+          question={question}
+          handleSubmit={handleSubmit}
+        />
       )}
       {finish && (
         <ResultsList
