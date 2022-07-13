@@ -1,4 +1,4 @@
-import { render, screen, renderHook, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, renderHook, fireEvent } from "@testing-library/react";
 import { useState } from "react";
 import { KeyPad } from "./Keypad";
 
@@ -95,6 +95,22 @@ describe("Header component responding to different props", () => {
     expect(mainDisplayText).toHaveTextContent("5.");
   });
 
+  test("Doesn't render extra dot if one is already present in display", () => {
+    const { result } = renderHook(() => useDisplay(["5", ".", "1"]));
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const dotBtn = screen.getByRole("button", { name: /\./i });
+
+    fireEvent.click(dotBtn);
+    expect(result.current.display).toStrictEqual(["5", ".", "1"]);
+
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent(/^5.1$/);
+  });
+
   test("Renders 0 if negative sign is pressed before other number pressed", () => {
     const { result } = renderHook(() => useDisplay());
     render(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
@@ -103,22 +119,6 @@ describe("Header component responding to different props", () => {
 
     fireEvent.click(negBtn);
     expect(result.current.display).toStrictEqual("0");
-
-    expect(mainDisplayText).toHaveTextContent(/^0$/i);
-  });
-
-  test("Renders only one 0 if 0 is pressed before other buttons", () => {
-    const { result } = renderHook(() => useDisplay());
-    const { rerender } = render(
-      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
-    );
-    const mainDisplayText = screen.getByTitle("mainDisplayText");
-    const zeroBtn = screen.getByRole("button", { name: /0/i });
-
-    fireEvent.click(zeroBtn);
-    fireEvent.click(zeroBtn);
-    expect(result.current.display).toStrictEqual(["0"]);
-    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
 
     expect(mainDisplayText).toHaveTextContent(/^0$/i);
   });
@@ -143,6 +143,22 @@ describe("Header component responding to different props", () => {
     rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
 
     expect(mainDisplayText).toHaveTextContent(/^-5$/i);
+  });
+
+  test("Renders only one 0 if 0 is pressed before other buttons", () => {
+    const { result } = renderHook(() => useDisplay());
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const zeroBtn = screen.getByRole("button", { name: /0/i });
+
+    fireEvent.click(zeroBtn);
+    fireEvent.click(zeroBtn);
+    expect(result.current.display).toStrictEqual(["0"]);
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent(/^0$/i);
   });
 
   test("Renders 7 when delete key is pressed on value 75", () => {
@@ -195,6 +211,21 @@ describe("Header component responding to different props", () => {
     rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
 
     expect(mainDisplayText).toHaveTextContent(/^0$/i);
+  });
+
+  test("Renders 0 if user presses delete on negative single digit", () => {
+    const { result } = renderHook(() => useDisplay(["-", "2"]));
+    const { rerender } = render(
+      <KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />
+    );
+    const mainDisplayText = screen.getByTitle("mainDisplayText");
+    const delBtn = screen.getByRole("button", { name: /del/i });
+
+    fireEvent.click(delBtn);
+    expect(result.current.display).toStrictEqual("0");
+    rerender(<KeyPad display={result.current.display} setDisplay={result.current.setDisplay} />);
+
+    expect(mainDisplayText).toHaveTextContent(/^0$/);
   });
 
   test("Renders question in display", () => {

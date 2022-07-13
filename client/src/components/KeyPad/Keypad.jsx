@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import "./KeyPad.css";
 
 export const KeyPad = ({ display, setDisplay, question, handleSubmit }) => {
