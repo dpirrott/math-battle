@@ -44,6 +44,8 @@ The following features will slowly be added to the live demo.
 
 ## **Screenshots**
 
+Coming soon...
+
 # **Getting Started**
 
 You will need to have two separate terminals running, one for the frontend client and the other for
