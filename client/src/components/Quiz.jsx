@@ -104,6 +104,39 @@ const Quiz = ({
     setDisplay("0");
   };
 
+  const storeGameDetails = (tie = false) => {
+    let gameDetails = {
+      tie,
+      gameSettings,
+    };
+    if (tie) {
+      gameDetails = {
+        ...gameDetails,
+        users: [
+          {
+            name: cookies.username,
+            score,
+          },
+          { name: opponentName, score: opponentResult },
+        ],
+      };
+    } else {
+      gameDetails = {
+        ...gameDetails,
+        winner: {
+          name: cookies.username,
+          score,
+        },
+        loser: {
+          name: opponentName,
+          score: opponentResult,
+        },
+      };
+    }
+
+    socket.emit("store game details", { gameDetails, roomID });
+  };
+
   const handleSubmit = () => {
     const formatInput = display.join("");
 
@@ -139,22 +172,6 @@ const Quiz = ({
 
     setDisplay("0");
     setResponses((prev) => [...prev, response]);
-  };
-
-  const storeGameDetails = () => {
-    const gameDetails = {
-      winner: {
-        name: cookies.username,
-        score,
-      },
-      loser: {
-        name: opponentName,
-        score: opponentResult,
-      },
-      gameSettings,
-    };
-
-    socket.emit("store game details", { gameDetails, roomID });
   };
 
   useEffect(() => {

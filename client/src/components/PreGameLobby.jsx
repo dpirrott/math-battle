@@ -21,6 +21,7 @@ export const PreGameLobby = ({
 
   useEffect(() => {
     if (finish) {
+      // Only winner sends game details to backend
       if (score.points > opponentResult.points) {
         setWinner(cookies.username);
         storeGameDetails();
@@ -28,6 +29,10 @@ export const PreGameLobby = ({
         setWinner(opponentName);
       } else {
         setWinner("Tie");
+        // Force only one user to send game details if tie
+        if (cookies.username > opponentName) {
+          storeGameDetails(true);
+        }
       }
     } else {
       setWinner(null);
