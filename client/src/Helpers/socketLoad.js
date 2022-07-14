@@ -53,7 +53,7 @@ const socketLoad = ({
     setOpponentReady(false);
     setPlayerReady(false);
     setOpponentResult({ points: 0, correct: 0, total: 0 });
-    socket.emit("opponentScore", { score: { userID: cookies.username, ...tempScore }, roomID });
+    socket.emit("opponentScore", { score: { ...tempScore }, roomID });
   });
 
   socket.on("currentSettings", (settings) => {
@@ -98,15 +98,6 @@ const socketLoad = ({
     setTotalTime(null);
     setQuestions(null);
   });
-
-  // socket.on("finish", () => {
-  //   localStorage.clear();
-  //   setTimerIsRunning(false);
-  //   setClock(0);
-  //   setFinish("Game over");
-  //   setTotalTime(null);
-  //   setQuestions(null);
-  // });
 
   socket.on("pause", () => {
     setTimerIsRunning(false);

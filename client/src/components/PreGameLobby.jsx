@@ -14,6 +14,7 @@ export const PreGameLobby = ({
   opponentResult,
   preGameCount,
   score,
+  storeGameDetails,
   finish,
 }) => {
   const [winner, setWinner] = useState(null);
@@ -22,6 +23,7 @@ export const PreGameLobby = ({
     if (finish) {
       if (score.points > opponentResult.points) {
         setWinner(cookies.username);
+        storeGameDetails();
       } else if (score.points < opponentResult.points) {
         setWinner(opponentName);
       } else {
@@ -39,7 +41,10 @@ export const PreGameLobby = ({
       </Button>
 
       {finish && (
-        <h1 style={{ color: `${winner === cookies.username ? "#00dd00" : "red"}` }} className="gameWinnerText">
+        <h1
+          style={{ color: `${winner === cookies.username ? "#00dd00" : "red"}` }}
+          className="gameWinnerText"
+        >
           {winner === "Tie" ? "Tie game!" : `${winner} wins!`}
         </h1>
       )}
@@ -61,7 +66,9 @@ export const PreGameLobby = ({
               <h2>{opponentName}</h2>
               {opponentName && finish && <h1>{opponentResult.points}</h1>}
             </div>
-            <div className={finish ? "appearAfterFinish" : ""}>{opponentReady ? <Ready /> : <NotReady />}</div>
+            <div className={finish ? "appearAfterFinish" : ""}>
+              {opponentReady ? <Ready /> : <NotReady />}
+            </div>
           </div>
         ) : (
           <div>

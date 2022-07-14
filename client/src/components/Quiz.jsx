@@ -141,6 +141,22 @@ const Quiz = ({
     setResponses((prev) => [...prev, response]);
   };
 
+  const storeGameDetails = () => {
+    const gameDetails = {
+      winner: {
+        name: cookies.username,
+        score,
+      },
+      loser: {
+        name: opponentName,
+        score: opponentResult,
+      },
+      gameSettings,
+    };
+
+    socket.emit("store game details", { gameDetails, roomID });
+  };
+
   useEffect(() => {
     const renderQuestion = () => {
       const retrievedQuestion = questions[score.total];
@@ -233,6 +249,7 @@ const Quiz = ({
             score={score}
             finish={finish}
             preGameCount={preGameCount}
+            storeGameDetails={storeGameDetails}
           />
         </>
       ) : (

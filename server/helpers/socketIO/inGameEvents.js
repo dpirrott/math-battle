@@ -4,7 +4,6 @@ const { clearInterval } = require("timers");
 
 module.exports = (io, socket, roomsCollection) => {
   socket.on("opponentResponses", ({ responses, roomID }) => {
-    console.log("Opponents current responses:", responses);
     socket.broadcast.to(roomID).emit("opponentResponses", responses);
   });
 
@@ -38,7 +37,6 @@ module.exports = (io, socket, roomsCollection) => {
     // Update users ready status in gamesList
     let roomData = await roomsCollection.findOne({ room: roomID });
     const connectedUsers = roomData.connectedUsers;
-    console.log(`username ${username}, playerReady ${playerReady}`);
     connectedUsers.find((user, i) => {
       if (user.username === username) {
         roomData.connectedUsers[i].ready = playerReady;
@@ -47,7 +45,6 @@ module.exports = (io, socket, roomsCollection) => {
         return true;
       }
     });
-    console.log(roomData.connectedUsers);
     let readyCount = roomData.connectedUsers.filter((user) => user.ready === true).length;
     console.log("ReadyCount:", readyCount);
 
@@ -181,6 +178,17 @@ module.exports = (io, socket, roomsCollection) => {
     } catch (e) {
       console.log("Error:", e);
     }
+  });
+
+  socket.on("store game details", async ({ gameDetails, roomID }) => {
+    if (!gameDetails.gameSettings) {
+      const roomData = await roomsCollection.findOne({ room: roomID });
+      gameDetails = {
+        ...gameDetails,
+        gameSettings: roomData.gameSettings,
+      };
+    }
+    console.log(gameDetails);
   });
 
   socket.on("pause", async (roomID) => {
