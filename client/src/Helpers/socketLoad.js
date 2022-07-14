@@ -61,10 +61,11 @@ const socketLoad = ({
     setGameSettings(settings);
   });
 
-  socket.on("game questions", (questionsList) => {
-    setQuestions(questionsList);
-    localStorage.setItem("questions", JSON.stringify(questionsList));
+  socket.on("game questions", ({ questions, gameSettings }) => {
+    setQuestions(questions);
+    localStorage.setItem("questions", JSON.stringify(questions));
     setScore({ points: 0, correct: 0, total: 0 });
+    setGameSettings(gameSettings);
     setFinish(null);
     setPreGameCount(null);
     setDisplay("0");

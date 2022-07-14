@@ -2,7 +2,7 @@ const { generateQuestions } = require("../generateQuestions");
 const cursorToObject = require("../mongoDB/cursorToObject");
 const { clearInterval } = require("timers");
 
-module.exports = (io, socket, roomsCollection) => {
+module.exports = (io, socket, roomsCollection, gamesCollection) => {
   socket.on("opponentResponses", ({ responses, roomID }) => {
     socket.broadcast.to(roomID).emit("opponentResponses", responses);
   });
@@ -91,7 +91,10 @@ module.exports = (io, socket, roomsCollection) => {
               roomData.gameStatus.preGameState = false;
               count = testDuration;
               io.to(roomID).emit("pre game finished");
-              io.to(roomID).emit("game questions", questions);
+              io.to(roomID).emit("game questions", {
+                questions,
+                gameSettings: roomData.gameSettings,
+              });
               io.to(roomID).emit("game timer", count, count);
             }
           }
@@ -181,14 +184,19 @@ module.exports = (io, socket, roomsCollection) => {
   });
 
   socket.on("store game details", async ({ gameDetails, roomID }) => {
-    if (!gameDetails.gameSettings) {
-      const roomData = await roomsCollection.findOne({ room: roomID });
-      gameDetails = {
-        ...gameDetails,
-        gameSettings: roomData.gameSettings,
-      };
+    try {
+      if (!gameDetails.gameSettings) {
+        const roomData = await roomsCollection.findOne({ room: roomID });
+        gameDetails = {
+          ...gameDetails,
+          gameSettings: roomData.gameSettings,
+        };
+      }
+      console.log(gameDetails);
+      gamesCollection.insertOne(gameDetails);
+    } catch (e) {
+      console.log("Error", e);
     }
-    console.log(gameDetails);
   });
 
   socket.on("pause", async (roomID) => {

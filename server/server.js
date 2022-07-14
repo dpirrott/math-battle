@@ -72,6 +72,7 @@ client.connect((err) => {
   const db = client.db("mentalMathBattle");
   const usersCollection = db.collection("users");
   const roomsCollection = db.collection("rooms");
+  const gamesCollection = db.collection("games");
 
   const usersRoutes = require("./routes/users");
   app.use("/", usersRoutes(usersCollection));
@@ -81,7 +82,7 @@ client.connect((err) => {
   io.on("connection", (socket) => {
     console.log("client connected: ", socket.id);
     registerJoinLeaveEvents(io, socket, roomsCollection);
-    registerInGameEvents(io, socket, roomsCollection);
+    registerInGameEvents(io, socket, roomsCollection, gamesCollection);
   });
 });
 
