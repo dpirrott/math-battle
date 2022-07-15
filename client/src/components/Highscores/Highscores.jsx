@@ -1,11 +1,21 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { useState } from "react";
 
 export const Highscores = ({ setViewHighScore, username }) => {
+  const [displayHistoryData, setDisplayHistoryData] = useState(null);
+
   const loadGameHistory = async () => {
-    const historyData = await axios.get("/gameHistory", { params: { username } });
-    console.log(historyData);
+    const history = await axios.get("/gameHistory", { params: { username } });
+    const listHistoryData = history.data.map((game, i) => {
+      return (
+        <li key={i}>
+          <p>{game.tie ? "Tie game" : `Winner${game.winner}`}</p>
+        </li>
+      );
+    });
+    setDisplayHistoryData(listHistoryData);
   };
 
   return (
@@ -15,6 +25,8 @@ export const Highscores = ({ setViewHighScore, username }) => {
       <Button onClick={() => loadGameHistory()} variant="secondary">
         Game History
       </Button>
+
+      {displayHistoryData && <ul>{displayHistoryData}</ul>}
     </div>
   );
 };
