@@ -97,7 +97,7 @@
 }
 
 .scoreCard {
-  width: calc((100%-85px) / 2);
+  width: calc((100% - 85px) / 2);
   height: fit-content;
   border: 2px solid black;
   background: #000000;
