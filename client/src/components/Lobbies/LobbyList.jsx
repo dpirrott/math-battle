@@ -5,10 +5,19 @@ import { LobbyCard } from "./LobbyCard";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 import "./LobbyCss.css";
+import { Highscores } from "../Highscores/Highscores";
 
-export const LobbyList = ({ socket, username, errorMsg, handleLeaveRoom, roomID, removeCookie }) => {
+export const LobbyList = ({
+  socket,
+  username,
+  errorMsg,
+  handleLeaveRoom,
+  roomID,
+  removeCookie,
+}) => {
   const [allRoomsData, setAllRoomsData] = useState(null);
   const [lobbyCards, setLobbyCards] = useState(null);
+  const [viewHighScores, setViewHighScores] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -49,13 +58,27 @@ export const LobbyList = ({ socket, username, errorMsg, handleLeaveRoom, roomID,
 
   return (
     <div>
-      <Button className="logout" variant="danger" onClick={() => handleLogout()}>
-        Logout
-      </Button>
-      <div className="d-grid gap-2 lobbyList">
-        {lobbyCards}
-        {errorMsg && <p>{errorMsg}</p>}
-      </div>
+      {!viewHighScores && (
+        <>
+          <Button className="logout" variant="danger" onClick={() => handleLogout()}>
+            Logout
+          </Button>
+          <Button
+            className="highscoreBtn"
+            variant="primary"
+            onClick={() => setViewHighScores(true)}
+          >
+            Highscores
+          </Button>
+
+          <div className="d-grid gap-2 lobbyList">
+            {lobbyCards}
+            {errorMsg && <p>{errorMsg}</p>}
+          </div>
+        </>
+      )}
+
+      {viewHighScores && <Highscores setViewHighScore={setViewHighScores} />}
     </div>
   );
 };
