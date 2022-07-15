@@ -3,8 +3,16 @@ import React from "react";
 export const HighscoreCard = ({ game }) => {
   const { tie = false, winner, loser, gameSettings, users } = game;
   return (
-    <ul>
-      {tie ? (
+    <li>
+      <div>
+        <div>User details</div>
+        <div>Game status - win/score</div>
+        <div>Opponent details</div>
+      </div>
+
+      <button>Expand details button</button>
+
+      {/* {tie ? (
         <ul>
           {users.map((user, i) => (
             <li key={i}>
@@ -21,7 +29,7 @@ export const HighscoreCard = ({ game }) => {
             `Loser - {loser.name} - Score - {loser.score.points}`
           </li>
         </>
-      )}
-    </ul>
+      )} */}
+    </li>
   );
 };
