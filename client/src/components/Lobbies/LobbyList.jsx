@@ -78,7 +78,7 @@ export const LobbyList = ({
         </>
       )}
 
-      {viewHighScores && <Highscores setViewHighScore={setViewHighScores} />}
+      {viewHighScores && <Highscores setViewHighScore={setViewHighScores} username={username} />}
     </div>
   );
 };

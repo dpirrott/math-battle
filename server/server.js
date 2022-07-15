@@ -75,7 +75,9 @@ client.connect((err) => {
   const gamesCollection = db.collection("games");
 
   const usersRoutes = require("./routes/users");
+  const gameRoutes = require("./routes/games");
   app.use("/", usersRoutes(usersCollection));
+  app.use("/", gameRoutes(gamesCollection));
 
   resetRoomCollection(roomsCollection);
 
