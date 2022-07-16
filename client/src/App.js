@@ -19,6 +19,7 @@ function App() {
   const [opponentName, setOpponentName] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [inGame, setInGame] = useState(false);
+  const [viewHighScores, setViewHighScores] = useState(false);
 
   // Quiz state variables
   const [clock, setClock] = useState(0);
@@ -123,6 +124,7 @@ function App() {
           handleLeaveRoom={handleLeaveRoom}
           inGame={inGame}
           endGame={endGame}
+          viewHighScores={viewHighScores}
         />
         {socket && cookies.username ? (
           <>
@@ -156,6 +158,8 @@ function App() {
                 handleLeaveRoom={handleLeaveRoom}
                 roomID={roomID}
                 removeCookie={removeCookie}
+                viewHighScores={viewHighScores}
+                setViewHighScores={setViewHighScores}
               />
             )}
           </>

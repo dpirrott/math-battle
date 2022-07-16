@@ -1,0 +1,18 @@
+.highScoreTabs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.highScoreTabs > button {
+  width: 49%;
+  height: 60px;
+  border-radius: 10px 10px 0 0;
+}
+
+.highScoreTabs > button:first-child {
+  background: #291a1a;
+}
+
+.personalScoresContainer {
+  background: #291a1a;
+}

@@ -14,10 +14,11 @@ export const LobbyList = ({
   handleLeaveRoom,
   roomID,
   removeCookie,
+  viewHighScores,
+  setViewHighScores,
 }) => {
   const [allRoomsData, setAllRoomsData] = useState(null);
   const [lobbyCards, setLobbyCards] = useState(null);
-  const [viewHighScores, setViewHighScores] = useState(false);
 
   useEffect(() => {
     if (socket) {
