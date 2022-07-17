@@ -48,8 +48,6 @@ function App() {
   };
 
   const handleLeaveRoom = () => {
-    console.log("Left the room");
-    console.log(roomID);
     socket.emit("leave room", { username: cookies.username, roomID: roomID });
     setRoomID(null);
     setFinish(null);
@@ -75,11 +73,15 @@ function App() {
         .post("/validUsername", { username: cookies.username }, { withCredentials: true })
         .then((res) => {
           console.log(res.data.username);
-          setCookie("username", res.data.username, { maxAge: 3600 });
+          setCookie("username", res.data.username, {
+            maxAge: 3600,
+            secure: true,
+            sameSite: "none",
+          });
         })
         .catch((err) => {
           console.log(err.response.data.msg);
-          removeCookie("username", { path: "/" });
+          removeCookie("username", { path: "/", secure: true, sameSite: "none" });
         });
     } else {
       localStorage.clear();
@@ -177,7 +179,13 @@ function App() {
               login={handleLogin}
               setCookie={setCookie}
             />
-            <Register show={showRegister} setShow={setShowRegister} register={handleRegister} />
+            <Register
+              show={showRegister}
+              setShow={setShowRegister}
+              register={handleRegister}
+              login={handleLogin}
+              setCookie={setCookie}
+            />
           </div>
         )}
       </div>

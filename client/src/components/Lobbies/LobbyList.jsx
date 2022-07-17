@@ -52,7 +52,7 @@ export const LobbyList = ({
         socket.emit("opponent disconnect", { username: username, roomID });
         handleLeaveRoom();
         localStorage.clear();
-        removeCookie("username", { path: "/" });
+        removeCookie("username", { path: "/", secure: true, sameSite: "none" });
       })
       .catch((err) => console.log("Logout error:", err));
   };

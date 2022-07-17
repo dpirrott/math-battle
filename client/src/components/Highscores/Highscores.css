@@ -7,10 +7,16 @@
   width: 49%;
   height: 60px;
   border-radius: 10px 10px 0 0;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.07em;
 }
 
 .highScoreTabs > button:first-child {
   background: #291a1a;
+  border: 2px solid black;
+  border-bottom: 0;
 }
 
 .personalScoresContainer {

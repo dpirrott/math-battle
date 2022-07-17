@@ -2,7 +2,7 @@ import { Modal as Popup, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import React, { useState } from "react";
 
-export const Register = ({ show, setShow, register }) => {
+export const Register = ({ show, setShow, register, setCookie, login }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
@@ -21,12 +21,28 @@ export const Register = ({ show, setShow, register }) => {
     register(username, password, passwordConf)
       .then((res) => {
         console.log(res.data);
-        handleClose();
+        login(username, password)
+          .then((res) => {
+            console.log(res.data);
+            setCookie("username", username, { maxAge: 3600, secure: true, SameSite: "none" });
+            localStorage.clear();
+            handleClose();
+          })
+          .catch((err) => {
+            console.log("err:", err.response.data);
+            setErrorMsg(err.response.data);
+          });
       })
       .catch((err) => {
         console.log("err:", err.response.data);
         setErrorMsg(err.response.data);
       });
+  };
+
+  const detectEnterKey = (e) => {
+    if (e.key === "Enter") {
+      handleRegister(e);
+    }
   };
 
   return (
@@ -68,6 +84,7 @@ export const Register = ({ show, setShow, register }) => {
                 value={passwordConf}
                 autoComplete="new-password"
                 onChange={(e) => setPasswordConf(e.target.value)}
+                onKeyDown={(e) => detectEnterKey(e)}
               />
             </Form.Group>
           </Form>
