@@ -31,23 +31,23 @@ export const Highscores = ({ setViewHighScore, username }) => {
       </div>
 
       <div className="personalScoresContainer">
-        <h1>{username}</h1>
+        <h1 className="userTitle">{username}</h1>
 
-        <div>
-          <div>
-            <div>
+        <div className="scoreSummaryContainer">
+          <div className="summaryContainer endSummary">
+            <div className="summaryCard">
               <h1>60</h1>
               <h2>Games</h2>
             </div>
           </div>
-          <div>
-            <div>
+          <div className="summaryContainer">
+            <div className="summaryCard">
               <h1>50</h1>
               <h2>Wins</h2>
             </div>
           </div>
-          <div>
-            <div>
+          <div className="summaryContainer endSummary">
+            <div className="summaryCard">
               <h1>75.5</h1>
               <h2>SPM</h2>
             </div>

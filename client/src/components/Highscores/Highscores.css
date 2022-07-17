@@ -19,6 +19,78 @@
   border-bottom: 0;
 }
 
+.highScoreTabs > button:last-child {
+  background: #007ff4;
+  border: 2px solid black;
+  border-bottom: 0;
+}
+
 .personalScoresContainer {
   background: #291a1a;
+}
+
+.userTitle {
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 77px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+  text-decoration-line: underline;
+  color: #ffffff;
+  text-shadow: 0px -10px 15px rgb(0, 0, 0, 1);
+  justify-content: center;
+}
+
+.scoreSummaryContainer {
+  display: flex;
+  width: 90%;
+  align-self: center;
+  margin: 20px auto;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.summaryCard {
+  background: #827b7b;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  filter: drop-shadow(0px 5px 10px rgba(255, 251, 251, 0.15));
+  max-height: 100px;
+}
+
+.summaryCard > h1 {
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 58px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+  color: #000000;
+}
+
+.summaryCard > h2 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+  color: #000000;
+}
+
+.summaryContainer {
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+}
+
+.endSummary {
+  justify-content: flex-end;
 }
