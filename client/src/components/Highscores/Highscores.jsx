@@ -3,27 +3,33 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import "./Highscores.css";
 import { HighscoreCard } from "../Highscores/HighscoreCard";
+import { useEffect } from "react";
 
 export const Highscores = ({ setViewHighScore, username }) => {
   const [displayHistoryData, setDisplayHistoryData] = useState(null);
 
   const loadGameHistory = async () => {
     const history = await axios.get("/gameHistory", { params: { username } });
+    console.log(history.data);
     const listHistoryData = history.data.map((game, i) => {
-      return <HighscoreCard key={i} game={game} />;
+      return <HighscoreCard key={i} game={game} username={username} />;
     });
     setDisplayHistoryData(listHistoryData);
   };
 
+  const deleteGameHistory = async () => {
+    await axios.get("deleteGames");
+    setDisplayHistoryData([]);
+  };
+
+  useEffect(() => {
+    loadGameHistory();
+  }, []);
+
   return (
     <div>
       <Button onClick={() => setViewHighScore(false)}>Return to Rooms</Button>
-
-      {/* <Button onClick={() => loadGameHistory()} variant="secondary">
-        Game History
-      </Button>
-
-      {displayHistoryData && <ul>{displayHistoryData}</ul>} */}
+      {/* <Button onClick={() => deleteGameHistory()}>Delete game history</Button> */}
 
       <div className="highScoreTabs">
         <button>Personal</button>
@@ -56,6 +62,7 @@ export const Highscores = ({ setViewHighScore, username }) => {
 
         <h1>Match History</h1>
         <p>Press game for more details</p>
+        <ul>{displayHistoryData}</ul>
       </div>
     </div>
   );

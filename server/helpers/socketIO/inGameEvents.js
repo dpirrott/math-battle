@@ -193,7 +193,7 @@ module.exports = (io, socket, roomsCollection, gamesCollection) => {
         };
       }
       console.log(gameDetails);
-      gamesCollection.insertOne(gameDetails);
+      gamesCollection.insertOne({ ...gameDetails, game_date: new Date() });
     } catch (e) {
       console.log("Error", e);
     }
