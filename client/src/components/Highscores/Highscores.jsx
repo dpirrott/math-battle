@@ -60,8 +60,8 @@ export const Highscores = ({ setViewHighScore, username }) => {
           </div>
         </div>
 
-        <h1>Match History</h1>
-        <p>Press game for more details</p>
+        <h1 className="matchHistoryTitle">Match History</h1>
+        <p className="historySubTitle">Press game for more details</p>
         <ul>{displayHistoryData}</ul>
       </div>
     </div>

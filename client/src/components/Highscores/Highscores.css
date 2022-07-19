@@ -94,3 +94,90 @@
 .endSummary {
   justify-content: flex-end;
 }
+
+.matchHistoryTitle {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 44px;
+  color: #ffffff;
+}
+
+.historySubTitle {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  color: #ffffff;
+}
+
+.personalScoresContainer > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.matchCardContainer {
+  color: black;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  height: 100px;
+}
+
+.matchCardContainer > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.matchCardContainer > div > h1,
+.matchCardContainer > div > h2,
+.matchCardContainer > div > h3,
+.matchCardContainer > div > p {
+  margin: 0;
+}
+
+.matchCardContainer > div > h2 {
+  /* font-family: "Inter"; */
+  font-style: normal;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+  color: #000000;
+}
+
+.matchCardContainer > div > h1 {
+  /* font-family: "Inter"; */
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+
+  color: #000000;
+}
+
+.matchCardContainer > div > h3 {
+  /* font-family: "Inter"; */
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: -0.07em;
+  color: #000000;
+}
