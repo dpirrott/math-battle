@@ -14,7 +14,6 @@ export const LobbyList = ({
   handleLeaveRoom,
   roomID,
   removeCookie,
-  setFinish,
   viewHighScores,
   setViewHighScores,
 }) => {
@@ -58,6 +57,11 @@ export const LobbyList = ({
       .catch((err) => console.log("Logout error:", err));
   };
 
+  const handleViewHighscores = () => {
+    localStorage.setItem("viewHighScores", "true");
+    setViewHighScores(true);
+  };
+
   return (
     <div>
       {!viewHighScores && (
@@ -65,11 +69,7 @@ export const LobbyList = ({
           <Button className="logout" variant="danger" onClick={() => handleLogout()}>
             Logout
           </Button>
-          <Button
-            className="highscoreBtn"
-            variant="primary"
-            onClick={() => setViewHighScores(true)}
-          >
+          <Button className="highscoreBtn" variant="primary" onClick={() => handleViewHighscores()}>
             Highscores
           </Button>
 

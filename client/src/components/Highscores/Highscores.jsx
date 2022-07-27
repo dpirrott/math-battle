@@ -7,14 +7,20 @@ import { useEffect } from "react";
 
 export const Highscores = ({ setViewHighScore, username }) => {
   const [displayHistoryData, setDisplayHistoryData] = useState(null);
+  const [wins, setWins] = useState(0);
 
   const loadGameHistory = async () => {
+    let winCount = 0;
     const history = await axios.get("/gameHistory", { params: { username } });
     console.log(history.data);
-    const listHistoryData = history.data.map((game, i) => {
+    const listHistoryData = await history.data.map((game, i) => {
+      if (!game.tie && game.winner.name === username) {
+        winCount++;
+      }
       return <HighscoreCard key={i} game={game} username={username} />;
     });
     setDisplayHistoryData(listHistoryData);
+    setWins(winCount);
   };
 
   const deleteGameHistory = async () => {
@@ -42,13 +48,13 @@ export const Highscores = ({ setViewHighScore, username }) => {
         <div className="scoreSummaryContainer">
           <div className="summaryContainer endSummary">
             <div className="summaryCard">
-              <h1>60</h1>
+              <h1>{displayHistoryData && displayHistoryData.length}</h1>
               <h2>Games</h2>
             </div>
           </div>
           <div className="summaryContainer">
             <div className="summaryCard">
-              <h1>50</h1>
+              <h1>{wins}</h1>
               <h2>Wins</h2>
             </div>
           </div>

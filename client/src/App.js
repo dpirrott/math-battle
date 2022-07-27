@@ -67,8 +67,10 @@ function App() {
   useEffect(() => {
     const socket = io("http://localhost:5000");
     const roomIDCached = JSON.parse(localStorage.getItem("roomID"));
+    const viewHighScoresCache = JSON.parse(localStorage.getItem("viewHighScores"));
     if (cookies.username) {
       setRoomID(roomIDCached);
+      setViewHighScores(viewHighScoresCache);
       axios
         .post("/validUsername", { username: cookies.username }, { withCredentials: true })
         .then((res) => {
