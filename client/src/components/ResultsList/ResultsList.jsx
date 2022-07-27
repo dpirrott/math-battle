@@ -1,21 +1,8 @@
 import React from "react";
 import "./ResultsList.css";
 import { Result } from "./Result";
-import { ReactComponent as Checkmark } from "../../images/correct.svg";
-import { ReactComponent as RedX } from "../../images/incorrect.svg";
 
 export const ResultsList = ({ responses, opponentResponses, opponentName, cookies }) => {
-  const generateResultsList = (results) => {
-    console.log("Responses:", results);
-    return results.map((result, index) => {
-      return (
-        <li key={index}>
-          <Result result={result} />
-        </li>
-      );
-    });
-  };
-
   const joinOpponentAnswer = (myResults, opponentResults) => {
     const myLength = myResults.length;
     const oppLength = opponentResults.length;
@@ -40,7 +27,11 @@ export const ResultsList = ({ responses, opponentResponses, opponentName, cookie
         };
       }
       if (opponentResults[i]) {
-        tempObj = { ...tempObj, oppInput: opponentResults[i].input, oppResult: opponentResults[i].result };
+        tempObj = {
+          ...tempObj,
+          oppInput: opponentResults[i].input,
+          oppResult: opponentResults[i].result,
+        };
       } else {
         tempObj = { ...tempObj, oppInput: "", oppResult: "" };
       }
@@ -51,21 +42,8 @@ export const ResultsList = ({ responses, opponentResponses, opponentName, cookie
 
   const generateResultsTable = (responses, opponentResponses) => {
     const combinedArray = joinOpponentAnswer(responses, opponentResponses);
-    const tableResults = combinedArray.map(({ number, question, myInput, myResult, oppInput, oppResult }) => {
-      return (
-        <tr key={number}>
-          <td className="questionNumber">{number}.</td>
-          <td>{question}</td>
-          <td className="tableResponse">
-            {myInput ? `${myInput} ` : "--"}
-            {myInput && (myResult ? <Checkmark /> : <RedX />)}
-          </td>
-          <td className="tableResponse">
-            {oppInput ? `${oppInput} ` : "--"}
-            {oppInput && (oppResult ? <Checkmark /> : <RedX />)}
-          </td>
-        </tr>
-      );
+    const tableResults = combinedArray.map((result, i) => {
+      return <Result key={i} result={result} />;
     });
     return tableResults;
   };
