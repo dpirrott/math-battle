@@ -16,6 +16,7 @@ module.exports = (gamesCollection, name) => {
             ],
           })
           .project( {"_id": 0} )
+          .sort({"game_date": -1})
           .toArray();
       console.log(gameHistory);
       res.status(200).json(gameHistory);
