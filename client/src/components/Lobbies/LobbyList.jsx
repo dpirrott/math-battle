@@ -14,6 +14,7 @@ export const LobbyList = ({
   handleLeaveRoom,
   roomID,
   removeCookie,
+  setFinish,
   viewHighScores,
   setViewHighScores,
 }) => {

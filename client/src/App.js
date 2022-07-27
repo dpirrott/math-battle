@@ -159,6 +159,7 @@ function App() {
                 errorMsg={errorMsg}
                 handleLeaveRoom={handleLeaveRoom}
                 roomID={roomID}
+                setFinish={setFinish}
                 removeCookie={removeCookie}
                 viewHighScores={viewHighScores}
                 setViewHighScores={setViewHighScores}
