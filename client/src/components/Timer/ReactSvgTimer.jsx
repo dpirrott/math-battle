@@ -26,12 +26,9 @@ export const ReactSvgTimer = ({
   countdownColor,
   displayCountdown,
   timerDuration,
-  resetTimerRequested,
-  resetTimer,
   timerCount,
   completeTimer,
   duration,
-  setDuration,
   onPause,
   onResume,
   timerIsRunning,
@@ -47,17 +44,20 @@ export const ReactSvgTimer = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+    const getcounterText = () => {
+      // This function is not great - complexity is due to counting up once timer goal is reached
+      if (duration >= 3600000 || duration === 0) {
+        return `${moment.utc(duration).format("hh:mm:ss")}`;
+      } else {
+        return `${moment.utc(duration).format("mm:ss")}`;
+      }
+    };
+
     setcounterText(getcounterText());
     if (duration === 0) {
       setDraw(drawCoord(360));
     }
   }, [duration]);
-
-  // useInterval(() => {
-  //   if (resetTimerRequested) {
-  //     reset();
-  //   }
-  // }, resetTimerRequested);
 
   useInterval(() => {
     // Moments are used to correct drift from JavaScript's setInterval
@@ -106,15 +106,6 @@ export const ReactSvgTimer = ({
     // prettier-ignore
     let coord = `M${radius + offset},${radius + offset} L${radius + offset},${offset} A${radius},${radius} 0 ${dir},1 ${rX},${rY}`
     return coord;
-  };
-
-  const getcounterText = () => {
-    // This function is not great - complexity is due to counting up once timer goal is reached
-    if (duration >= 3600000 || duration === 0) {
-      return `${moment.utc(duration).format("hh:mm:ss")}`;
-    } else {
-      return `${moment.utc(duration).format("mm:ss")}`;
-    }
   };
 
   return (

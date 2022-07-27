@@ -13,12 +13,9 @@ export const Timer = ({
   totalTime,
 }) => {
   let [resetRequested, setResetRequested] = useState(false);
-  let [timerIsComplete, setTimerIsComplete] = useState(false);
-  let [logMilliseconds, setLogMilliseconds] = useState(true);
   const [duration, setDuration] = useState(0);
 
   const onComplete = (status) => {
-    setTimerIsComplete(status);
     onResetRequest();
     setFinish("Game over");
   };
@@ -28,9 +25,6 @@ export const Timer = ({
   };
 
   const timerValue = (value) => {
-    // if (logMilliseconds) {
-    //   console.log(value);
-    // }
     return value;
   };
 
