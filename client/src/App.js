@@ -74,7 +74,6 @@ function App() {
       axios
         .post("/validUsername", { username: cookies.username }, { withCredentials: true })
         .then((res) => {
-          console.log(res.data.username);
           setCookie("username", res.data.username, {
             maxAge: 3600,
             secure: true,
@@ -99,14 +98,8 @@ function App() {
         if (roomID && connectedUsers.length < 2) {
           setRoomID(roomID);
           localStorage.setItem("roomID", roomID);
-          console.log(connectedUsers);
           setOpponentName(connectedUsers.length > 0 ? connectedUsers[0].username : null);
           setErrorMsg(null);
-          console.log(
-            `Joined room: ${roomID}, Current user in room: ${
-              connectedUsers.length > 0 ? connectedUsers[0].username : "empty"
-            }`
-          );
         } else {
           if (roomIDCached) {
             localStorage.clear("roomID");

@@ -18,7 +18,6 @@ export const HighscoreCard = ({ game, username }) => {
     });
     const date = datetime.slice(0, 10);
     const time = datetime.slice(12, 17) + " " + datetime.slice(-4, datetime.length);
-    console.log(`datetime: ${datetime}, date: ${date}, time: ${time}`);
     setDateTime({
       date,
       time,

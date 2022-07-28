@@ -12,7 +12,6 @@ export const Highscores = ({ setViewHighScore, username }) => {
   const loadGameHistory = async () => {
     let winCount = 0;
     const history = await axios.get("/gameHistory", { params: { username } });
-    console.log(history.data);
     const listHistoryData = await history.data.map((game, i) => {
       if (!game.tie && game.winner.name === username) {
         winCount++;
